@@ -1,0 +1,27 @@
+name: navaja_suiza_sanitaria
+description: La Navaja Suiza Sanitaria - Herramientas para profesionales de emergencias
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.8.1
+  audioplayers: ^6.1.0
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/audio/
+    - assets/icons/

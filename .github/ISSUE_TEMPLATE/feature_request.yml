@@ -1,0 +1,57 @@
+name: "Feature Request / Solicitud de Funcionalidad"
+description: "Sugiere una nueva funcionalidad para EmerKit / Suggest a new feature for EmerKit"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tu sugerencia. Tu experiencia clinica nos ayuda a mejorar la app.
+        Thank you for your suggestion. Your clinical experience helps us improve the app.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descripcion de la funcionalidad / Feature Description"
+      description: "Describe la funcionalidad que te gustaria ver / Describe the feature you would like to see"
+      placeholder: "Me gustaria que la app pudiera... / I would like the app to be able to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: "Caso de uso / escenario clinico / Use Case / Clinical Scenario"
+      description: "En que situacion usarias esta funcionalidad / In what situation would you use this feature"
+      placeholder: "Durante una asistencia a un paciente con... / During an intervention with a patient who..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: profile
+    attributes:
+      label: "Perfil profesional / Professional Profile"
+      description: "Tu perfil sanitario / Your healthcare profile"
+      options:
+        - "TES / EMT"
+        - "Enfermeria / Nursing"
+        - "Medicina / Medicine"
+        - "Estudiante / Student"
+        - "Otro / Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternativas consideradas / Alternatives Considered"
+      description: "Has considerado alguna alternativa / Have you considered any alternatives"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "Contexto adicional / Additional Context"
+      description: "Cualquier otra informacion relevante / Any other relevant information"
+    validations:
+      required: false

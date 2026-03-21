@@ -1,0 +1,88 @@
+name: "New Tool Request / Solicitud de Nueva Herramienta"
+description: "Solicita una nueva herramienta clinica para EmerKit / Request a new clinical tool for EmerKit"
+labels: ["new-tool", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Solicita una nueva herramienta clinica. Cuanta mas informacion proporciones, mejor podremos evaluar e implementar la herramienta.
+        Request a new clinical tool. The more information you provide, the better we can evaluate and implement the tool.
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: "Nombre de la herramienta / Tool Name"
+      description: "Nombre de la escala, calculadora o guia / Name of the scale, calculator, or guide"
+      placeholder: "Ej: Escala de APACHE II / E.g.: APACHE II Score"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Categoria / Category"
+      description: "En que categoria encaja mejor / Which category fits best"
+      options:
+        - "Soporte Vital / Life Support"
+        - "Valoracion / Assessment"
+        - "Signos y Valores / Signs & Values"
+        - "Oxigenoterapia / Oxygen Therapy"
+        - "Tecnicas / Techniques"
+        - "Proteccion / Protection"
+        - "Comunicacion / Communication"
+        - "Nueva categoria / New category"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descripcion / Description"
+      description: "Que hace esta herramienta y como se utiliza en la practica clinica / What this tool does and how it is used in clinical practice"
+      placeholder: "Esta escala se utiliza para... / This scale is used to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "Referencias clinicas / Clinical References"
+      description: "Fuentes, articulos, guias clinicas o enlaces de referencia / Sources, articles, clinical guidelines, or reference links"
+      placeholder: |
+        - Articulo original: ...
+        - Guia clinica: ...
+        - URL: ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Prioridad sugerida / Suggested Priority"
+      description: "Que tan importante consideras esta herramienta / How important do you consider this tool"
+      options:
+        - "Alta - Uso diario en emergencias / High - Daily use in emergencies"
+        - "Media - Uso frecuente / Medium - Frequent use"
+        - "Baja - Uso ocasional / Low - Occasional use"
+    validations:
+      required: true
+
+  - type: textarea
+    id: parameters
+    attributes:
+      label: "Parametros de entrada / Input Parameters"
+      description: "Que datos necesita el usuario introducir / What data does the user need to input"
+      placeholder: |
+        - Edad del paciente / Patient age
+        - Temperatura / Temperature
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "Informacion adicional / Additional Information"
+      description: "Cualquier otro contexto relevante / Any other relevant context"
+    validations:
+      required: false
