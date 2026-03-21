@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
 
 class _WoundType {
   final String name;
@@ -132,9 +132,9 @@ class HeridasScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  _buildRow('Mecanismo', w.mechanism),
-                  _buildRow('Características', w.characteristics),
-                  _buildRow('Manejo', w.management),
+                  _buildRow(context, 'Mecanismo', w.mechanism),
+                  _buildRow(context, 'Características', w.characteristics),
+                  _buildRow(context, 'Manejo', w.management),
                 ],
               ),
             ),
@@ -145,12 +145,12 @@ class HeridasScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, String value) {
+  Widget _buildRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
-      child: RichText(
-        text: TextSpan(
-          style: const TextStyle(fontSize: 13, color: Colors.black87),
+      child: Text.rich(
+        TextSpan(
+          style: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color),
           children: [
             TextSpan(text: '$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
             TextSpan(text: value),

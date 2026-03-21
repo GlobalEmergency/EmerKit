@@ -40,7 +40,7 @@ class RankinData {
   ];
 
   static const infoSections = <String, String>{
-    '?Que es?':
+    '¿Qué es?':
         'La Escala de Rankin Modificada (mRS) es una escala de valoracion funcional '
         'que mide el grado de discapacidad o dependencia en las actividades de la vida '
         'diaria tras un ictus u otra patologia neurologica. Es la escala mas utilizada '

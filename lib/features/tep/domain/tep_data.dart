@@ -27,7 +27,7 @@ class TepData {
   ];
 
   static const infoSections = <String, String>{
-    '?Que es?':
+    '¿Qué es?':
         'El Triangulo de Evaluacion Pediatrica (TEP) es una herramienta de valoracion '
         'inicial rapida del paciente pediatrico. Permite identificar en segundos el tipo '
         'y gravedad de la situacion clinica mediante la observacion visual y auditiva, '

@@ -6,5 +6,4 @@ export 'severity.dart';
 export 'scored_item.dart';
 export 'clinical_reference.dart';
 export 'tool_category.dart';
-export 'temperature_grade.dart';
-export 'info_section.dart';
+export 'tool_info.dart';

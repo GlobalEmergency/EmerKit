@@ -113,7 +113,7 @@ class NihssData {
   ];
 
   static const infoSections = <String, String>{
-    '?Que es?':
+    '¿Qué es?':
         'La National Institutes of Health Stroke Scale (NIHSS) es una escala '
         'de valoracion neurologica estandarizada que cuantifica la gravedad '
         'del ictus. Evalua 11 dominios neurologicos con una puntuacion '

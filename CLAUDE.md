@@ -22,7 +22,7 @@ lib/
 │   └── <feature>/
 │       ├── domain/      # Pure Dart calculators and data (NO Flutter imports)
 │       └── presentation/# Screens and feature-specific widgets
-└── screens/             # General screens
+└── app.dart             # MaterialApp entry point
 ```
 
 ## Key Commands

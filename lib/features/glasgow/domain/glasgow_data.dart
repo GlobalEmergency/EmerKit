@@ -29,7 +29,7 @@ class GlasgowData {
   ];
 
   static const infoSections = <String, String>{
-    '?Que es?':
+    '¿Qué es?':
         'La Escala de Coma de Glasgow (GCS) es una escala neurologica que valora el nivel de consciencia '
         'de un paciente. Se utiliza en la valoracion inicial y seguimiento de pacientes con traumatismo '
         'craneoencefalico y otras emergencias neurologicas.',

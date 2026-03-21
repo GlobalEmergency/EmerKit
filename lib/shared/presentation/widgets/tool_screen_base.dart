@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'info_bottom_sheet.dart';
-export 'result_banner.dart';
 
 /// Widget base para todas las herramientas interactivas de la app.
 ///

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/result_banner.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
 import '../domain/o2_calculator.dart';
 import '../domain/o2_calculator_data.dart';
