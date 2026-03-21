@@ -1,4 +1,4 @@
-package com.ztech.navaja_suiza_sanitaria
+package online.globalemergency.emerkit
 
 import io.flutter.embedding.android.FlutterActivity
 

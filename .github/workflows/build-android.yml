@@ -1,4 +1,4 @@
-name: Build Android Release
+name: Build & Deploy Android
 
 on:
   push:
@@ -31,10 +31,30 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      # Decode keystore from base64 secret
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > android/app/emerkit-release.jks
+
+      # Create key.properties from secrets
+      - name: Create key.properties
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=emerkit-release.jks
+          EOF
+
       - name: Build release APK
         run: flutter build apk --release
 
-      - name: Build release AAB
+      - name: Build release AAB (Google Play)
         run: flutter build appbundle --release
 
       - name: Upload APK artifact
@@ -48,6 +68,17 @@ jobs:
         with:
           name: release-aab
           path: build/app/outputs/bundle/release/app-release.aab
+
+      # Deploy to Google Play (internal track)
+      - name: Upload to Google Play
+        if: secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: online.globalemergency.emerkit
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
