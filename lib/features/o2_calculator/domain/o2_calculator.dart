@@ -1,4 +1,4 @@
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
+import 'package:emerkit/shared/domain/entities/severity.dart';
 
 class O2Result {
   final double autonomyMinutes;

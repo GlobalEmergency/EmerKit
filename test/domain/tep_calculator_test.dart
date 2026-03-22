@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
-import 'package:navaja_suiza_sanitaria/features/tep/domain/tep_calculator.dart';
+import 'package:emerkit/shared/domain/entities/severity.dart';
+import 'package:emerkit/features/tep/domain/tep_calculator.dart';
 
 void main() {
   const calculator = TepCalculator();

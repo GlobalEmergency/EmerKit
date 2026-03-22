@@ -1,5 +1,5 @@
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/clinical_reference.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/models/medication_protocol.dart';
+import 'package:emerkit/shared/domain/entities/clinical_reference.dart';
+import 'package:emerkit/shared/domain/models/medication_protocol.dart';
 
 class RcpData {
   RcpData._();

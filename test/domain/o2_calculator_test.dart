@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/o2_calculator/domain/o2_calculator.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
+import 'package:emerkit/features/o2_calculator/domain/o2_calculator.dart';
+import 'package:emerkit/shared/domain/entities/severity.dart';
 
 void main() {
   group('O2Calculator', () {

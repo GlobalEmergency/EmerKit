@@ -1,5 +1,5 @@
 /// Barrel file: un solo import para todas las entidades del dominio.
-/// Uso: import 'package:navaja_suiza_sanitaria/shared/domain/entities/entities.dart';
+/// Uso: import 'package:emerkit/shared/domain/entities/entities.dart';
 library;
 
 export 'severity.dart';

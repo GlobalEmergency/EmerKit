@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/nihss/domain/nihss_data.dart';
-import 'package:navaja_suiza_sanitaria/features/lund_browder/domain/lund_browder_data.dart';
-import 'package:navaja_suiza_sanitaria/features/glosario/domain/glosario_data.dart';
-import 'package:navaja_suiza_sanitaria/features/rcp/domain/rcp_data.dart';
+import 'package:emerkit/features/nihss/domain/nihss_data.dart';
+import 'package:emerkit/features/lund_browder/domain/lund_browder_data.dart';
+import 'package:emerkit/features/glosario/domain/glosario_data.dart';
+import 'package:emerkit/features/rcp/domain/rcp_data.dart';
 
 void main() {
   group('NIHSS - integridad de datos clinicos', () {

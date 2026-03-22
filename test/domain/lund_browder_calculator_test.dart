@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/lund_browder/domain/lund_browder_calculator.dart';
-import 'package:navaja_suiza_sanitaria/features/lund_browder/domain/lund_browder_data.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
+import 'package:emerkit/features/lund_browder/domain/lund_browder_calculator.dart';
+import 'package:emerkit/features/lund_browder/domain/lund_browder_data.dart';
+import 'package:emerkit/shared/domain/entities/severity.dart';
 
 void main() {
   group('LundBrowderCalculator', () {

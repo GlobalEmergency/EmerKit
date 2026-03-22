@@ -1,4 +1,4 @@
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/clinical_reference.dart';
+import 'package:emerkit/shared/domain/entities/clinical_reference.dart';
 
 class HeartRateData {
   HeartRateData._();

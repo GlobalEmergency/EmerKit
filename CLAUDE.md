@@ -5,7 +5,7 @@
 EmerKit is a cross-platform Flutter app with 24 clinical tools for emergency healthcare professionals. Developed by Global Emergency (globalemergency.online).
 
 - **Package name**: `online.globalemergency.emerkit`
-- **Dart package**: `navaja_suiza_sanitaria` (legacy, do not rename)
+- **Dart package**: `emerkit`
 - **Repo**: https://github.com/GlobalEmergency/EmerKit
 
 ## Architecture
@@ -69,7 +69,7 @@ bash scripts/propagate-version.sh    # Propagate version.json to pubspec.yaml + 
 ## Code Conventions
 
 ### Imports
-- **Cross-feature**: use `package:navaja_suiza_sanitaria/...`
+- **Cross-feature**: use `package:emerkit/...`
 - **Within same feature**: use relative imports
 - **NEVER** import across features directly (use shared layer)
 

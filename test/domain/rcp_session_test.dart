@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/models/action_log.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/models/medication_protocol.dart';
-import 'package:navaja_suiza_sanitaria/features/rcp/domain/rcp_data.dart';
-import 'package:navaja_suiza_sanitaria/features/rcp/domain/rcp_session.dart';
+import 'package:emerkit/shared/domain/models/action_log.dart';
+import 'package:emerkit/shared/domain/models/medication_protocol.dart';
+import 'package:emerkit/features/rcp/domain/rcp_data.dart';
+import 'package:emerkit/features/rcp/domain/rcp_session.dart';
 
 void main() {
   group('RCP SVB - ciclo de 30 compresiones', () {

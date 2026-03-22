@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/models/medication_protocol.dart';
+import 'package:emerkit/shared/domain/models/medication_protocol.dart';
 
 class MedicationAlertCard extends StatelessWidget {
   final MedicationTracker tracker;

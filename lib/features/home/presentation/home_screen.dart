@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
-import 'package:navaja_suiza_sanitaria/shared/utils/external_app_launcher.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_card.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/section_header.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/tool_category.dart';
+import 'package:emerkit/shared/presentation/theme/app_colors.dart';
+import 'package:emerkit/shared/utils/external_app_launcher.dart';
+import 'package:emerkit/shared/presentation/widgets/tool_card.dart';
+import 'package:emerkit/shared/presentation/widgets/section_header.dart';
+import 'package:emerkit/shared/domain/entities/tool_category.dart';
 import 'tool_registry.dart';
 
 /// Maps each ToolCategory to its brand color.

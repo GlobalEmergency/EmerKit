@@ -1,5 +1,5 @@
 /// Barrel file: un solo import para todos los widgets compartidos.
-/// Uso: import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/widgets.dart';
+/// Uso: import 'package:emerkit/shared/presentation/widgets/widgets.dart';
 library;
 
 export 'tool_screen_base.dart';

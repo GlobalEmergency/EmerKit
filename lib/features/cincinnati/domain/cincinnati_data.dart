@@ -1,4 +1,4 @@
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/clinical_reference.dart';
+import 'package:emerkit/shared/domain/entities/clinical_reference.dart';
 
 /// Static clinical data for the Cincinnati Prehospital Stroke Scale.
 class CincinnatiData {

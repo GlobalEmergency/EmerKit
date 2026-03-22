@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/models/action_log.dart';
+import 'package:emerkit/shared/domain/models/action_log.dart';
 
 class ActionLogViewer extends StatefulWidget {
   final ActionLog actionLog;

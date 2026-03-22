@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
-import 'package:navaja_suiza_sanitaria/features/glasgow/domain/glasgow_calculator.dart';
+import 'package:emerkit/shared/domain/entities/severity.dart';
+import 'package:emerkit/features/glasgow/domain/glasgow_calculator.dart';
 
 void main() {
   const calculator = GlasgowCalculator();

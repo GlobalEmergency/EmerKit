@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/domain/entities/tool_category.dart';
+import 'package:emerkit/shared/domain/entities/tool_category.dart';
 
 class ToolEntry {
   final String id;

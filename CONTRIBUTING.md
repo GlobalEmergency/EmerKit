@@ -69,8 +69,8 @@ lib/
 
 ### Imports
 
-- **Entre features**: usa `package:navaja_suiza_sanitaria/...`
-  *Cross-feature*: use `package:navaja_suiza_sanitaria/...`
+- **Entre features**: usa `package:emerkit/...`
+  *Cross-feature*: use `package:emerkit/...`
 - **Dentro del mismo feature**: usa imports relativos.
   *Within the same feature*: use relative imports.
 
@@ -273,7 +273,7 @@ ToolEntry(
 ```dart
 // test/domain/mi_escala_calculator_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/mi_escala/domain/mi_escala_calculator.dart';
+import 'package:emerkit/features/mi_escala/domain/mi_escala_calculator.dart';
 
 void main() {
   const calculator = MiEscalaCalculator();

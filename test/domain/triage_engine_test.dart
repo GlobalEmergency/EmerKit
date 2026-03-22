@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/triage/domain/triage_engine.dart';
-import 'package:navaja_suiza_sanitaria/features/triage/domain/triage_data.dart';
+import 'package:emerkit/features/triage/domain/triage_engine.dart';
+import 'package:emerkit/features/triage/domain/triage_data.dart';
 
 void main() {
   late TriageEngine engine;

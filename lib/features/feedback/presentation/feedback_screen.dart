@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
+import 'package:emerkit/shared/presentation/theme/app_colors.dart';
 
 class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});

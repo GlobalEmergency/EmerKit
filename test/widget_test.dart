@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/app.dart';
+import 'package:emerkit/app.dart';
 
 void main() {
   testWidgets('App launches', (WidgetTester tester) async {
