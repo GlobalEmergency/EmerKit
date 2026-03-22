@@ -26,7 +26,8 @@ permissions:
 jobs:
   build:
     name: Build & Upload to TestFlight
-    runs-on: macos-latest
+    runs-on: macos-15
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
         with:
@@ -67,33 +68,56 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      - name: Install App Store Connect API Key
+      # Install certificate and provisioning profile (same pattern as DeaMap)
+      - name: Install Apple certificate and provisioning profile
         env:
-          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          IOS_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_CERTIFICATE_P12_BASE64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
         run: |
-          mkdir -p ~/.appstoreconnect/private_keys
-          echo "$API_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
-          mkdir -p ~/private_keys
-          echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
+          # Create temporary keychain
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
 
-      - name: Configure iOS project for distribution
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Import certificate
+          CERTIFICATE_PATH="$RUNNER_TEMP/certificate.p12"
+          echo "$IOS_CERTIFICATE_P12_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          security import "$CERTIFICATE_PATH" \
+            -P "$IOS_CERTIFICATE_PASSWORD" \
+            -A \
+            -t cert \
+            -f pkcs12 \
+            -k "$KEYCHAIN_PATH"
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASSWORD" \
+            "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+
+          # Install provisioning profile
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin \
+            <<< "$(security cms -D -i "$PROFILE_PATH")")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" \
+            "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_UUID}.mobileprovision"
+
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          echo "PROVISIONING_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+
+      - name: Configure iOS project
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
-          # Update version
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
-
-          # Configure Runner.xcodeproj for manual distribution signing
-          ruby -e '
-            pbx = File.read("Runner.xcodeproj/project.pbxproj")
-            pbx.gsub!(/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/, "PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;")
-            pbx.gsub!(/DEVELOPMENT_TEAM = [^;]*;/, "DEVELOPMENT_TEAM = '"$TEAM_ID"';")
-            pbx.gsub!(/CODE_SIGN_STYLE = [^;]*;/, "CODE_SIGN_STYLE = Automatic;")
-            File.write("Runner.xcodeproj/project.pbxproj", pbx)
-          '
 
       - name: Build Flutter iOS
         run: |
@@ -103,8 +127,6 @@ jobs:
 
       - name: Xcode Archive
         env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
@@ -113,32 +135,57 @@ jobs:
             -scheme Runner \
             -configuration Release \
             -archivePath ../build/ios/archive/Runner.xcarchive \
-            -destination 'generic/platform=iOS' \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
-            -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID" \
+            -destination "generic/platform=iOS" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            -IDEBuildOperationTimingLogLevel=0
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            PROVISIONING_PROFILE="$PROVISIONING_PROFILE_UUID" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
+            -allowProvisioningUpdates
 
           echo "✅ Archive created"
           ls -la ../build/ios/archive/Runner.xcarchive/
 
-      - name: Export IPA
+      - name: Create ExportOptions.plist
         env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>teamID</key>
+            <string>${TEAM_ID}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>online.globalemergency.emerkit</key>
+              <string>${PROVISIONING_PROFILE_UUID}</string>
+            </dict>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>destination</key>
+            <string>upload</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Export IPA
         run: |
           cd ios
           xcodebuild -exportArchive \
             -archivePath ../build/ios/archive/Runner.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
             -exportPath ../build/ios/ipa \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
-            -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID"
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates=NO
 
           echo "✅ IPA exported"
           ls -la ../build/ios/ipa/
@@ -148,7 +195,11 @@ jobs:
         env:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
+          mkdir -p private_keys
+          echo "$API_KEY" > "private_keys/AuthKey_${KEY_ID}.p8"
+
           IPA_FILE=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
           if [ -z "$IPA_FILE" ]; then
             echo "❌ No IPA file found"
@@ -160,8 +211,7 @@ jobs:
             --type ios \
             --file "$IPA_FILE" \
             --apiKey "$KEY_ID" \
-            --apiIssuer "$ISSUER_ID" \
-            --verbose
+            --apiIssuer "$ISSUER_ID"
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v7
@@ -177,4 +227,11 @@ jobs:
           IPA=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
           if [ -n "$IPA" ]; then
             gh release upload "${{ steps.version.outputs.tag }}" "$IPA" --clobber || echo "⚠️ Could not attach to release"
+          fi
+
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          if [ -n "$KEYCHAIN_PATH" ] && [ -f "$KEYCHAIN_PATH" ]; then
+            security delete-keychain "$KEYCHAIN_PATH" || true
           fi
