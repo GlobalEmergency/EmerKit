@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/ecg_data.dart';
 
 class EcgLeadsScreen extends StatelessWidget {
   const EcgLeadsScreen({super.key});
@@ -8,53 +11,35 @@ class EcgLeadsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Electrodos ECG'),
-          actions: [
-            Builder(
-              builder: (context) => buildInfoAction(context, 'Electrodos ECG', [
-                buildInfoCard(
-                  'Importancia de la colocación',
-                  'La correcta colocación de los electrodos es fundamental para obtener un trazado ECG fiable. Una colocación incorrecta puede simular patologías inexistentes (como infartos o bloqueos) o enmascarar alteraciones reales, llevando a diagnósticos erróneos y tratamientos inadecuados.',
-                ),
-                buildInfoCard(
-                  'Errores comunes',
-                  '- Inversión de electrodos de miembros: genera trazados confusos.\n'
-                      '- Colocación de V1-V2 demasiado altas: simula patología (patrón Brugada).\n'
-                      '- Electrodos sobre hueso o músculo: artefactos y bajo voltaje.\n'
-                      '- Piel húmeda o vellosa: mala adherencia y artefactos.\n'
-                      '- Cables mal conectados: derivaciones intercambiadas.',
-                ),
-                buildInfoCard(
-                  'Sistema Europeo (IEC) vs Americano (AHA)',
-                  'Existen dos sistemas de codificación por colores para los electrodos de ECG. El sistema europeo (IEC) utiliza los colores rojo, amarillo, verde y negro, mientras que el americano (AHA) utiliza blanco, negro, verde y rojo. Es esencial conocer ambos sistemas para evitar errores en la colocación.',
-                ),
-                buildReferencesCard([
-                  'AHA/ACC Guidelines for Electrocardiography. Circulation. 2007.',
-                  'IEC 60601 Medical Electrical Equipment Standards.',
-                ]),
-              ]),
+      child: ToolScreenBase(
+        title: 'Electrodos ECG',
+        infoBody: const ToolInfoPanel(
+          sections: EcgData.infoSections,
+          references: EcgData.references,
+        ),
+        toolBody: Column(
+          children: [
+            Material(
+              color: Theme.of(context).colorScheme.primary,
+              child: const TabBar(
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                tabs: [
+                  Tab(text: 'Europeo'),
+                  Tab(text: 'Americano (AHA)'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildEuropean(),
+                  _buildAmerican(),
+                ],
+              ),
             ),
           ],
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              Tab(text: 'Europeo'),
-              Tab(text: 'Americano (AHA)'),
-            ],
-          ),
-        ),
-        body: SafeArea(
-          top: false,
-          child: TabBarView(
-            children: [
-              _buildEuropean(),
-              _buildAmerican(),
-            ],
-          ),
         ),
       ),
     );

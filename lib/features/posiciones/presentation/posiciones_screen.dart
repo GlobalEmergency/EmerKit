@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/posiciones_data.dart';
 
 class _Position {
   final String name;
@@ -99,76 +102,49 @@ class PosicionesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Posiciones del Paciente'),
-        actions: [
-          buildInfoAction(context, 'Posiciones del Paciente', [
-            buildInfoCard(
-              'Importancia del posicionamiento',
-              'La posición del paciente es una intervención terapéutica en sí misma. Una correcta posición puede mejorar la ventilación, optimizar la perfusión, reducir la presión intracraneal, prevenir la aspiración y mejorar el confort del paciente. La elección depende de la patología y el estado clínico.',
-            ),
-            buildInfoCard(
-              'Contraindicaciones generales',
-              '- Trendelenburg: contraindicado en TCE, ACV, disnea, lesiones torácicas y embarazo avanzado.\n'
-                  '- Decúbito supino: contraindicado en pacientes inconscientes que respiran (riesgo de aspiración) y disnea.\n'
-                  '- Decúbito prono: contraindicado si no se puede proteger la vía aérea.\n'
-                  '- Siempre inmovilizar antes de movilizar si se sospecha lesión de columna.',
-            ),
-            buildInfoCard(
-              'Consideraciones especiales',
-              '- Embarazadas (>20 sem): decúbito lateral izquierdo para evitar compresión de la vena cava.\n'
-                  '- Trauma: inmovilización en bloque sobre tabla espinal.\n'
-                  '- Niños: adaptar posiciones a la anatomía pediátrica.\n'
-                  '- Pacientes obesos: pueden necesitar posiciones más incorporadas para respirar.',
-            ),
-            buildReferencesCard([
-              'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
-              'Tintinalli\'s Emergency Medicine. 9th Ed. 2020.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'Posiciones del Paciente',
+      infoBody: const ToolInfoPanel(
+        sections: PosicionesData.infoSections,
+        references: PosicionesData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: _positions.length,
-          itemBuilder: (context, index) {
-            final pos = _positions[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ExpansionTile(
-                leading: Icon(pos.icon,
-                    color: Theme.of(context).colorScheme.primary),
-                title: Text(pos.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(pos.indication,
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.orange.shade700)),
-                children: [
-                  if (pos.imagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          pos.imagePath!,
-                          height: 180,
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                        ),
+      toolBody: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: _positions.length,
+        itemBuilder: (context, index) {
+          final pos = _positions[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ExpansionTile(
+              leading:
+                  Icon(pos.icon, color: Theme.of(context).colorScheme.primary),
+              title: Text(pos.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(pos.indication,
+                  style:
+                      TextStyle(fontSize: 12, color: Colors.orange.shade700)),
+              children: [
+                if (pos.imagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        pos.imagePath!,
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Text(pos.description),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Text(pos.description),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

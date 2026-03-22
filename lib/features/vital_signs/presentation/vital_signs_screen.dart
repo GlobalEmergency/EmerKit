@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/vital_signs_data.dart';
 
 class _AgeGroup {
   final String name;
@@ -35,80 +38,54 @@ class VitalSignsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Constantes Vitales'),
-        actions: [
-          buildInfoAction(context, 'Constantes Vitales', [
-            buildInfoCard(
-              '¿Qué son las constantes vitales?',
-              'Las constantes vitales son los parámetros fisiológicos que reflejan el estado de las funciones básicas del organismo. Incluyen la frecuencia cardíaca (FC), frecuencia respiratoria (FR), presión arterial (TAS/TAD), saturación de oxígeno (SpO₂) y temperatura corporal (Tª).',
-            ),
-            buildInfoCard(
-              'Rangos normales por edad',
-              'Los valores normales varían significativamente según la edad del paciente. Los neonatos y lactantes presentan frecuencias cardíacas y respiratorias más elevadas y presiones arteriales más bajas que los adultos. Es fundamental conocer estos rangos para identificar alteraciones de forma precoz.',
-            ),
-            buildInfoCard(
-              '¿Cuándo son preocupantes?',
-              'Los valores fuera de rango pueden indicar situaciones de gravedad:\n\n'
-                  '- Taquicardia o bradicardia extremas: posible compromiso hemodinámico.\n'
-                  '- Taquipnea o bradipnea: insuficiencia respiratoria.\n'
-                  '- Hipotensión: shock o hipovolemia.\n'
-                  '- SpO₂ < 94%: hipoxemia que requiere oxigenoterapia.\n'
-                  '- Fiebre > 38°C o hipotermia < 35°C: infección o exposición.',
-            ),
-            buildReferencesCard([
-              'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
-              'PALS Provider Manual. AHA, 2020.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'Constantes Vitales',
+      infoBody: const ToolInfoPanel(
+        sections: VitalSignsData.infoSections,
+        references: VitalSignsData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: _groups.length,
-          itemBuilder: (context, index) {
-            final g = _groups[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(g.icon, color: AppColors.signosValores),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(g.name,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _buildVitalChip('FC', g.fc, 'lpm', Colors.red),
-                        _buildVitalChip('FR', g.fr, 'rpm', Colors.blue),
-                        _buildVitalChip('TAS', g.tas, 'mmHg', Colors.orange),
-                        _buildVitalChip(
-                            'TAD', g.tad, 'mmHg', Colors.orange.shade700),
-                        _buildVitalChip('SpO₂', g.spo2, '', Colors.cyan),
-                        _buildVitalChip('Tª', g.temp, '', Colors.purple),
-                      ],
-                    ),
-                  ],
-                ),
+      toolBody: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: _groups.length,
+        itemBuilder: (context, index) {
+          final g = _groups[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(g.icon, color: AppColors.signosValores),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(g.name,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildVitalChip('FC', g.fc, 'lpm', Colors.red),
+                      _buildVitalChip('FR', g.fr, 'rpm', Colors.blue),
+                      _buildVitalChip('TAS', g.tas, 'mmHg', Colors.orange),
+                      _buildVitalChip(
+                          'TAD', g.tad, 'mmHg', Colors.orange.shade700),
+                      _buildVitalChip('SpO₂', g.spo2, '', Colors.cyan),
+                      _buildVitalChip('Tª', g.temp, '', Colors.purple),
+                    ],
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

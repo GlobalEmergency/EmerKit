@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/adr_data.dart';
 
 class _AdrClass {
   final String code;
@@ -81,87 +84,62 @@ class AdrScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ADR - Mercancías Peligrosas'),
-        actions: [
-          buildInfoAction(context, 'ADR - Mercancías Peligrosas', [
-            buildInfoCard(
-              'Acuerdo ADR',
-              'El ADR (Accord relatif au transport international des marchandises Dangereuses par Route) es el acuerdo europeo que regula el transporte internacional de mercancías peligrosas por carretera. Clasifica las sustancias en 9 clases según su peligrosidad y establece las normas de señalización, embalaje y transporte.',
-            ),
-            buildInfoCard(
-              'Actuación ante incidentes HAZMAT',
-              '- Mantener distancia de seguridad (mínimo 100 m, 300 m si hay incendio).\n'
-                  '- Aproximación desde barlovento (a favor del viento, que el viento vaya de ti hacia el incidente).\n'
-                  '- Identificar el producto: panel naranja (Kemler/ONU), rombos de peligro.\n'
-                  '- No tocar, oler ni probar sustancias desconocidas.\n'
-                  '- Establecer zonas de intervención (caliente, templada, fría).',
-            ),
-            buildInfoCard(
-              'Uso de la Guía de Respuesta (GRE/ERG)',
-              'La Guía de Respuesta en Caso de Emergencia (GRE) permite identificar rápidamente los riesgos de las sustancias involucradas. Se puede buscar por número ONU, nombre del producto o tipo de placa/panel. Proporciona distancias de aislamiento y acciones protectoras inmediatas.',
-            ),
-            buildReferencesCard([
-              'ADR 2023 - Acuerdo Europeo sobre Transporte de Mercancías Peligrosas por Carretera. UNECE.',
-              'Guía de Respuesta en Caso de Emergencia (GRE/ERG). 2020.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'ADR - Mercancías Peligrosas',
+      infoBody: const ToolInfoPanel(
+        sections: AdrData.infoSections,
+        references: AdrData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(12),
-          children: [
-            const Card(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Panel naranja',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    SizedBox(height: 8),
-                    Text('Número superior: Código de peligro (Kemler)\n'
-                        'Número inferior: Número ONU (identifica la materia)\n\n'
-                        'X delante = reacción peligrosa con agua\n'
-                        'Repetición de cifra = intensificación del peligro'),
-                  ],
-                ),
+      toolBody: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Panel naranja',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  SizedBox(height: 8),
+                  Text('Número superior: Código de peligro (Kemler)\n'
+                      'Número inferior: Número ONU (identifica la materia)\n\n'
+                      'X delante = reacción peligrosa con agua\n'
+                      'Repetición de cifra = intensificación del peligro'),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: Text('Clases ADR',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            ),
-            ..._classes.map((c) => Card(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: c.color,
-                      child: Text(c.code,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: c.color == Colors.white ||
-                                    c.color == Colors.yellow
-                                ? Colors.black
-                                : Colors.white,
-                          )),
-                    ),
-                    title: Text('Clase ${c.code}: ${c.name}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: Text(c.description,
-                        style: const TextStyle(fontSize: 12)),
+          ),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Text('Clases ADR',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ),
+          ..._classes.map((c) => Card(
+                margin: const EdgeInsets.only(bottom: 6),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: c.color,
+                    child: Text(c.code,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: c.color == Colors.white ||
+                                  c.color == Colors.yellow
+                              ? Colors.black
+                              : Colors.white,
+                        )),
                   ),
-                )),
-          ],
-        ),
+                  title: Text('Clase ${c.code}: ${c.name}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 14)),
+                  subtitle:
+                      Text(c.description, style: const TextStyle(fontSize: 12)),
+                ),
+              )),
+        ],
       ),
     );
   }

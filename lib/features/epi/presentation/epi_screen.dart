@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/epi_data.dart';
 
 class _Step {
   final String title;
@@ -65,54 +68,35 @@ class EpiScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('EPI'),
-          actions: [
-            Builder(
-              builder: (context) =>
-                  buildInfoAction(context, 'Equipo de Protección Individual', [
-                buildInfoCard(
-                  'Importancia del EPI',
-                  'El Equipo de Protección Individual (EPI) es la barrera principal entre el profesional sanitario y los agentes biológicos, químicos o físicos presentes en el entorno asistencial. Su uso correcto previene infecciones cruzadas y protege tanto al profesional como al paciente.',
-                ),
-                buildInfoCard(
-                  'Riesgos de contaminación',
-                  'La contaminación puede ocurrir durante la colocación, el uso o, sobre todo, durante la retirada del EPI. Los principales riesgos incluyen:\n\n'
-                      '- Contacto con superficies contaminadas del EPI al retirarlo.\n'
-                      '- Autocontaminación por tocarse la cara con guantes usados.\n'
-                      '- Exposición a aerosoles al retirar la mascarilla incorrectamente.\n'
-                      '- Salpicaduras a mucosas por falta de protección ocular.',
-                ),
-                buildInfoCard(
-                  'Secuencia correcta',
-                  'El orden de colocación y retirada es esencial. La colocación va de lo limpio a lo más expuesto (manos al final). La retirada va de lo más contaminado a lo menos contaminado, con higiene de manos entre pasos. Cada paso debe realizarse con cuidado para evitar la autocontaminación.',
-                ),
-                buildReferencesCard([
-                  'CDC Guidelines for Isolation Precautions and PPE. 2020.',
-                  'WHO: Rational Use of Personal Protective Equipment for COVID-19. 2020.',
-                ]),
-              ]),
+      child: ToolScreenBase(
+        title: 'EPI',
+        infoBody: const ToolInfoPanel(
+          sections: EpiData.infoSections,
+          references: EpiData.references,
+        ),
+        toolBody: Column(
+          children: [
+            Material(
+              color: Theme.of(context).colorScheme.primary,
+              child: const TabBar(
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                tabs: [
+                  Tab(text: 'Colocación'),
+                  Tab(text: 'Retirada'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildStepsList(_donningSteps, Colors.green),
+                  _buildStepsList(_doffingSteps, Colors.orange),
+                ],
+              ),
             ),
           ],
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              Tab(text: 'Colocación'),
-              Tab(text: 'Retirada'),
-            ],
-          ),
-        ),
-        body: SafeArea(
-          top: false,
-          child: TabBarView(
-            children: [
-              _buildStepsList(_donningSteps, Colors.green),
-              _buildStepsList(_doffingSteps, Colors.orange),
-            ],
-          ),
         ),
       ),
     );

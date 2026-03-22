@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/vendajes_data.dart';
 
 class _Vendaje {
   final String name;
@@ -61,73 +64,48 @@ class VendajesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vendajes'),
-        actions: [
-          buildInfoAction(context, 'Vendajes', [
-            buildInfoCard(
-              'Principios del vendaje',
-              'El vendaje es una técnica que consiste en envolver una parte del cuerpo con material adecuado para sujetar apósitos, inmovilizar, comprimir o proteger. Los principios fundamentales incluyen: vendar de distal a proximal, mantener tensión uniforme, no cubrir los dedos (para valorar perfusión) y evitar arrugas que provoquen lesiones por presión.',
-            ),
-            buildInfoCard(
-              'Materiales',
-              '- Venda de gasa: fijación de apósitos, vendajes no compresivos.\n'
-                  '- Venda elástica (crepé): vendajes de contención y ligera compresión.\n'
-                  '- Venda cohesiva: se adhiere a sí misma, ideal para articulaciones.\n'
-                  '- Venda tubular: protección y fijación en extremidades.\n'
-                  '- Venda de yeso/fibra de vidrio: inmovilización rígida (uso hospitalario).',
-            ),
-            buildInfoCard(
-              'Vendaje compresivo',
-              'El vendaje compresivo se utiliza para el control de hemorragias. Se aplica con presión firme y constante sobre el punto de sangrado. Debe revisarse frecuentemente para asegurar que no compromete la circulación distal (pulsos, sensibilidad, color y temperatura).',
-            ),
-            buildReferencesCard([
-              'Cruz Roja Española. Manual de Primeros Auxilios.',
-              'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'Vendajes',
+      infoBody: const ToolInfoPanel(
+        sections: VendajesData.infoSections,
+        references: VendajesData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: _vendajes.length,
-          itemBuilder: (context, index) {
-            final v = _vendajes[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ExpansionTile(
-                leading: const Icon(Icons.healing, color: Colors.orange),
-                title: Text(v.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(v.indication,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                children: [
-                  if (v.imagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          v.imagePath!,
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                        ),
+      toolBody: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: _vendajes.length,
+        itemBuilder: (context, index) {
+          final v = _vendajes[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ExpansionTile(
+              leading: const Icon(Icons.healing, color: Colors.orange),
+              title: Text(v.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(v.indication,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              children: [
+                if (v.imagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        v.imagePath!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child:
-                        Text(v.technique, style: const TextStyle(fontSize: 14)),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child:
+                      Text(v.technique, style: const TextStyle(fontSize: 14)),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

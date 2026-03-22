@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/rcp_data.dart';
 
 class PlanRcpScreen extends StatelessWidget {
   const PlanRcpScreen({super.key});
@@ -9,138 +12,117 @@ class PlanRcpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Algoritmo SVB'),
-          actions: [
-            Builder(
-              builder: (context) =>
-                  buildInfoAction(context, 'Soporte Vital Básico', [
-                buildInfoCard(
-                  'Historia de la RCP',
-                  'La reanimación cardiopulmonar moderna se desarrolló en la década de 1960 combinando la ventilación boca a boca (descrita por Elam y Safar) con las compresiones torácicas externas (descritas por Kouwenhoven, Jude y Knickerbocker). Desde entonces, las guías se actualizan periódicamente basándose en la evidencia científica.',
-                ),
-                buildInfoCard(
-                  'Cadena de supervivencia',
-                  'La cadena de supervivencia describe los eslabones críticos para la supervivencia de una parada cardíaca:\n\n'
-                      '1. Reconocimiento precoz y pedir ayuda.\n'
-                      '2. RCP precoz por testigos.\n'
-                      '3. Desfibrilación precoz.\n'
-                      '4. Soporte vital avanzado.\n'
-                      '5. Cuidados post-resucitación.\n\n'
-                      'Cada minuto sin RCP reduce la supervivencia un 7-10%.',
-                ),
-                buildInfoCard(
-                  'Importancia de la RCP precoz',
-                  'La RCP iniciada por testigos duplica o triplica la supervivencia de la parada cardíaca extrahospitalaria. Las compresiones torácicas de alta calidad (profundidad, frecuencia y mínimas interrupciones) son el factor más determinante. La combinación de RCP precoz con desfibrilación en los primeros 3-5 minutos puede alcanzar tasas de supervivencia del 50-70%.',
-                ),
-                buildReferencesCard([
-                  'European Resuscitation Council Guidelines 2025.',
-                  'Olasveengen TM, et al. European Resuscitation Council Guidelines 2025: Basic Life Support.',
-                ]),
-              ]),
+      child: ToolScreenBase(
+        title: 'Algoritmo SVB',
+        infoBody: const ToolInfoPanel(
+          sections: RcpData.infoSections,
+          references: RcpData.references,
+        ),
+        toolBody: Column(
+          children: [
+            Material(
+              color: Theme.of(context).colorScheme.primary,
+              child: const TabBar(
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                tabs: [
+                  Tab(text: 'Adultos'),
+                  Tab(text: 'Pediátrico'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildAlgorithm(
+                    'SVB Adultos (ERC 2025)',
+                    [
+                      const _AlgorithmStep(
+                          'Seguridad',
+                          'Garantizar la seguridad del reanimador y la víctima',
+                          AppColors.proteccion),
+                      const _AlgorithmStep(
+                          '¿Responde?',
+                          'Estimular: sacudir hombros y preguntar "¿Se encuentra bien?"',
+                          AppColors.valoracion),
+                      const _AlgorithmStep(
+                          'Pedir ayuda',
+                          'Gritar pidiendo ayuda\nActivar altavoz del teléfono para llamar al 112 sin dejar de actuar',
+                          AppColors.comunicacion),
+                      const _AlgorithmStep(
+                          'Abrir vía aérea',
+                          'Maniobra frente-mentón\n(Tracción mandibular si sospecha trauma)',
+                          AppColors.tecnicas),
+                      const _AlgorithmStep(
+                          '¿Respira normalmente?',
+                          'Ver, oír, sentir (máximo 10 segundos)\nGasping = NO respira\nSi duda: actuar como si no respira',
+                          AppColors.valoracion),
+                      const _AlgorithmStep(
+                          'Llamar 112 + pedir DEA',
+                          'Activar sistema de emergencias\nSolicitar DEA\nUsar función manos libres del teléfono\nSi solo hay un reanimador: iniciar RCP antes de llamar',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          '30 compresiones torácicas',
+                          'Centro del pecho (mitad inferior del esternón)\nProfundidad: 5-6 cm\nFrecuencia: 100-120/min\nPermitir reexpansión torácica completa\nMinimizar interrupciones (<10s)',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          '2 ventilaciones de rescate',
+                          'Insuflaciones de ~1 segundo cada una\nObservar elevación del tórax\nSi no se consigue: recolocar cabeza y reintentar\nSi no es posible ventilar: solo compresiones',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          'Continuar 30:2',
+                          'No interrumpir hasta:\n- Llegada de profesionales\n- La víctima muestre signos de vida\n- Agotamiento del reanimador\n- Relevo cada 2 min si hay más reanimadores',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          'DEA',
+                          'En cuanto esté disponible:\n- Encender y seguir instrucciones de voz\n- Colocar parches (esternal-apical)\n- No tocar al paciente durante análisis\n- Descarga si indicada\n- Reanudar RCP inmediatamente tras descarga\n- Continuar hasta que el DEA reanalice',
+                          AppColors.soporteVital),
+                    ],
+                  ),
+                  _buildAlgorithm(
+                    'SVB Pediátrico (ERC 2025)',
+                    [
+                      const _AlgorithmStep('Seguridad', 'Garantizar seguridad',
+                          AppColors.proteccion),
+                      const _AlgorithmStep(
+                          '¿Responde?',
+                          'Estimular suavemente y hablar\nLactante: estimular planta del pie',
+                          AppColors.valoracion),
+                      const _AlgorithmStep(
+                          'Pedir ayuda',
+                          'Gritar pidiendo ayuda\nSi solo hay un reanimador: 1 min de RCP antes de ir a llamar',
+                          AppColors.comunicacion),
+                      const _AlgorithmStep(
+                          'Abrir vía aérea',
+                          'Maniobra frente-mentón\nPosición neutra en lactantes\nLigera extensión en niños',
+                          AppColors.tecnicas),
+                      const _AlgorithmStep(
+                          '¿Respira normalmente?',
+                          'Ver, oír, sentir (máximo 10 segundos)\nSi respira: PLS adaptada a la edad',
+                          AppColors.valoracion),
+                      const _AlgorithmStep(
+                          '5 ventilaciones de rescate',
+                          'Boca a boca-nariz en lactantes\nBoca a boca en niños\nInsuflaciones de ~1 segundo\nObservar elevación del tórax en cada insuflación',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          '¿Signos de vida?',
+                          'Evaluar respuesta a ventilaciones (máx 10s)\nBuscar movimiento, tos, respiración\nProfesionales: comprobar pulso (braquial/carotídeo)',
+                          AppColors.valoracion),
+                      const _AlgorithmStep(
+                          '15 compresiones torácicas',
+                          'Lactante: 2 pulgares abrazando tórax (2 reanimadores)\no 2 dedos (1 reanimador)\nNiño: 1 o 2 manos según tamaño\nProfundidad: al menos 1/3 del tórax (4cm lactante, 5cm niño)',
+                          AppColors.soporteVital),
+                      const _AlgorithmStep(
+                          'Continuar 15:2',
+                          'Ratio 15:2 (2 reanimadores)\nRatio 30:2 (1 reanimador)\nUsar DEA en cuanto esté disponible\n(parches pediátricos si <8 años, adulto si no disponibles)',
+                          AppColors.soporteVital),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              Tab(text: 'Adultos'),
-              Tab(text: 'Pediátrico'),
-            ],
-          ),
-        ),
-        body: SafeArea(
-          top: false,
-          child: TabBarView(
-            children: [
-              _buildAlgorithm(
-                'SVB Adultos (ERC 2025)',
-                [
-                  const _AlgorithmStep(
-                      'Seguridad',
-                      'Garantizar la seguridad del reanimador y la víctima',
-                      AppColors.proteccion),
-                  const _AlgorithmStep(
-                      '¿Responde?',
-                      'Estimular: sacudir hombros y preguntar "¿Se encuentra bien?"',
-                      AppColors.valoracion),
-                  const _AlgorithmStep(
-                      'Pedir ayuda',
-                      'Gritar pidiendo ayuda\nActivar altavoz del teléfono para llamar al 112 sin dejar de actuar',
-                      AppColors.comunicacion),
-                  const _AlgorithmStep(
-                      'Abrir vía aérea',
-                      'Maniobra frente-mentón\n(Tracción mandibular si sospecha trauma)',
-                      AppColors.tecnicas),
-                  const _AlgorithmStep(
-                      '¿Respira normalmente?',
-                      'Ver, oír, sentir (máximo 10 segundos)\nGasping = NO respira\nSi duda: actuar como si no respira',
-                      AppColors.valoracion),
-                  const _AlgorithmStep(
-                      'Llamar 112 + pedir DEA',
-                      'Activar sistema de emergencias\nSolicitar DEA\nUsar función manos libres del teléfono\nSi solo hay un reanimador: iniciar RCP antes de llamar',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      '30 compresiones torácicas',
-                      'Centro del pecho (mitad inferior del esternón)\nProfundidad: 5-6 cm\nFrecuencia: 100-120/min\nPermitir reexpansión torácica completa\nMinimizar interrupciones (<10s)',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      '2 ventilaciones de rescate',
-                      'Insuflaciones de ~1 segundo cada una\nObservar elevación del tórax\nSi no se consigue: recolocar cabeza y reintentar\nSi no es posible ventilar: solo compresiones',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      'Continuar 30:2',
-                      'No interrumpir hasta:\n- Llegada de profesionales\n- La víctima muestre signos de vida\n- Agotamiento del reanimador\n- Relevo cada 2 min si hay más reanimadores',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      'DEA',
-                      'En cuanto esté disponible:\n- Encender y seguir instrucciones de voz\n- Colocar parches (esternal-apical)\n- No tocar al paciente durante análisis\n- Descarga si indicada\n- Reanudar RCP inmediatamente tras descarga\n- Continuar hasta que el DEA reanalice',
-                      AppColors.soporteVital),
-                ],
-              ),
-              _buildAlgorithm(
-                'SVB Pediátrico (ERC 2025)',
-                [
-                  const _AlgorithmStep('Seguridad', 'Garantizar seguridad',
-                      AppColors.proteccion),
-                  const _AlgorithmStep(
-                      '¿Responde?',
-                      'Estimular suavemente y hablar\nLactante: estimular planta del pie',
-                      AppColors.valoracion),
-                  const _AlgorithmStep(
-                      'Pedir ayuda',
-                      'Gritar pidiendo ayuda\nSi solo hay un reanimador: 1 min de RCP antes de ir a llamar',
-                      AppColors.comunicacion),
-                  const _AlgorithmStep(
-                      'Abrir vía aérea',
-                      'Maniobra frente-mentón\nPosición neutra en lactantes\nLigera extensión en niños',
-                      AppColors.tecnicas),
-                  const _AlgorithmStep(
-                      '¿Respira normalmente?',
-                      'Ver, oír, sentir (máximo 10 segundos)\nSi respira: PLS adaptada a la edad',
-                      AppColors.valoracion),
-                  const _AlgorithmStep(
-                      '5 ventilaciones de rescate',
-                      'Boca a boca-nariz en lactantes\nBoca a boca en niños\nInsuflaciones de ~1 segundo\nObservar elevación del tórax en cada insuflación',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      '¿Signos de vida?',
-                      'Evaluar respuesta a ventilaciones (máx 10s)\nBuscar movimiento, tos, respiración\nProfesionales: comprobar pulso (braquial/carotídeo)',
-                      AppColors.valoracion),
-                  const _AlgorithmStep(
-                      '15 compresiones torácicas',
-                      'Lactante: 2 pulgares abrazando tórax (2 reanimadores)\no 2 dedos (1 reanimador)\nNiño: 1 o 2 manos según tamaño\nProfundidad: al menos 1/3 del tórax (4cm lactante, 5cm niño)',
-                      AppColors.soporteVital),
-                  const _AlgorithmStep(
-                      'Continuar 15:2',
-                      'Ratio 15:2 (2 reanimadores)\nRatio 30:2 (1 reanimador)\nUsar DEA en cuanto esté disponible\n(parches pediátricos si <8 años, adulto si no disponibles)',
-                      AppColors.soporteVital),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

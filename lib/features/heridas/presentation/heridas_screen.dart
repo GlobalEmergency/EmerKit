@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/heridas_data.dart';
 
 class _WoundType {
   final String name;
@@ -80,74 +83,42 @@ class HeridasScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clasificación de Heridas'),
-        actions: [
-          buildInfoAction(context, 'Heridas', [
-            buildInfoCard(
-              'Valoración de heridas',
-              'La valoración inicial de una herida debe incluir: mecanismo de lesión, localización, profundidad, extensión, presencia de cuerpos extraños, afectación de estructuras profundas (tendones, nervios, vasos) y tiempo transcurrido desde la lesión. Esta información es clave para determinar el tratamiento adecuado.',
-            ),
-            buildInfoCard(
-              'Signos de infección',
-              'Los signos clásicos de infección de una herida incluyen:\n\n'
-                  '- Calor local aumentado.\n'
-                  '- Enrojecimiento (eritema) perilesional.\n'
-                  '- Tumefacción (edema).\n'
-                  '- Dolor creciente o pulsátil.\n'
-                  '- Supuración purulenta.\n'
-                  '- Fiebre y malestar general (en infecciones avanzadas).',
-            ),
-            buildInfoCard(
-              'Criterios de derivación',
-              '- Heridas profundas con afectación de tendones, nervios o vasos.\n'
-                  '- Heridas con cuerpos extraños enclavados.\n'
-                  '- Amputaciones (preservar la parte amputada).\n'
-                  '- Heridas por mordedura (alto riesgo de infección).\n'
-                  '- Heridas con signos de infección establecida.\n'
-                  '- Heridas que requieren sutura (> 6-8 horas de evolución tienen mayor riesgo).',
-            ),
-            buildReferencesCard([
-              'ATLS: Advanced Trauma Life Support. 10th Ed. 2018.',
-              'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'Clasificación de Heridas',
+      infoBody: const ToolInfoPanel(
+        sections: HeridasData.infoSections,
+        references: HeridasData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: _wounds.length,
-          itemBuilder: (context, index) {
-            final w = _wounds[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(w.icon, color: w.color),
-                        const SizedBox(width: 8),
-                        Text(w.name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    _buildRow(context, 'Mecanismo', w.mechanism),
-                    _buildRow(context, 'Características', w.characteristics),
-                    _buildRow(context, 'Manejo', w.management),
-                  ],
-                ),
+      toolBody: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: _wounds.length,
+        itemBuilder: (context, index) {
+          final w = _wounds[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(w.icon, color: w.color),
+                      const SizedBox(width: 8),
+                      Text(w.name,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _buildRow(context, 'Mecanismo', w.mechanism),
+                  _buildRow(context, 'Características', w.characteristics),
+                  _buildRow(context, 'Manejo', w.management),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

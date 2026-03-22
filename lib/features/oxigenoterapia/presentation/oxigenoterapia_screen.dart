@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_panel.dart';
+import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_screen_base.dart';
+
+import '../domain/oxigenoterapia_data.dart';
 
 class _O2Device {
   final String name;
@@ -58,76 +61,52 @@ class OxigenoterapiaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dispositivos O₂'),
-        actions: [
-          buildInfoAction(context, 'Oxigenoterapia', [
-            buildInfoCard(
-              'Principios de la oxigenoterapia',
-              'La oxigenoterapia consiste en la administración de oxígeno a concentraciones superiores a las del aire ambiente (21%) para corregir la hipoxemia. El objetivo es mantener una SpO₂ adecuada (generalmente > 94%, o 88-92% en pacientes con EPOC).',
-            ),
-            buildInfoCard(
-              'Concepto de FiO₂',
-              'La FiO₂ (Fracción Inspirada de Oxígeno) es el porcentaje de oxígeno que recibe el paciente en cada inspiración. El aire ambiente tiene una FiO₂ del 21%. Cada dispositivo permite alcanzar diferentes niveles de FiO₂ según su diseño y el flujo de oxígeno administrado.',
-            ),
-            buildInfoCard(
-              '¿Cuándo usar cada dispositivo?',
-              '- Gafas nasales: hipoxemia leve, tratamiento a largo plazo. Cómodas.\n'
-                  '- Mascarilla simple: hipoxemia moderada que no responde a gafas nasales.\n'
-                  '- Mascarilla con reservorio: emergencias con hipoxia severa (trauma, PCR).\n'
-                  '- Mascarilla Venturi: cuando se requiere FiO₂ precisa y controlada (EPOC, insuficiencia respiratoria crónica).',
-            ),
-            buildReferencesCard([
-              'BTS Guideline for Oxygen Use in Healthcare. Thorax. 2017.',
-              'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
-            ]),
-          ]),
-        ],
+    return ToolScreenBase(
+      title: 'Dispositivos O₂',
+      infoBody: const ToolInfoPanel(
+        sections: OxigenoterapiaData.infoSections,
+        references: OxigenoterapiaData.references,
       ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: _devices.length,
-          itemBuilder: (context, index) {
-            final device = _devices[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(device.icon,
-                            color: AppColors.oxigenoterapia, size: 28),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(device.name,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        _buildInfoChip('Flujo', device.flowRange),
-                        const SizedBox(width: 8),
-                        _buildInfoChip('FiO₂', device.fio2Range),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(device.description,
-                        style: const TextStyle(fontSize: 13)),
-                  ],
-                ),
+      toolBody: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _devices.length,
+        itemBuilder: (context, index) {
+          final device = _devices[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(device.icon,
+                          color: AppColors.oxigenoterapia, size: 28),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(device.name,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _buildInfoChip('Flujo', device.flowRange),
+                      const SizedBox(width: 8),
+                      _buildInfoChip('FiO₂', device.fio2Range),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(device.description,
+                      style: const TextStyle(fontSize: 13)),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
