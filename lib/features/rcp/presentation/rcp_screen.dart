@@ -687,12 +687,46 @@ class _RcpScreenState extends State<RcpScreen> {
                 label: 'Parches DEA colocados',
                 logText: 'Parches DEA colocados',
                 sheetContext: ctx),
-            _actionTile(
-                id: 'rhythm',
-                icon: Icons.search,
-                label: 'Analisis de ritmo',
-                logText: 'Analisis de ritmo',
-                sheetContext: ctx),
+            ListTile(
+              leading: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(Icons.search,
+                      color: _isDone('rhythm') ? Colors.grey : null),
+                  if (_isDone('rhythm'))
+                    const Positioned(
+                      right: -4,
+                      bottom: -4,
+                      child: Icon(Icons.check_circle,
+                          color: Colors.green, size: 14),
+                    ),
+                ],
+              ),
+              title: const Text('Analisis de ritmo'),
+              trailing: _countOf('rhythm') > 0
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Text(
+                        'x${_countOf('rhythm')}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    )
+                  : null,
+              onTap: () {
+                Navigator.pop(ctx);
+                _showRhythmAnalysis();
+              },
+            ),
             _actionTile(
                 id: 'shock',
                 icon: Icons.flash_on,
@@ -706,6 +740,174 @@ class _RcpScreenState extends State<RcpScreen> {
                 label: 'Descarga NO indicada',
                 logText: 'Descarga NO indicada',
                 sheetContext: ctx),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showRhythmAnalysis() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Ritmo identificado',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Analisis #${_countOf('rhythm') + 1}',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'DESFIBRILABLE',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'FV',
+                      subtitle: 'Fibrilacion ventricular',
+                      color: Colors.red,
+                      icon: Icons.show_chart,
+                      shockable: true,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'TVSP',
+                      subtitle: 'Taquicardia ventricular sin pulso',
+                      color: Colors.red,
+                      icon: Icons.timeline,
+                      shockable: true,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'NO DESFIBRILABLE',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'Asistolia',
+                      subtitle: 'Linea plana',
+                      color: Colors.blue,
+                      icon: Icons.horizontal_rule,
+                      shockable: false,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'AESP',
+                      subtitle: 'Actividad electrica sin pulso',
+                      color: Colors.blue,
+                      icon: Icons.monitor_heart,
+                      shockable: false,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'ROSC',
+                      subtitle: 'Ritmo organizado con pulso',
+                      color: Colors.green,
+                      icon: Icons.favorite,
+                      shockable: false,
+                      isRosc: true,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _rhythmCard({
+    required BuildContext ctx,
+    required String label,
+    required String subtitle,
+    required Color color,
+    required IconData icon,
+    required bool shockable,
+    bool isRosc = false,
+  }) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(ctx);
+        final logText = isRosc
+            ? 'Ritmo: $label - $subtitle'
+            : 'Ritmo: $label (${shockable ? "DESFIBRILABLE" : "NO desfibrilable"}) - $subtitle';
+        _logQuickAction('rhythm', logText);
+        if (isRosc) {
+          _logQuickAction(
+              'rosc', 'ROSC - Recuperacion de circulacion espontanea');
+        }
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(fontSize: 10, color: color.withValues(alpha: 0.8)),
+            ),
           ],
         ),
       ),
