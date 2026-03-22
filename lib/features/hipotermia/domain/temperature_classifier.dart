@@ -36,7 +36,8 @@ class TemperatureClassifier {
     if (temp >= 32) {
       return const TemperatureResult(
         label: 'LEVE',
-        severity: Severity(label: 'Hipotermia leve', level: SeverityLevel.moderate),
+        severity:
+            Severity(label: 'Hipotermia leve', level: SeverityLevel.moderate),
         symptoms: [
           'Temblor intenso',
           'Vasoconstriccion',
@@ -54,7 +55,8 @@ class TemperatureClassifier {
     if (temp >= 28) {
       return const TemperatureResult(
         label: 'MODERADA',
-        severity: Severity(label: 'Hipotermia moderada', level: SeverityLevel.severe),
+        severity:
+            Severity(label: 'Hipotermia moderada', level: SeverityLevel.severe),
         symptoms: [
           'Desaparece el temblor',
           'Rigidez muscular',
@@ -72,7 +74,8 @@ class TemperatureClassifier {
     }
     return const TemperatureResult(
       label: 'GRAVE',
-      severity: Severity(label: 'Hipotermia grave', level: SeverityLevel.severe),
+      severity:
+          Severity(label: 'Hipotermia grave', level: SeverityLevel.severe),
       symptoms: [
         'Coma',
         'Arritmias graves (FV)',
@@ -96,7 +99,8 @@ class TemperatureClassifier {
     if (temp > 40) {
       return const TemperatureResult(
         label: 'GOLPE DE CALOR',
-        severity: Severity(label: 'Golpe de calor', level: SeverityLevel.severe),
+        severity:
+            Severity(label: 'Golpe de calor', level: SeverityLevel.severe),
         symptoms: [
           'Temperatura >40 C',
           'Alteracion nivel de consciencia',
@@ -119,7 +123,8 @@ class TemperatureClassifier {
     if (temp >= 38) {
       return const TemperatureResult(
         label: 'AGOTAMIENTO POR CALOR',
-        severity: Severity(label: 'Agotamiento por calor', level: SeverityLevel.moderate),
+        severity: Severity(
+            label: 'Agotamiento por calor', level: SeverityLevel.moderate),
         symptoms: [
           'Debilidad, fatiga intensa',
           'Sudoracion profusa',

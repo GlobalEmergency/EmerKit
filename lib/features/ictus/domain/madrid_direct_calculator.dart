@@ -74,7 +74,8 @@ class MadridDirectCalculator {
       label: requiresThrombectomy
           ? 'Traslado directo a trombectomía'
           : 'Traslado a UI más cercana',
-      level: requiresThrombectomy ? SeverityLevel.severe : SeverityLevel.moderate,
+      level:
+          requiresThrombectomy ? SeverityLevel.severe : SeverityLevel.moderate,
     );
 
     return MadridDirectResult(

@@ -39,7 +39,8 @@ const _wounds = [
   _WoundType(
     name: 'Punzante',
     mechanism: 'Objeto puntiagudo (clavo, aguja)',
-    characteristics: 'Orificio pequeño, profundidad variable. Riesgo de lesión interna.',
+    characteristics:
+        'Orificio pequeño, profundidad variable. Riesgo de lesión interna.',
     management: 'NO retirar objeto enclavado. Inmovilizar. Traslado.',
     icon: Icons.push_pin,
     color: Colors.orange,
@@ -47,7 +48,8 @@ const _wounds = [
   _WoundType(
     name: 'Abrasión / Erosión',
     mechanism: 'Fricción (caída, rozadura)',
-    characteristics: 'Superficial, extensa. Pérdida de epidermis. Muy dolorosa.',
+    characteristics:
+        'Superficial, extensa. Pérdida de epidermis. Muy dolorosa.',
     management: 'Limpieza abundante con suero. Apósito no adherente.',
     icon: Icons.texture,
     color: Colors.amber,
@@ -56,15 +58,18 @@ const _wounds = [
     name: 'Avulsión / Desgarro',
     mechanism: 'Tracción (mordedura, maquinaria)',
     characteristics: 'Bordes muy irregulares. Pérdida de tejido. Colgajos.',
-    management: 'Preservar colgajo, cubrir con suero. Si amputación: preservar parte.',
+    management:
+        'Preservar colgajo, cubrir con suero. Si amputación: preservar parte.',
     icon: Icons.warning,
     color: Colors.deepOrange,
   ),
   _WoundType(
     name: 'Quemadura',
     mechanism: 'Térmico, químico, eléctrico, radiación',
-    characteristics: 'Clasificación por profundidad y extensión (Lund-Browder).',
-    management: 'Enfriar con agua (20 min). No aplicar remedios caseros. Cubrir con apósito estéril.',
+    characteristics:
+        'Clasificación por profundidad y extensión (Lund-Browder).',
+    management:
+        'Enfriar con agua (20 min). No aplicar remedios caseros. Cubrir con apósito estéril.',
     icon: Icons.local_fire_department,
     color: Colors.red,
   ),
@@ -87,21 +92,21 @@ class HeridasScreen extends StatelessWidget {
             buildInfoCard(
               'Signos de infección',
               'Los signos clásicos de infección de una herida incluyen:\n\n'
-              '- Calor local aumentado.\n'
-              '- Enrojecimiento (eritema) perilesional.\n'
-              '- Tumefacción (edema).\n'
-              '- Dolor creciente o pulsátil.\n'
-              '- Supuración purulenta.\n'
-              '- Fiebre y malestar general (en infecciones avanzadas).',
+                  '- Calor local aumentado.\n'
+                  '- Enrojecimiento (eritema) perilesional.\n'
+                  '- Tumefacción (edema).\n'
+                  '- Dolor creciente o pulsátil.\n'
+                  '- Supuración purulenta.\n'
+                  '- Fiebre y malestar general (en infecciones avanzadas).',
             ),
             buildInfoCard(
               'Criterios de derivación',
               '- Heridas profundas con afectación de tendones, nervios o vasos.\n'
-              '- Heridas con cuerpos extraños enclavados.\n'
-              '- Amputaciones (preservar la parte amputada).\n'
-              '- Heridas por mordedura (alto riesgo de infección).\n'
-              '- Heridas con signos de infección establecida.\n'
-              '- Heridas que requieren sutura (> 6-8 horas de evolución tienen mayor riesgo).',
+                  '- Heridas con cuerpos extraños enclavados.\n'
+                  '- Amputaciones (preservar la parte amputada).\n'
+                  '- Heridas por mordedura (alto riesgo de infección).\n'
+                  '- Heridas con signos de infección establecida.\n'
+                  '- Heridas que requieren sutura (> 6-8 horas de evolución tienen mayor riesgo).',
             ),
             buildReferencesCard([
               'ATLS: Advanced Trauma Life Support. 10th Ed. 2018.',
@@ -113,34 +118,36 @@ class HeridasScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _wounds.length,
-        itemBuilder: (context, index) {
-          final w = _wounds[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(w.icon, color: w.color),
-                      const SizedBox(width: 8),
-                      Text(w.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  _buildRow(context, 'Mecanismo', w.mechanism),
-                  _buildRow(context, 'Características', w.characteristics),
-                  _buildRow(context, 'Manejo', w.management),
-                ],
+          padding: const EdgeInsets.all(12),
+          itemCount: _wounds.length,
+          itemBuilder: (context, index) {
+            final w = _wounds[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(w.icon, color: w.color),
+                        const SizedBox(width: 8),
+                        Text(w.name,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _buildRow(context, 'Mecanismo', w.mechanism),
+                    _buildRow(context, 'Características', w.characteristics),
+                    _buildRow(context, 'Manejo', w.management),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -150,9 +157,13 @@ class HeridasScreen extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text.rich(
         TextSpan(
-          style: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color),
+          style: TextStyle(
+              fontSize: 13,
+              color: Theme.of(context).textTheme.bodyMedium?.color),
           children: [
-            TextSpan(text: '$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: '$label: ',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             TextSpan(text: value),
           ],
         ),

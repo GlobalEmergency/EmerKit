@@ -22,7 +22,11 @@ class _GlasgowScreenState extends State<GlasgowScreen> {
   GlasgowResult get _result =>
       _calculator.calculate(eye: _eye, verbal: _verbal, motor: _motor);
 
-  void _reset() => setState(() { _eye = 4; _verbal = 5; _motor = 6; });
+  void _reset() => setState(() {
+        _eye = 4;
+        _verbal = 5;
+        _motor = 6;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +44,22 @@ class _GlasgowScreenState extends State<GlasgowScreen> {
         padding: const EdgeInsets.all(12),
         children: [
           ScoredItemSelector(
-            title: 'Ocular (O)', icon: Icons.remove_red_eye,
+            title: 'Ocular (O)',
+            icon: Icons.remove_red_eye,
             items: GlasgowData.eyeResponses,
             selectedScore: _eye,
             onChanged: (v) => setState(() => _eye = v),
           ),
           ScoredItemSelector(
-            title: 'Verbal (V)', icon: Icons.record_voice_over,
+            title: 'Verbal (V)',
+            icon: Icons.record_voice_over,
             items: GlasgowData.verbalResponses,
             selectedScore: _verbal,
             onChanged: (v) => setState(() => _verbal = v),
           ),
           ScoredItemSelector(
-            title: 'Motor (M)', icon: Icons.front_hand,
+            title: 'Motor (M)',
+            icon: Icons.front_hand,
             items: GlasgowData.motorResponses,
             selectedScore: _motor,
             onChanged: (v) => setState(() => _motor = v),
@@ -70,9 +77,12 @@ class _GlasgowScreenState extends State<GlasgowScreen> {
 extension _SeverityColor on SeverityLevel {
   Color get color {
     switch (this) {
-      case SeverityLevel.mild: return AppColors.severityMild;
-      case SeverityLevel.moderate: return AppColors.severityModerate;
-      case SeverityLevel.severe: return AppColors.severitySevere;
+      case SeverityLevel.mild:
+        return AppColors.severityMild;
+      case SeverityLevel.moderate:
+        return AppColors.severityModerate;
+      case SeverityLevel.severe:
+        return AppColors.severitySevere;
     }
   }
 }

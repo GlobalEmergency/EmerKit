@@ -56,10 +56,10 @@ class VendajesScreen extends StatelessWidget {
             buildInfoCard(
               'Materiales',
               '- Venda de gasa: fijación de apósitos, vendajes no compresivos.\n'
-              '- Venda elástica (crepé): vendajes de contención y ligera compresión.\n'
-              '- Venda cohesiva: se adhiere a sí misma, ideal para articulaciones.\n'
-              '- Venda tubular: protección y fijación en extremidades.\n'
-              '- Venda de yeso/fibra de vidrio: inmovilización rígida (uso hospitalario).',
+                  '- Venda elástica (crepé): vendajes de contención y ligera compresión.\n'
+                  '- Venda cohesiva: se adhiere a sí misma, ideal para articulaciones.\n'
+                  '- Venda tubular: protección y fijación en extremidades.\n'
+                  '- Venda de yeso/fibra de vidrio: inmovilización rígida (uso hospitalario).',
             ),
             buildInfoCard(
               'Vendaje compresivo',
@@ -75,26 +75,29 @@ class VendajesScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _vendajes.length,
-        itemBuilder: (context, index) {
-          final v = _vendajes[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: ExpansionTile(
-              leading: const Icon(Icons.healing, color: Colors.orange),
-              title: Text(v.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(v.indication, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Text(v.technique, style: const TextStyle(fontSize: 14)),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+          padding: const EdgeInsets.all(12),
+          itemCount: _vendajes.length,
+          itemBuilder: (context, index) {
+            final v = _vendajes[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ExpansionTile(
+                leading: const Icon(Icons.healing, color: Colors.orange),
+                title: Text(v.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(v.indication,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child:
+                        Text(v.technique, style: const TextStyle(fontSize: 14)),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

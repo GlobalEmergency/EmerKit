@@ -79,7 +79,8 @@ class AboutScreen extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline, size: 20, color: AppColors.severityModerate),
+                      Icon(Icons.info_outline,
+                          size: 20, color: AppColors.severityModerate),
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -98,7 +99,8 @@ class AboutScreen extends StatelessWidget {
               // Developer
               Card(
                 child: InkWell(
-                  onTap: () => _launchUrl('https://www.globalemergency.online/'),
+                  onTap: () =>
+                      _launchUrl('https://www.globalemergency.online/'),
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -110,17 +112,22 @@ class AboutScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [AppColors.primaryDark, Color(0xFF0C2D48)],
+                              colors: [
+                                AppColors.primaryDark,
+                                Color(0xFF0C2D48)
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.public, color: AppColors.accent, size: 24),
+                              const Icon(Icons.public,
+                                  color: AppColors.accent, size: 24),
                               const SizedBox(width: 10),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +142,10 @@ class AboutScreen extends StatelessWidget {
                                   ),
                                   Text(
                                     'globalemergency.online',
-                                    style: TextStyle(fontSize: 12, color: AppColors.accent.withValues(alpha: 0.8)),
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.accent
+                                            .withValues(alpha: 0.8)),
                                   ),
                                 ],
                               ),
@@ -146,11 +156,16 @@ class AboutScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.open_in_new, size: 14, color: AppColors.accent.withValues(alpha: 0.7)),
+                            Icon(Icons.open_in_new,
+                                size: 14,
+                                color: AppColors.accent.withValues(alpha: 0.7)),
                             const SizedBox(width: 4),
                             Text(
                               'Visitar web',
-                              style: TextStyle(fontSize: 12, color: AppColors.accent.withValues(alpha: 0.7)),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.7)),
                             ),
                           ],
                         ),

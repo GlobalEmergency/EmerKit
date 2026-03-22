@@ -27,7 +27,8 @@ class ServiceLocator {
   static T get<T extends Object>() {
     if (_instances.containsKey(T)) return _instances[T] as T;
     if (_factories.containsKey(T)) return _factories[T]!() as T;
-    throw Exception('ServiceLocator: $T no está registrado. Llama a register<$T>() primero.');
+    throw Exception(
+        'ServiceLocator: $T no está registrado. Llama a register<$T>() primero.');
   }
 
   /// Comprueba si un tipo está registrado.

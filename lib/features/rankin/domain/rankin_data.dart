@@ -40,13 +40,11 @@ class RankinData {
   ];
 
   static const infoSections = <String, String>{
-    '¿Qué es?':
-        'La Escala de Rankin Modificada (mRS) es una escala de valoracion funcional '
+    '¿Qué es?': 'La Escala de Rankin Modificada (mRS) es una escala de valoracion funcional '
         'que mide el grado de discapacidad o dependencia en las actividades de la vida '
         'diaria tras un ictus u otra patologia neurologica. Es la escala mas utilizada '
         'como variable de resultado en ensayos clinicos de ictus.',
-    'Interpretacion':
-        '0: Asintomatico, sin limitaciones\n'
+    'Interpretacion': '0: Asintomatico, sin limitaciones\n'
         '1: Sin incapacidad significativa, capaz de realizar actividades habituales\n'
         '2: Incapacidad leve, independiente pero con algunas limitaciones\n'
         '3: Incapacidad moderada, necesita algo de ayuda pero camina solo\n'
@@ -57,14 +55,14 @@ class RankinData {
         '(independiente para actividades basicas de la vida diaria).',
     'Cuando aplicarla':
         'Evaluacion funcional post-ictus (al alta y en seguimiento).\n'
-        'Variable de resultado en ensayos clinicos de ictus.\n'
-        'Valoracion de la discapacidad en patologia neurologica.\n'
-        'Toma de decisiones sobre tratamiento y destino al alta.',
+            'Variable de resultado en ensayos clinicos de ictus.\n'
+            'Valoracion de la discapacidad en patologia neurologica.\n'
+            'Toma de decisiones sobre tratamiento y destino al alta.',
     'Limitaciones':
         'Subjetividad en la diferenciacion entre niveles adyacentes.\n'
-        'No capta cambios sutiles dentro de un mismo nivel.\n'
-        'No evalua dominios cognitivos ni emocionales especificamente.\n'
-        'Variabilidad interobservador, especialmente en niveles intermedios.',
+            'No capta cambios sutiles dentro de un mismo nivel.\n'
+            'No evalua dominios cognitivos ni emocionales especificamente.\n'
+            'Variabilidad interobservador, especialmente en niveles intermedios.',
   };
 
   static const references = [

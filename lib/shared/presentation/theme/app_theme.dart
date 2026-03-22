@@ -15,7 +15,6 @@ class AppTheme {
       backgroundColor: AppColors.primaryDark,
       foregroundColor: Colors.white,
       titleTextStyle: TextStyle(
-        
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,
@@ -49,7 +48,6 @@ class AppTheme {
       elevation: 0,
       backgroundColor: AppColors.primaryDark,
       titleTextStyle: TextStyle(
-        
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,

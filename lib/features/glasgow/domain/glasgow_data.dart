@@ -31,21 +31,18 @@ class GlasgowData {
   static const infoSections = <String, String>{
     '¿Qué es?':
         'La Escala de Coma de Glasgow (GCS) es una escala neurologica que valora el nivel de consciencia '
-        'de un paciente. Se utiliza en la valoracion inicial y seguimiento de pacientes con traumatismo '
-        'craneoencefalico y otras emergencias neurologicas.',
-    'Interpretacion':
-        '15: Normal\n'
+            'de un paciente. Se utiliza en la valoracion inicial y seguimiento de pacientes con traumatismo '
+            'craneoencefalico y otras emergencias neurologicas.',
+    'Interpretacion': '15: Normal\n'
         '13-14: Leve (paciente alerta, puede presentar confusion)\n'
         '9-12: Moderado (respuesta al dolor, desorientado)\n'
         '3-8: Grave (coma, considerar IOT para proteccion de via aerea)\n\n'
         'GCS de 8 o menor: Considerar intubacion orotraqueal',
-    'Limitaciones':
-        'No valorable en pacientes sedados o relajados.\n'
+    'Limitaciones': 'No valorable en pacientes sedados o relajados.\n'
         'La respuesta verbal no es evaluable en pacientes intubados.\n'
         'Edema facial o periorbitario puede impedir valorar apertura ocular.\n'
         'Lesiones medulares pueden alterar la respuesta motora.',
-    'Cuando aplicarla':
-        'TCE (Traumatismo Craneoencefalico)\n'
+    'Cuando aplicarla': 'TCE (Traumatismo Craneoencefalico)\n'
         'Alteracion del nivel de consciencia\n'
         'Valoracion neurologica inicial\n'
         'Seguimiento evolutivo del paciente critico',

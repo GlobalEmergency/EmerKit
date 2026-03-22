@@ -19,26 +19,25 @@ class O2CalculatorData {
   ];
 
   static const Map<String, String> infoSections = {
-    'Formula':
-        'Autonomia = (Volumen botella x Presion util) / Caudal\n\n'
+    'Formula': 'Autonomia = (Volumen botella x Presion util) / Caudal\n\n'
         'Presion util = Presion manometro - 20 bar (reserva de seguridad)',
     'Reserva de seguridad (20 bar)':
         'Siempre se descuentan 20 bar de la presion del manometro como '
-        'reserva de seguridad. Esto garantiza un margen antes de que la '
-        'botella se agote por completo.',
+            'reserva de seguridad. Esto garantiza un margen antes de que la '
+            'botella se agote por completo.',
     'Tamanos de botella habituales':
         '1 L: Botella portatil pequena, emergencias rapidas\n'
-        '2 L: Portatil, traslados cortos\n'
-        '3 L: Portatil, uso frecuente en ambulancias\n'
-        '5 L: Estandar en SVB y SVA\n'
-        '7 L: Uso hospitalario y traslados largos\n'
-        '10 L: Gran capacidad, hospitales y reserva',
+            '2 L: Portatil, traslados cortos\n'
+            '3 L: Portatil, uso frecuente en ambulancias\n'
+            '5 L: Estandar en SVB y SVA\n'
+            '7 L: Uso hospitalario y traslados largos\n'
+            '10 L: Gran capacidad, hospitales y reserva',
     'Consejos para emergencias':
         'Verifica siempre la presion antes de cada servicio.\n'
-        'Lleva una botella de repuesto si el traslado es largo.\n'
-        'Ajusta el caudal al minimo eficaz segun SpO2.\n'
-        'Recuerda: con menos de 50 bar la botella esta practicamente vacia.\n'
-        'Autonomia < 10 min: prepara cambio de botella inmediato.',
+            'Lleva una botella de repuesto si el traslado es largo.\n'
+            'Ajusta el caudal al minimo eficaz segun SpO2.\n'
+            'Recuerda: con menos de 50 bar la botella esta practicamente vacia.\n'
+            'Autonomia < 10 min: prepara cambio de botella inmediato.',
   };
 
   static const references = [

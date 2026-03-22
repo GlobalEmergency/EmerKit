@@ -58,22 +58,20 @@ class TriageData {
   };
 
   static const infoSections = <String, String>{
-    '¿Qué es?':
-        'El triage START (Simple Triage and Rapid Treatment) es un sistema de clasificación '
+    '¿Qué es?': 'El triage START (Simple Triage and Rapid Treatment) es un sistema de clasificación '
         'de víctimas diseñado para incidentes con múltiples víctimas (IMV). Permite una valoración '
         'rápida en menos de 60 segundos por paciente, priorizando la atención según la gravedad.',
-    'Cuándo utilizarlo':
-        'Incidentes con múltiples víctimas (IMV)\n'
+    'Cuándo utilizarlo': 'Incidentes con múltiples víctimas (IMV)\n'
         'Catástrofes y desastres\n'
         'Situaciones con recursos sanitarios limitados\n'
         'Cuando es necesario priorizar la atención de múltiples pacientes',
     'Interpretación de colores':
         'VERDE (Leve): Paciente que puede caminar. Atención demorable.\n\n'
-        'AMARILLO (Urgente): Respira, tiene perfusión adecuada y obedece órdenes. '
-        'Requiere atención urgente pero puede esperar.\n\n'
-        'ROJO (Inmediato): Compromiso de vía aérea, respiración (FR >= 30) o '
-        'circulación (relleno capilar >= 2s) o no obedece órdenes. Atención inmediata.\n\n'
-        'NEGRO (Fallecido): No respira ni siquiera tras apertura de vía aérea.',
+            'AMARILLO (Urgente): Respira, tiene perfusión adecuada y obedece órdenes. '
+            'Requiere atención urgente pero puede esperar.\n\n'
+            'ROJO (Inmediato): Compromiso de vía aérea, respiración (FR >= 30) o '
+            'circulación (relleno capilar >= 2s) o no obedece órdenes. Atención inmediata.\n\n'
+            'NEGRO (Fallecido): No respira ni siquiera tras apertura de vía aérea.',
   };
 
   static const references = <ClinicalReference>[

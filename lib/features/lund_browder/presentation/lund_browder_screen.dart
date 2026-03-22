@@ -7,7 +7,12 @@ import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/tool_info_pan
 import '../domain/lund_browder_calculator.dart';
 import '../domain/lund_browder_data.dart';
 
-const _burnColors = [Colors.grey, Color(0xFFFFF176), Color(0xFFFFB74D), Color(0xFFE57373)];
+const _burnColors = [
+  Colors.grey,
+  Color(0xFFFFF176),
+  Color(0xFFFFB74D),
+  Color(0xFFE57373)
+];
 
 class LundBrowderScreen extends StatefulWidget {
   const LundBrowderScreen({super.key});
@@ -18,7 +23,8 @@ class LundBrowderScreen extends StatefulWidget {
 
 class _LundBrowderScreenState extends State<LundBrowderScreen> {
   int _selectedAge = 5; // Adult
-  final List<int> _burnDegree = List.filled(LundBrowderData.zoneNames.length, 0);
+  final List<int> _burnDegree =
+      List.filled(LundBrowderData.zoneNames.length, 0);
 
   LundBrowderResult get _result => LundBrowderCalculator.calculate(
         burnDegrees: _burnDegree,
@@ -93,18 +99,24 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
               itemCount: LundBrowderData.zoneNames.length,
               itemBuilder: (context, index) {
                 final name = LundBrowderData.zoneNames[index];
-                final pct = LundBrowderData.zonePercentages[index][_selectedAge];
+                final pct =
+                    LundBrowderData.zonePercentages[index][_selectedAge];
                 final degree = _burnDegree[index];
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-                  color: degree > 0 ? _burnColors[degree].withValues(alpha: 0.15) : null,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                  color: degree > 0
+                      ? _burnColors[degree].withValues(alpha: 0.15)
+                      : null,
                   child: ListTile(
                     dense: true,
-                    title: Text(name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                    title: Text(name,
+                        style: const TextStyle(fontWeight: FontWeight.w500)),
                     subtitle: Text(
                       '$pct% \u00b7 ${LundBrowderData.burnLabels[degree]}',
-                      style: TextStyle(fontSize: 12, color: _burnColors[degree]),
+                      style:
+                          TextStyle(fontSize: 12, color: _burnColors[degree]),
                     ),
                     trailing: SizedBox(
                       width: 160,
@@ -123,7 +135,8 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                                     : _burnColors[d].withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(6),
                                 border: degree == d
-                                    ? Border.all(color: Colors.black26, width: 2)
+                                    ? Border.all(
+                                        color: Colors.black26, width: 2)
                                     : null,
                               ),
                               child: Center(
@@ -132,7 +145,9 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 13,
-                                    color: degree == d ? Colors.white : Colors.black54,
+                                    color: degree == d
+                                        ? Colors.white
+                                        : Colors.black54,
                                   ),
                                 ),
                               ),

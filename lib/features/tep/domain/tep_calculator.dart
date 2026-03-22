@@ -20,9 +20,8 @@ class TepCalculator {
     required bool? breathing,
     required bool? circulation,
   }) {
-    final abnormal = [appearance, breathing, circulation]
-        .where((v) => v == false)
-        .length;
+    final abnormal =
+        [appearance, breathing, circulation].where((v) => v == false).length;
 
     final diagnosis = _diagnosis(
       appearance: appearance,

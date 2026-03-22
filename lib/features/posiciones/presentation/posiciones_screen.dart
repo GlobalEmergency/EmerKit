@@ -31,7 +31,8 @@ const _positions = [
   _Position(
     name: 'Decúbito prono',
     indication: 'SDRA, lesiones en espalda',
-    description: 'Tumbado boca abajo. Mejora oxigenación en distress respiratorio.',
+    description:
+        'Tumbado boca abajo. Mejora oxigenación en distress respiratorio.',
     icon: Icons.airline_seat_flat,
   ),
   _Position(
@@ -55,7 +56,8 @@ const _positions = [
   _Position(
     name: 'Trendelenburg',
     indication: 'Shock hipovolémico',
-    description: 'Pies más altos que la cabeza (15-30°). Favorece retorno venoso.',
+    description:
+        'Pies más altos que la cabeza (15-30°). Favorece retorno venoso.',
     icon: Icons.airline_seat_legroom_reduced,
   ),
   _Position(
@@ -67,13 +69,15 @@ const _positions = [
   _Position(
     name: 'Sentado con piernas colgando',
     indication: 'Edema agudo de pulmón',
-    description: 'Sentado en borde de camilla, piernas colgando. Reduce precarga.',
+    description:
+        'Sentado en borde de camilla, piernas colgando. Reduce precarga.',
     icon: Icons.chair,
   ),
   _Position(
     name: 'Fowler con piernas elevadas',
     indication: 'Shock cardiogénico',
-    description: 'Semi-incorporado con piernas elevadas. Mejora retorno venoso sin aumentar precarga pulmonar.',
+    description:
+        'Semi-incorporado con piernas elevadas. Mejora retorno venoso sin aumentar precarga pulmonar.',
     icon: Icons.airline_seat_recline_normal,
   ),
 ];
@@ -95,16 +99,16 @@ class PosicionesScreen extends StatelessWidget {
             buildInfoCard(
               'Contraindicaciones generales',
               '- Trendelenburg: contraindicado en TCE, ACV, disnea, lesiones torácicas y embarazo avanzado.\n'
-              '- Decúbito supino: contraindicado en pacientes inconscientes que respiran (riesgo de aspiración) y disnea.\n'
-              '- Decúbito prono: contraindicado si no se puede proteger la vía aérea.\n'
-              '- Siempre inmovilizar antes de movilizar si se sospecha lesión de columna.',
+                  '- Decúbito supino: contraindicado en pacientes inconscientes que respiran (riesgo de aspiración) y disnea.\n'
+                  '- Decúbito prono: contraindicado si no se puede proteger la vía aérea.\n'
+                  '- Siempre inmovilizar antes de movilizar si se sospecha lesión de columna.',
             ),
             buildInfoCard(
               'Consideraciones especiales',
               '- Embarazadas (>20 sem): decúbito lateral izquierdo para evitar compresión de la vena cava.\n'
-              '- Trauma: inmovilización en bloque sobre tabla espinal.\n'
-              '- Niños: adaptar posiciones a la anatomía pediátrica.\n'
-              '- Pacientes obesos: pueden necesitar posiciones más incorporadas para respirar.',
+                  '- Trauma: inmovilización en bloque sobre tabla espinal.\n'
+                  '- Niños: adaptar posiciones a la anatomía pediátrica.\n'
+                  '- Pacientes obesos: pueden necesitar posiciones más incorporadas para respirar.',
             ),
             buildReferencesCard([
               'PHTLS: Prehospital Trauma Life Support. 9th Ed.',
@@ -116,27 +120,30 @@ class PosicionesScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _positions.length,
-        itemBuilder: (context, index) {
-          final pos = _positions[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: ExpansionTile(
-              leading: Icon(pos.icon, color: Theme.of(context).colorScheme.primary),
-              title: Text(pos.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(pos.indication,
-                  style: TextStyle(fontSize: 12, color: Colors.orange.shade700)),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Text(pos.description),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+          padding: const EdgeInsets.all(12),
+          itemCount: _positions.length,
+          itemBuilder: (context, index) {
+            final pos = _positions[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ExpansionTile(
+                leading: Icon(pos.icon,
+                    color: Theme.of(context).colorScheme.primary),
+                title: Text(pos.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(pos.indication,
+                    style:
+                        TextStyle(fontSize: 12, color: Colors.orange.shade700)),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: Text(pos.description),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

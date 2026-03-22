@@ -5,7 +5,8 @@ void main() {
   const calculator = MadridDirectCalculator();
 
   group('MadridDirectCalculator', () {
-    test('2 items positive, normal TAS/age = score 2, thrombectomy required', () {
+    test('2 items positive, normal TAS/age = score 2, thrombectomy required',
+        () {
       final result = calculator.calculate(
         armNoGravity: true,
         legNoGravity: true,

@@ -9,22 +9,53 @@ class _Step {
 }
 
 const _donningSteps = [
-  _Step('Higiene de manos', 'Solución hidroalcohólica o lavado con agua y jabón.', Icons.clean_hands),
-  _Step('Bata', 'Colocar bata impermeable, cubriendo torso completamente. Atar por detrás.', Icons.checkroom),
-  _Step('Mascarilla/Respirador', 'FFP2/FFP3 según procedimiento. Ajustar clip nasal. Verificar sellado.', Icons.masks),
-  _Step('Gafas/Pantalla facial', 'Colocar protección ocular. Ajustar para evitar empañamiento.', Icons.visibility),
-  _Step('Gorro', 'Cubrir completamente el cabello. Meter las orejas.', Icons.face),
-  _Step('Guantes', 'Colocar guantes sobre los puños de la bata. Doble guante si procedimiento de riesgo.', Icons.back_hand),
+  _Step('Higiene de manos',
+      'Solución hidroalcohólica o lavado con agua y jabón.', Icons.clean_hands),
+  _Step(
+      'Bata',
+      'Colocar bata impermeable, cubriendo torso completamente. Atar por detrás.',
+      Icons.checkroom),
+  _Step(
+      'Mascarilla/Respirador',
+      'FFP2/FFP3 según procedimiento. Ajustar clip nasal. Verificar sellado.',
+      Icons.masks),
+  _Step(
+      'Gafas/Pantalla facial',
+      'Colocar protección ocular. Ajustar para evitar empañamiento.',
+      Icons.visibility),
+  _Step('Gorro', 'Cubrir completamente el cabello. Meter las orejas.',
+      Icons.face),
+  _Step(
+      'Guantes',
+      'Colocar guantes sobre los puños de la bata. Doble guante si procedimiento de riesgo.',
+      Icons.back_hand),
 ];
 
 const _doffingSteps = [
-  _Step('Retirar guantes', 'Pellizcar exterior del guante. Retirar de dentro a fuera. Desechar.', Icons.back_hand),
-  _Step('Higiene de manos', 'Con guantes internos o solución hidroalcohólica.', Icons.clean_hands),
-  _Step('Retirar bata', 'Desatar. Retirar sin tocar el exterior. Enrollar de dentro a fuera. Desechar.', Icons.checkroom),
-  _Step('Retirar gafas/pantalla', 'Retirar por las patillas o goma (no tocar la parte frontal). Desechar o desinfectar.', Icons.visibility),
-  _Step('Retirar gorro', 'Retirar desde la parte posterior. Desechar.', Icons.face),
-  _Step('Retirar mascarilla', 'Retirar por las gomas (no tocar la parte frontal). Desechar.', Icons.masks),
-  _Step('Higiene de manos', 'Lavado final con agua y jabón o solución hidroalcohólica.', Icons.clean_hands),
+  _Step(
+      'Retirar guantes',
+      'Pellizcar exterior del guante. Retirar de dentro a fuera. Desechar.',
+      Icons.back_hand),
+  _Step('Higiene de manos', 'Con guantes internos o solución hidroalcohólica.',
+      Icons.clean_hands),
+  _Step(
+      'Retirar bata',
+      'Desatar. Retirar sin tocar el exterior. Enrollar de dentro a fuera. Desechar.',
+      Icons.checkroom),
+  _Step(
+      'Retirar gafas/pantalla',
+      'Retirar por las patillas o goma (no tocar la parte frontal). Desechar o desinfectar.',
+      Icons.visibility),
+  _Step('Retirar gorro', 'Retirar desde la parte posterior. Desechar.',
+      Icons.face),
+  _Step(
+      'Retirar mascarilla',
+      'Retirar por las gomas (no tocar la parte frontal). Desechar.',
+      Icons.masks),
+  _Step(
+      'Higiene de manos',
+      'Lavado final con agua y jabón o solución hidroalcohólica.',
+      Icons.clean_hands),
 ];
 
 class EpiScreen extends StatelessWidget {
@@ -39,7 +70,8 @@ class EpiScreen extends StatelessWidget {
           title: const Text('EPI'),
           actions: [
             Builder(
-              builder: (context) => buildInfoAction(context, 'Equipo de Protección Individual', [
+              builder: (context) =>
+                  buildInfoAction(context, 'Equipo de Protección Individual', [
                 buildInfoCard(
                   'Importancia del EPI',
                   'El Equipo de Protección Individual (EPI) es la barrera principal entre el profesional sanitario y los agentes biológicos, químicos o físicos presentes en el entorno asistencial. Su uso correcto previene infecciones cruzadas y protege tanto al profesional como al paciente.',
@@ -47,10 +79,10 @@ class EpiScreen extends StatelessWidget {
                 buildInfoCard(
                   'Riesgos de contaminación',
                   'La contaminación puede ocurrir durante la colocación, el uso o, sobre todo, durante la retirada del EPI. Los principales riesgos incluyen:\n\n'
-                  '- Contacto con superficies contaminadas del EPI al retirarlo.\n'
-                  '- Autocontaminación por tocarse la cara con guantes usados.\n'
-                  '- Exposición a aerosoles al retirar la mascarilla incorrectamente.\n'
-                  '- Salpicaduras a mucosas por falta de protección ocular.',
+                      '- Contacto con superficies contaminadas del EPI al retirarlo.\n'
+                      '- Autocontaminación por tocarse la cara con guantes usados.\n'
+                      '- Exposición a aerosoles al retirar la mascarilla incorrectamente.\n'
+                      '- Salpicaduras a mucosas por falta de protección ocular.',
                 ),
                 buildInfoCard(
                   'Secuencia correcta',
@@ -97,10 +129,14 @@ class EpiScreen extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: accentColor,
-              child: Text('${index + 1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text('${index + 1}',
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-            title: Text(step.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(step.description, style: const TextStyle(fontSize: 13)),
+            title: Text(step.title,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle:
+                Text(step.description, style: const TextStyle(fontSize: 13)),
             trailing: Icon(step.icon, color: accentColor),
           ),
         );

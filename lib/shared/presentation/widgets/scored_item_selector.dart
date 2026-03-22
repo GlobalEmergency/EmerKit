@@ -33,7 +33,9 @@ class ScoredItemSelector extends StatelessWidget {
               children: [
                 Icon(icon, size: 20, color: color),
                 const SizedBox(width: 8),
-                Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -43,8 +45,13 @@ class ScoredItemSelector extends StatelessWidget {
               dense: true,
               selected: isSelected,
               selectedTileColor: color.withValues(alpha: 0.08),
-              title: Text(item.label, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : null)),
-              subtitle: item.description != null ? Text(item.description!, style: const TextStyle(fontSize: 11)) : null,
+              title: Text(item.label,
+                  style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.bold : null)),
+              subtitle: item.description != null
+                  ? Text(item.description!,
+                      style: const TextStyle(fontSize: 11))
+                  : null,
               trailing: Container(
                 width: 32,
                 height: 32,
@@ -55,7 +62,9 @@ class ScoredItemSelector extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '${item.score}',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.white : Colors.grey),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.white : Colors.grey),
                   ),
                 ),
               ),

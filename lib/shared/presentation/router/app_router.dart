@@ -40,10 +40,14 @@ final appRouter = GoRouter(
     GoRoute(path: '/triage', builder: (_, __) => const TriageScreen()),
     GoRoute(path: '/tep', builder: (_, __) => const TepScreen()),
     GoRoute(path: '/heart-rate', builder: (_, __) => const HeartRateScreen()),
-    GoRoute(path: '/o2-calculator', builder: (_, __) => const O2CalculatorScreen()),
-    GoRoute(path: '/oxigenoterapia', builder: (_, __) => const OxigenoterapiaScreen()),
+    GoRoute(
+        path: '/o2-calculator', builder: (_, __) => const O2CalculatorScreen()),
+    GoRoute(
+        path: '/oxigenoterapia',
+        builder: (_, __) => const OxigenoterapiaScreen()),
     GoRoute(path: '/ecg-leads', builder: (_, __) => const EcgLeadsScreen()),
-    GoRoute(path: '/lund-browder', builder: (_, __) => const LundBrowderScreen()),
+    GoRoute(
+        path: '/lund-browder', builder: (_, __) => const LundBrowderScreen()),
     GoRoute(path: '/rcp-rithm', builder: (_, __) => const RcpRithmScreen()),
     GoRoute(path: '/plan-rcp', builder: (_, __) => const PlanRcpScreen()),
     GoRoute(path: '/adr', builder: (_, __) => const AdrScreen()),
@@ -53,7 +57,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/posiciones', builder: (_, __) => const PosicionesScreen()),
     GoRoute(path: '/ictus', builder: (_, __) => const IctusScreen()),
     GoRoute(path: '/hipotermia', builder: (_, __) => const HipotermiaScreen()),
-    GoRoute(path: '/hipertermia', builder: (_, __) => const HipertermiaScreen()),
+    GoRoute(
+        path: '/hipertermia', builder: (_, __) => const HipertermiaScreen()),
     GoRoute(path: '/comm', builder: (_, __) => const CommScreen()),
     GoRoute(path: '/nihss', builder: (_, __) => const NihssScreen()),
     GoRoute(path: '/rankin', builder: (_, __) => const RankinScreen()),

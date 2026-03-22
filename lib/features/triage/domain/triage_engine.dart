@@ -90,7 +90,8 @@ class TriageEngine {
       if (node.isResult) break;
       final nextId = answer ? node.yesNode : node.noNode;
       if (nextId == null) {
-        throw StateError('Node "$currentId" has no ${answer ? "yes" : "no"} branch');
+        throw StateError(
+            'Node "$currentId" has no ${answer ? "yes" : "no"} branch');
       }
       currentId = nextId;
     }

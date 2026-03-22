@@ -54,18 +54,25 @@ class _RankinScreenState extends State<RankinScreen> {
             color: isSelected ? color.withValues(alpha: 0.15) : null,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: isSelected ? BorderSide(color: color, width: 2) : BorderSide.none,
+              side: isSelected
+                  ? BorderSide(color: color, width: 2)
+                  : BorderSide.none,
             ),
             child: ListTile(
               onTap: () => setState(() => _selected = level.score),
               leading: CircleAvatar(
                 backgroundColor: color,
-                child: Text('${level.score}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: Text('${level.score}',
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
               ),
-              title: Text(level.label, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: level.description != null && level.description!.isNotEmpty
-                  ? Text(level.description!, style: const TextStyle(fontSize: 12))
-                  : null,
+              title: Text(level.label,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle:
+                  level.description != null && level.description!.isNotEmpty
+                      ? Text(level.description!,
+                          style: const TextStyle(fontSize: 12))
+                      : null,
             ),
           );
         }).toList(),

@@ -19,14 +19,14 @@ class GlucemiaScreen extends StatelessWidget {
             buildInfoCard(
               'Emergencias diabéticas',
               'Hipoglucemia: niveles de glucosa < 70 mg/dL. Es la emergencia diabética más frecuente y potencialmente mortal. Puede causar alteración del nivel de consciencia, convulsiones y coma.\n\n'
-              'Hiperglucemia: niveles > 250 mg/dL. Puede evolucionar a cetoacidosis diabética (DM tipo 1) o síndrome hiperosmolar (DM tipo 2), ambas potencialmente letales.',
+                  'Hiperglucemia: niveles > 250 mg/dL. Puede evolucionar a cetoacidosis diabética (DM tipo 1) o síndrome hiperosmolar (DM tipo 2), ambas potencialmente letales.',
             ),
             buildInfoCard(
               'Manejo prehospitalario',
               '- Hipoglucemia con paciente consciente: administrar glucosa oral (zumo, azúcar).\n'
-              '- Hipoglucemia con paciente inconsciente: glucagón IM o glucosa IV.\n'
-              '- Hiperglucemia grave: fluidoterapia IV, monitorización y traslado.\n'
-              '- Siempre determinar glucemia en pacientes con alteración del nivel de consciencia.',
+                  '- Hipoglucemia con paciente inconsciente: glucagón IM o glucosa IV.\n'
+                  '- Hiperglucemia grave: fluidoterapia IV, monitorización y traslado.\n'
+                  '- Siempre determinar glucemia en pacientes con alteración del nivel de consciencia.',
             ),
             buildReferencesCard([
               'American Diabetes Association. Standards of Medical Care. 2024.',
@@ -38,28 +38,45 @@ class GlucemiaScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildCard('Hipoglucemia grave', '<40 mg/dL', AppColors.severitySevere,
-              'Pérdida de consciencia, convulsiones.\nTratamiento: Glucagón IM / Glucosa IV.'),
-          _buildCard('Hipoglucemia', '40-70 mg/dL', AppColors.severityModerate,
-              'Temblor, sudoración, taquicardia, confusión.\nTratamiento: Glucosa oral si consciente.'),
-          _buildCard('Normal en ayunas', '70-100 mg/dL', AppColors.severityMild, ''),
-          _buildCard('Normal postprandial', '70-140 mg/dL', AppColors.severityMild,
-              '2 horas después de comer.'),
-          _buildCard('Hiperglucemia', '140-250 mg/dL', AppColors.severityModerate,
-              'Poliuria, polidipsia, polifagia.\nControl y seguimiento.'),
-          _buildCard('Hiperglucemia grave', '>250 mg/dL', AppColors.severitySevere,
-              'Riesgo de cetoacidosis diabética o síndrome hiperosmolar.\nBuscar cetonuria. Valorar traslado.'),
-          _buildCard('Cetoacidosis diabética', '>300 mg/dL + cetonas', AppColors.severitySevere,
-              'Respiración de Kussmaul, aliento cetósico, deshidratación.\nTratamiento: Fluidoterapia IV + Insulina.'),
-        ],
-      ),
+          padding: const EdgeInsets.all(16),
+          children: [
+            _buildCard(
+                'Hipoglucemia grave',
+                '<40 mg/dL',
+                AppColors.severitySevere,
+                'Pérdida de consciencia, convulsiones.\nTratamiento: Glucagón IM / Glucosa IV.'),
+            _buildCard(
+                'Hipoglucemia',
+                '40-70 mg/dL',
+                AppColors.severityModerate,
+                'Temblor, sudoración, taquicardia, confusión.\nTratamiento: Glucosa oral si consciente.'),
+            _buildCard(
+                'Normal en ayunas', '70-100 mg/dL', AppColors.severityMild, ''),
+            _buildCard('Normal postprandial', '70-140 mg/dL',
+                AppColors.severityMild, '2 horas después de comer.'),
+            _buildCard(
+                'Hiperglucemia',
+                '140-250 mg/dL',
+                AppColors.severityModerate,
+                'Poliuria, polidipsia, polifagia.\nControl y seguimiento.'),
+            _buildCard(
+                'Hiperglucemia grave',
+                '>250 mg/dL',
+                AppColors.severitySevere,
+                'Riesgo de cetoacidosis diabética o síndrome hiperosmolar.\nBuscar cetonuria. Valorar traslado.'),
+            _buildCard(
+                'Cetoacidosis diabética',
+                '>300 mg/dL + cetonas',
+                AppColors.severitySevere,
+                'Respiración de Kussmaul, aliento cetósico, deshidratación.\nTratamiento: Fluidoterapia IV + Insulina.'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCard(String title, String range, Color color, String description) {
+  Widget _buildCard(
+      String title, String range, Color color, String description) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -75,7 +92,8 @@ class GlucemiaScreen extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(range, style: TextStyle(fontWeight: FontWeight.w600, color: color)),
+            Text(range,
+                style: TextStyle(fontWeight: FontWeight.w600, color: color)),
             if (description.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(description, style: const TextStyle(fontSize: 12)),
