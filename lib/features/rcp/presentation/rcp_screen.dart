@@ -37,6 +37,10 @@ class _RcpScreenState extends State<RcpScreen> {
   bool _flash = false;
   bool _muted = false; // Only mutes compression clicks
   int _elapsedSeconds = 0;
+  bool _twoMinAlertPending = false; // Visual alert banner
+
+  // Track completed actions for visual check marks
+  final Set<String> _completedActions = {};
 
   // Fixed BPM per ERC 2025
   static const _bpm = 120;
@@ -78,10 +82,15 @@ class _RcpScreenState extends State<RcpScreen> {
   void _onTwoMinAlert() {
     _playAlert();
     _actionLog.add(
-      'Alerta 2 min: comprobar pulso / cambio reanimador',
+      'ALERTA 2 min: comprobar pulso / cambio reanimador',
       'evento',
     );
-    setState(() {});
+    setState(() => _twoMinAlertPending = true);
+  }
+
+  void _dismissTwoMinAlert() {
+    _actionLog.add('Alerta 2 min confirmada', 'evento');
+    setState(() => _twoMinAlertPending = false);
   }
 
   void _start() {
@@ -332,6 +341,44 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // 2-minute alert banner
+            if (_twoMinAlertPending)
+              GestureDetector(
+                onTap: _dismissTwoMinAlert,
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  color: Colors.orange.shade700,
+                  child: const Row(
+                    children: [
+                      Icon(Icons.warning_amber, color: Colors.white, size: 24),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'COMPROBAR PULSO / CAMBIO REANIMADOR',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'CONFIRMAR',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
             // Config section - ALWAYS visible
             _buildConfigSection(),
 
@@ -474,10 +521,73 @@ class _RcpScreenState extends State<RcpScreen> {
     );
   }
 
-  void _logQuickAction(String action) {
-    _actionLog.add(action, 'evento');
+  // Action counts per id
+  final Map<String, int> _actionCounts = {};
+
+  void _logQuickAction(String id, String logText) {
+    _actionCounts[id] = (_actionCounts[id] ?? 0) + 1;
+    _completedActions.add(id);
+    _actionLog.add(logText, 'evento');
     HapticFeedback.lightImpact();
     setState(() {});
+  }
+
+  void _logCustomEvent(String text) {
+    _actionLog.add(text, 'evento');
+    HapticFeedback.lightImpact();
+    setState(() {});
+  }
+
+  int _countOf(String id) => _actionCounts[id] ?? 0;
+  bool _isDone(String id) => _completedActions.contains(id);
+
+  Widget _actionTile({
+    required String id,
+    required IconData icon,
+    required String label,
+    required String logText,
+    Color? iconColor,
+    required BuildContext sheetContext,
+  }) {
+    final done = _isDone(id);
+    final count = _countOf(id);
+    return ListTile(
+      leading: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(icon, color: iconColor ?? (done ? Colors.grey : null)),
+          if (done)
+            const Positioned(
+              right: -4,
+              bottom: -4,
+              child: Icon(Icons.check_circle, color: Colors.green, size: 14),
+            ),
+        ],
+      ),
+      title: Text(label),
+      trailing: count > 0
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Text(
+                'x$count',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade700,
+                ),
+              ),
+            )
+          : null,
+      onTap: () {
+        Navigator.pop(sheetContext);
+        _logQuickAction(id, logText);
+      },
+    );
   }
 
   void _showAirwayOptions() {
@@ -487,46 +597,36 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.air),
-              title: const Text('Apertura via aerea'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Apertura via aerea');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.straighten),
-              title: const Text('Guedel colocado'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Canula orofaringea (Guedel) colocada');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.masks),
-              title: const Text('IOT realizada'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Intubacion orotraqueal (IOT) realizada');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.face),
-              title: const Text('Mascarilla laringea'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Mascarilla laringea colocada');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.cancel_outlined),
-              title: const Text('Aspiracion de secreciones'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Aspiracion de secreciones');
-              },
-            ),
+            _actionTile(
+                id: 'airway',
+                icon: Icons.air,
+                label: 'Apertura via aerea',
+                logText: 'Apertura via aerea',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'guedel',
+                icon: Icons.straighten,
+                label: 'Guedel colocado',
+                logText: 'Canula orofaringea (Guedel) colocada',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'iot',
+                icon: Icons.masks,
+                label: 'IOT realizada',
+                logText: 'Intubacion orotraqueal (IOT) realizada',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'ml',
+                icon: Icons.face,
+                label: 'Mascarilla laringea',
+                logText: 'Mascarilla laringea colocada',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'aspiration',
+                icon: Icons.cancel_outlined,
+                label: 'Aspiracion de secreciones',
+                logText: 'Aspiracion de secreciones',
+                sheetContext: ctx),
           ],
         ),
       ),
@@ -540,31 +640,34 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.favorite_border),
-              title: const Text('Comprobacion de pulso'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Comprobacion de pulso');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.favorite, color: Colors.green),
-              title: const Text('ROSC - Pulso recuperado'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction(
-                    'ROSC - Recuperacion de circulacion espontanea');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.favorite_border, color: Colors.red),
-              title: const Text('Sin pulso'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Sin pulso - continuar RCP');
-              },
-            ),
+            _actionTile(
+                id: 'pulse_check',
+                icon: Icons.favorite_border,
+                label: 'Comprobacion de pulso',
+                logText: 'Comprobacion de pulso',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'rosc',
+                icon: Icons.favorite,
+                label: 'ROSC - Pulso recuperado',
+                logText: 'ROSC - Recuperacion de circulacion espontanea',
+                iconColor: Colors.green,
+                sheetContext: ctx),
+            _actionTile(
+                id: 'no_pulse',
+                icon: Icons.favorite_border,
+                label: 'Sin pulso',
+                logText: 'Sin pulso - continuar RCP',
+                iconColor: Colors.red,
+                sheetContext: ctx),
+            const Divider(height: 1),
+            _actionTile(
+                id: 'lucas',
+                icon: Icons.precision_manufacturing,
+                label: 'LUCAS colocado',
+                logText: 'Dispositivo LUCAS de compresiones mecanicas colocado',
+                iconColor: AppColors.tecnicas,
+                sheetContext: ctx),
           ],
         ),
       ),
@@ -578,38 +681,31 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.electric_bolt),
-              title: const Text('Parches DEA colocados'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Parches DEA colocados');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.search),
-              title: const Text('Analisis de ritmo'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Analisis de ritmo');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.flash_on, color: Colors.orange),
-              title: const Text('Descarga administrada'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Descarga DEA administrada');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.flash_off),
-              title: const Text('Descarga NO indicada'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _logQuickAction('Descarga NO indicada');
-              },
-            ),
+            _actionTile(
+                id: 'dea_pads',
+                icon: Icons.electric_bolt,
+                label: 'Parches DEA colocados',
+                logText: 'Parches DEA colocados',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'rhythm',
+                icon: Icons.search,
+                label: 'Analisis de ritmo',
+                logText: 'Analisis de ritmo',
+                sheetContext: ctx),
+            _actionTile(
+                id: 'shock',
+                icon: Icons.flash_on,
+                label: 'Descarga administrada',
+                logText: 'Descarga DEA administrada',
+                iconColor: Colors.orange,
+                sheetContext: ctx),
+            _actionTile(
+                id: 'no_shock',
+                icon: Icons.flash_off,
+                label: 'Descarga NO indicada',
+                logText: 'Descarga NO indicada',
+                sheetContext: ctx),
           ],
         ),
       ),
@@ -631,7 +727,7 @@ class _RcpScreenState extends State<RcpScreen> {
           ),
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
-              _logQuickAction(value.trim());
+              _logCustomEvent(value.trim());
             }
             Navigator.pop(ctx);
           },
@@ -644,7 +740,7 @@ class _RcpScreenState extends State<RcpScreen> {
           FilledButton(
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
-                _logQuickAction(controller.text.trim());
+                _logCustomEvent(controller.text.trim());
               }
               Navigator.pop(ctx);
             },
@@ -666,24 +762,28 @@ class _RcpScreenState extends State<RcpScreen> {
             label: 'Via aerea',
             color: AppColors.valoracion,
             onTap: _showAirwayOptions,
+            doneIds: const ['airway', 'guedel', 'iot', 'ml', 'aspiration'],
           ),
           _quickActionButton(
             icon: Icons.favorite,
             label: 'Pulso',
             color: AppColors.soporteVital,
             onTap: _showPulseOptions,
+            doneIds: const ['pulse_check', 'rosc', 'no_pulse', 'lucas'],
           ),
           _quickActionButton(
             icon: Icons.electric_bolt,
             label: 'DEA',
             color: AppColors.tecnicas,
             onTap: _showDeaOptions,
+            doneIds: const ['dea_pads', 'rhythm', 'shock', 'no_shock'],
           ),
           _quickActionButton(
             icon: Icons.edit_note,
             label: 'Evento',
             color: AppColors.comunicacion,
             onTap: _showCustomEventDialog,
+            doneIds: const [],
           ),
         ],
       ),
@@ -695,7 +795,9 @@ class _RcpScreenState extends State<RcpScreen> {
     required String label,
     required Color color,
     required VoidCallback onTap,
+    required List<String> doneIds,
   }) {
+    final anyDone = doneIds.any(_isDone);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -704,13 +806,28 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 22),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: anyDone ? 0.25 : 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: anyDone
+                        ? Border.all(color: Colors.green, width: 1.5)
+                        : null,
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+                if (anyDone)
+                  const Positioned(
+                    right: -4,
+                    top: -4,
+                    child:
+                        Icon(Icons.check_circle, color: Colors.green, size: 16),
+                  ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
