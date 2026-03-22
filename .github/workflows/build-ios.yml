@@ -195,46 +195,10 @@ jobs:
             -allowProvisioningUpdates
 
           echo "✅ IPA exported"
-          ls -la ../build/ios/ipa/
+          ls -la ../build/ios/ipa/ 2>/dev/null || echo "IPA uploaded directly to App Store Connect"
 
-      - name: Upload to TestFlight
-        if: ${{ inputs.upload_to_testflight != false }}
-        env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: |
-          mkdir -p private_keys
-          echo "$API_KEY" > "private_keys/AuthKey_${KEY_ID}.p8"
-
-          IPA_FILE=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
-          if [ -z "$IPA_FILE" ]; then
-            echo "❌ No IPA file found"
-            exit 1
-          fi
-          echo "📦 Uploading: $IPA_FILE"
-
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$IPA_FILE" \
-            --apiKey "$KEY_ID" \
-            --apiIssuer "$ISSUER_ID"
-
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-ipa
-          path: build/ios/ipa/*.ipa
-
-      - name: Upload IPA to Release
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          IPA=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
-          if [ -n "$IPA" ]; then
-            gh release upload "${{ steps.version.outputs.tag }}" "$IPA" --clobber || echo "⚠️ Could not attach to release"
-          fi
+      # Note: ExportOptions.plist has destination=upload, so xcodebuild
+      # uploads directly to App Store Connect. No separate altool step needed.
 
       - name: Cleanup keychain
         if: always()
