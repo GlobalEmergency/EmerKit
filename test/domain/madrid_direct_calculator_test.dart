@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/ictus/domain/madrid_direct_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/madrid_direct/domain/madrid_direct_calculator.dart';
 
 void main() {
   const calculator = MadridDirectCalculator();

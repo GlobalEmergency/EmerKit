@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:navaja_suiza_sanitaria/features/ictus/domain/cincinnati_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/cincinnati/domain/cincinnati_calculator.dart';
 
 void main() {
   const calculator = CincinnatiCalculator();
