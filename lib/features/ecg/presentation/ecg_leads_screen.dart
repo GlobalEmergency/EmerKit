@@ -76,8 +76,8 @@ class EcgLeadsScreen extends StatelessWidget {
           _lead('Verde', 'Costilla izquierda inferior (LL)', Colors.green),
         ]),
         const SizedBox(height: 16),
-        _buildImageCard('assets/images/ecg_eu_leads.png',
-            'Colocación de electrodos precordiales (EU)'),
+        _buildImageCard('assets/images/ecg_base_usa.png',
+            'Colocación de electrodos precordiales'),
         const SizedBox(height: 12),
         _buildSection('ECG 12 derivaciones - Precordiales', [
           _lead('V1 (Rojo)', '4º espacio intercostal, borde esternal derecho',
