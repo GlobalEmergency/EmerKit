@@ -104,21 +104,21 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
 
-      # Build using xcodebuild directly with API key authentication
-      - name: Build iOS Archive
+      # Build Flutter assets (no signing)
+      - name: Build Flutter iOS
+        run: |
+          flutter build ios --release --no-codesign \
+            --build-name=${{ steps.version.outputs.version }} \
+            --build-number=${{ steps.version.outputs.build_number }}
+
+      # Archive with automatic signing via API key
+      - name: Xcode Archive
         env:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          # First, build the Flutter assets
-          flutter build ios --release --no-codesign \
-            --build-name=${{ steps.version.outputs.version }} \
-            --build-number=${{ steps.version.outputs.build_number }}
-
           cd ios
-
-          # Archive with API key for automatic signing
           xcodebuild archive \
             -workspace Runner.xcworkspace \
             -scheme Runner \
@@ -131,9 +131,18 @@ jobs:
             -authenticationKeyIssuerID "$ISSUER_ID" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            | tail -20
+            CODE_SIGN_IDENTITY="Apple Distribution"
 
-          # Export IPA
+          echo "✅ Archive created"
+          ls -la ../build/ios/archive/Runner.xcarchive/
+
+      # Export IPA from archive
+      - name: Export IPA
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          cd ios
           xcodebuild -exportArchive \
             -archivePath ../build/ios/archive/Runner.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
@@ -141,8 +150,10 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
             -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID" \
-            | tail -10
+            -authenticationKeyIssuerID "$ISSUER_ID"
+
+          echo "✅ IPA exported"
+          ls -la ../build/ios/ipa/
 
       - name: Upload to TestFlight
         if: ${{ inputs.upload_to_testflight != false }}
