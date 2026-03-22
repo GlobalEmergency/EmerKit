@@ -36,7 +36,7 @@ void main() {
     });
 
     test('porcentajes adulto suman 100%', () {
-      final adultIndex = 5; // Adulto
+      const adultIndex = 5; // Adulto
       double total = 0;
       for (final row in LundBrowderData.zonePercentages) {
         total += row[adultIndex];
