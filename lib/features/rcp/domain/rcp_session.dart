@@ -6,9 +6,10 @@ enum RcpMode { svb, sva }
 class RcpSession {
   RcpMode mode;
   bool ventilationEnabled;
-  int bpm;
   final ActionLog actionLog;
   List<MedicationTracker> medicationTrackers;
+
+  static const bpm = 120;
 
   int compressionCount = 0;
   int cycleCount = 0;
@@ -20,7 +21,6 @@ class RcpSession {
   RcpSession({
     required this.mode,
     required this.ventilationEnabled,
-    required this.bpm,
     required this.actionLog,
     List<MedicationTracker>? medicationTrackers,
   }) : medicationTrackers = medicationTrackers ?? [];
@@ -68,13 +68,6 @@ class RcpSession {
       'Cambio a ${newMode == RcpMode.sva ? 'SVA' : 'SVB'}',
       'evento',
     );
-  }
-
-  /// Change BPM mid-session.
-  void setBpm(int newBpm) {
-    if (bpm == newBpm) return;
-    bpm = newBpm;
-    actionLog.add('Frecuencia: $newBpm bpm', 'evento');
   }
 
   /// Administers a medication and logs it.

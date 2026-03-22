@@ -10,7 +10,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.svb,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: ActionLog(),
       );
 
@@ -33,7 +32,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.svb,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: ActionLog(),
       );
 
@@ -54,7 +52,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.svb,
         ventilationEnabled: false,
-        bpm: 120,
         actionLog: ActionLog(),
       );
 
@@ -75,7 +72,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.sva,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: ActionLog(),
         medicationTrackers: trackers,
       );
@@ -94,7 +90,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.sva,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: log,
         medicationTrackers: trackers,
       );
@@ -123,7 +118,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.sva,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: log,
         medicationTrackers: [tracker],
       );
@@ -158,7 +152,6 @@ void main() {
       final session = RcpSession(
         mode: RcpMode.sva,
         ventilationEnabled: true,
-        bpm: 120,
         actionLog: log,
         medicationTrackers: trackers,
       );

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:navaja_suiza_sanitaria/shared/domain/models/action_log.dart';
 import 'package:navaja_suiza_sanitaria/shared/domain/models/medication_protocol.dart';
@@ -20,7 +21,8 @@ class RcpScreen extends StatefulWidget {
 }
 
 class _RcpScreenState extends State<RcpScreen> {
-  late AudioPlayer _audioPlayer;
+  // Audio: use AudioPool for reliable low-latency playback
+  AudioPool? _audioPool;
   Timer? _timer;
   Timer? _clockTimer;
   Timer? _medicationRefreshTimer;
@@ -28,37 +30,46 @@ class _RcpScreenState extends State<RcpScreen> {
   bool _flash = false;
   int _elapsedSeconds = 0;
 
-  // Session (persists across config changes)
+  // Fixed BPM per ERC 2025
+  static const _bpm = 120;
+  static final _beatInterval = Duration(milliseconds: (60000 / _bpm).round());
+
+  // Session
   late ActionLog _actionLog;
   late RcpSession _session;
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
-    _audioPlayer.setPlayerMode(PlayerMode.lowLatency);
-    _audioPlayer.setSource(AssetSource('audio/metronome_click.wav'));
+    _initAudio();
     _actionLog = ActionLog();
     _session = RcpSession(
       mode: RcpMode.svb,
       ventilationEnabled: true,
-      bpm: 120,
       actionLog: _actionLog,
       medicationTrackers: [],
     );
+  }
+
+  Future<void> _initAudio() async {
+    _audioPool = await AudioPool.create(
+      source: AssetSource('audio/metronome_click.wav'),
+      maxPlayers: 3,
+    );
+  }
+
+  void _playClick() {
+    _audioPool?.start();
   }
 
   void _start() {
     if (_session.compressionCount == 0 &&
         _session.cycleCount == 0 &&
         _actionLog.entries.isEmpty) {
-      // Fresh start
       _actionLog = ActionLog();
-      _session.actionLog.clear();
       _session = RcpSession(
         mode: _session.mode,
         ventilationEnabled: _session.ventilationEnabled,
-        bpm: _session.bpm,
         actionLog: _actionLog,
         medicationTrackers: _session.mode == RcpMode.sva
             ? RcpData.svaMedications.map(MedicationTracker.new).toList()
@@ -66,14 +77,12 @@ class _RcpScreenState extends State<RcpScreen> {
       );
     }
     _actionLog.add(
-      'RCP iniciada - ${_session.mode == RcpMode.sva ? "SVA" : "SVB"} '
-          '- ${_session.bpm}bpm'
+      'RCP iniciada - ${_session.mode == RcpMode.sva ? "SVA" : "SVB"}'
           '${_session.ventilationEnabled ? " - 30:2" : " - continuo"}',
       'evento',
     );
     setState(() {
       _isRunning = true;
-      _elapsedSeconds = _actionLog.entries.isEmpty ? 0 : _elapsedSeconds;
     });
     _startMetronome();
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -100,7 +109,6 @@ class _RcpScreenState extends State<RcpScreen> {
     _session = RcpSession(
       mode: _session.mode,
       ventilationEnabled: _session.ventilationEnabled,
-      bpm: _session.bpm,
       actionLog: _actionLog,
       medicationTrackers: _session.mode == RcpMode.sva
           ? RcpData.svaMedications.map(MedicationTracker.new).toList()
@@ -124,19 +132,10 @@ class _RcpScreenState extends State<RcpScreen> {
     setState(() {});
   }
 
-  void _onBpmChanged(int newBpm) {
-    _session.setBpm(newBpm);
-    if (_isRunning && !_session.isBreathPhase) {
-      _startMetronome();
-    }
-    setState(() {});
-  }
-
   void _onVentilationChanged(bool enabled) {
     final wasBreathPhase = _session.isBreathPhase;
     _session.setVentilation(enabled);
     if (wasBreathPhase && !enabled && _isRunning) {
-      // Was paused for breath, now continuous - restart metronome
       _startMetronome();
     }
     setState(() {});
@@ -146,8 +145,7 @@ class _RcpScreenState extends State<RcpScreen> {
 
   void _startMetronome() {
     _timer?.cancel();
-    final interval = Duration(milliseconds: (60000 / _session.bpm).round());
-    _timer = Timer.periodic(interval, (_) => _onBeat());
+    _timer = Timer.periodic(_beatInterval, (_) => _onBeat());
   }
 
   void _startMedicationRefresh() {
@@ -160,8 +158,7 @@ class _RcpScreenState extends State<RcpScreen> {
   void _onBeat() {
     if (_session.isBreathPhase) return;
 
-    _audioPlayer.stop();
-    _audioPlayer.resume();
+    _playClick();
 
     final shouldVentilate = _session.onCompression();
 
@@ -184,6 +181,7 @@ class _RcpScreenState extends State<RcpScreen> {
 
   void _onAdministerMedication(MedicationTracker tracker) {
     _session.administerMedication(tracker);
+    HapticFeedback.mediumImpact();
     setState(() {});
   }
 
@@ -205,7 +203,7 @@ class _RcpScreenState extends State<RcpScreen> {
     _timer?.cancel();
     _clockTimer?.cancel();
     _medicationRefreshTimer?.cancel();
-    _audioPlayer.dispose();
+    _audioPool?.dispose();
     super.dispose();
   }
 
@@ -236,7 +234,7 @@ class _RcpScreenState extends State<RcpScreen> {
         _session.compressionCount == 0 &&
         _session.cycleCount == 0 &&
         _actionLog.entries.isEmpty) {
-      return 'Pulsa Play para iniciar';
+      return 'Pulsa Play para iniciar · 120 bpm';
     }
     if (_session.isBreathPhase) {
       return '${RcpSession.breathsPerCycle} ventilaciones';
@@ -295,10 +293,10 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Config section - ALWAYS visible, compact when running
+            // Config section - ALWAYS visible
             _buildConfigSection(),
 
-            // Play/Stop button
+            // Play/Pause button
             Padding(
               padding: EdgeInsets.symmetric(vertical: _isRunning ? 12 : 24),
               child: GestureDetector(
@@ -331,7 +329,7 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ),
 
-            // SVA medications section
+            // SVA medications
             if (_session.mode == RcpMode.sva && _isRunning) ...[
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -366,7 +364,7 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ],
 
-            // Action log + export
+            // Action log
             if (_session.mode == RcpMode.sva &&
                 (_isRunning || _actionLog.entries.isNotEmpty)) ...[
               Padding(
@@ -400,7 +398,7 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ],
 
-            // Info card when not running and no log
+            // Info card
             if (!_isRunning && _actionLog.entries.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -414,8 +412,8 @@ class _RcpScreenState extends State<RcpScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Ratio 30:2 \u00b7 Comprimir fuerte (5-6 cm) '
-                            'y rapido \u00b7 Permitir reexpansion completa',
+                            '120 bpm \u00b7 Ratio 30:2 \u00b7 Comprimir fuerte '
+                            '(5-6 cm) \u00b7 Permitir reexpansion completa',
                             style: TextStyle(
                                 fontSize: 12, color: Colors.grey.shade600),
                           ),
@@ -437,7 +435,6 @@ class _RcpScreenState extends State<RcpScreen> {
 
   Widget _buildConfigSection() {
     if (_isRunning) {
-      // Compact inline controls while running
       return Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
         child: Wrap(
@@ -445,7 +442,6 @@ class _RcpScreenState extends State<RcpScreen> {
           runSpacing: 4,
           alignment: WrapAlignment.center,
           children: [
-            // Mode toggle
             ChoiceChip(
               label: const Text('SVB'),
               selected: _session.mode == RcpMode.svb,
@@ -468,22 +464,7 @@ class _RcpScreenState extends State<RcpScreen> {
               onSelected: (_) => _onModeChanged(RcpMode.sva),
               visualDensity: VisualDensity.compact,
             ),
-            const SizedBox(width: 4),
-            // BPM chips
-            for (final bpm in [100, 110, 120])
-              ChoiceChip(
-                label: Text('$bpm'),
-                selected: _session.bpm == bpm,
-                selectedColor: AppColors.primary,
-                labelStyle: TextStyle(
-                  color: _session.bpm == bpm ? Colors.white : null,
-                  fontSize: 12,
-                ),
-                onSelected: (_) => _onBpmChanged(bpm),
-                visualDensity: VisualDensity.compact,
-              ),
-            const SizedBox(width: 4),
-            // Ventilation chip
+            const SizedBox(width: 8),
             FilterChip(
               label: const Text('30:2'),
               selected: _session.ventilationEnabled,
@@ -496,10 +477,8 @@ class _RcpScreenState extends State<RcpScreen> {
       );
     }
 
-    // Full controls when stopped
     return Column(
       children: [
-        // Mode selector
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: SegmentedButton<RcpMode>(
@@ -511,39 +490,11 @@ class _RcpScreenState extends State<RcpScreen> {
             onSelectionChanged: (selected) => _onModeChanged(selected.first),
           ),
         ),
-
-        // BPM selector
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('BPM: ',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              for (final bpm in [100, 110, 120])
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ChoiceChip(
-                    label: Text('$bpm'),
-                    selected: _session.bpm == bpm,
-                    selectedColor: AppColors.soporteVital,
-                    labelStyle: TextStyle(
-                      color: _session.bpm == bpm ? Colors.white : null,
-                      fontWeight: _session.bpm == bpm ? FontWeight.bold : null,
-                    ),
-                    onSelected: (_) => _onBpmChanged(bpm),
-                  ),
-                ),
-            ],
-          ),
-        ),
-
-        // Ventilation toggle
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: SwitchListTile(
             title: const Text(
-              'Parada para ventilaciones',
+              'Parada para ventilaciones (30:2)',
               style: TextStyle(fontSize: 14),
             ),
             value: _session.ventilationEnabled,
