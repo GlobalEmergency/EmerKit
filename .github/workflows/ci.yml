@@ -23,13 +23,22 @@ jobs:
         run: |
           bash scripts/propagate-version.sh --check
 
-          PR_VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+          # Check if app code was changed (lib/, assets/, pubspec.yaml, pubspec.lock)
           git fetch origin ${{ github.base_ref }} --depth=1
+          APP_CHANGES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- lib/ assets/ pubspec.yaml pubspec.lock | head -1)
+
+          if [ -z "$APP_CHANGES" ]; then
+            echo "ℹ️ No app code changes detected — version bump not required"
+            exit 0
+          fi
+
+          PR_VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
           BASE_VERSION=$(git show origin/${{ github.base_ref }}:version.json 2>/dev/null | grep -o '"version": *"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "0.0.0")
 
           echo "Base: $BASE_VERSION -> PR: $PR_VERSION"
           if [ "$PR_VERSION" = "$BASE_VERSION" ]; then
             echo "❌ ERROR: version.json has not been bumped ($BASE_VERSION -> $PR_VERSION)"
+            echo "This PR changes app code. Please bump the version in version.json."
             exit 1
           else
             echo "✅ Version bumped: $BASE_VERSION -> $PR_VERSION"
