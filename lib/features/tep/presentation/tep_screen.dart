@@ -26,14 +26,20 @@ class _TepScreenState extends State<TepScreen> {
   List<bool?> get _values => [_appearance, _breathing, _circulation];
 
   void _setValue(int index, bool value) => setState(() {
-    if (index == 0) _appearance = value;
-    else if (index == 1) _breathing = value;
-    else _circulation = value;
-  });
+        if (index == 0) {
+          _appearance = value;
+        } else if (index == 1) {
+          _breathing = value;
+        } else {
+          _circulation = value;
+        }
+      });
 
   void _reset() => setState(() {
-    _appearance = null; _breathing = null; _circulation = null;
-  });
+        _appearance = null;
+        _breathing = null;
+        _circulation = null;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -74,20 +80,30 @@ class _TepScreenState extends State<TepScreen> {
                     Row(children: [
                       Icon(_icons[index], color: AppColors.primary),
                       const SizedBox(width: 8),
-                      Text(side.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(side.title,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                     ]),
                     const SizedBox(height: 4),
-                    Text(side.description, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(side.description,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey)),
                     const SizedBox(height: 12),
                     Row(children: [
-                      Expanded(child: _ToggleButton(
-                        label: 'Normal', isSelected: _values[index] == true,
-                        color: AppColors.severityMild, onTap: () => _setValue(index, true),
+                      Expanded(
+                          child: _ToggleButton(
+                        label: 'Normal',
+                        isSelected: _values[index] == true,
+                        color: AppColors.severityMild,
+                        onTap: () => _setValue(index, true),
                       )),
                       const SizedBox(width: 8),
-                      Expanded(child: _ToggleButton(
-                        label: 'Anormal', isSelected: _values[index] == false,
-                        color: AppColors.severitySevere, onTap: () => _setValue(index, false),
+                      Expanded(
+                          child: _ToggleButton(
+                        label: 'Anormal',
+                        isSelected: _values[index] == false,
+                        color: AppColors.severitySevere,
+                        onTap: () => _setValue(index, false),
                       )),
                     ]),
                   ],
@@ -108,9 +124,12 @@ class _TepScreenState extends State<TepScreen> {
 extension _SeverityColor on SeverityLevel {
   Color get color {
     switch (this) {
-      case SeverityLevel.mild: return AppColors.severityMild;
-      case SeverityLevel.moderate: return AppColors.severityModerate;
-      case SeverityLevel.severe: return AppColors.severitySevere;
+      case SeverityLevel.mild:
+        return AppColors.severityMild;
+      case SeverityLevel.moderate:
+        return AppColors.severityModerate;
+      case SeverityLevel.severe:
+        return AppColors.severitySevere;
     }
   }
 }
@@ -122,8 +141,10 @@ class _ToggleButton extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ToggleButton({
-    required this.label, required this.isSelected,
-    required this.color, required this.onTap,
+    required this.label,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
   });
 
   @override
@@ -136,9 +157,11 @@ class _ToggleButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(label, textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : Colors.black54)),
+          child: Text(label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : Colors.black54)),
         ),
       ),
     );

@@ -26,11 +26,13 @@ class ResultBanner extends StatelessWidget {
         children: [
           Text(
             value,
-            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(
+                fontSize: 40, fontWeight: FontWeight.bold, color: color),
           ),
           Text(
             label,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: color),
+            style: TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w600, color: color),
           ),
           if (subtitle != null)
             Padding(
@@ -38,7 +40,8 @@ class ResultBanner extends StatelessWidget {
               child: Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: color.withValues(alpha: 0.7)),
+                style: TextStyle(
+                    fontSize: 12, color: color.withValues(alpha: 0.7)),
               ),
             ),
         ],

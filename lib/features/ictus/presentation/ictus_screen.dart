@@ -100,9 +100,12 @@ class _IctusScreenState extends State<IctusScreen> {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               child: Row(
                 children: [
-                  const Icon(Icons.menu_book, color: AppColors.primary, size: 22),
+                  const Icon(Icons.menu_book,
+                      color: AppColors.primary, size: 22),
                   const SizedBox(width: 8),
-                  const Text('Ictus', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text('Ictus',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close, size: 20),
@@ -174,7 +177,8 @@ class _IctusScreenState extends State<IctusScreen> {
           children: [
             const Text('Escala Cincinnati',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            IconButton(icon: const Icon(Icons.refresh), onPressed: _resetCincinnati),
+            IconButton(
+                icon: const Icon(Icons.refresh), onPressed: _resetCincinnati),
           ],
         ),
         const SizedBox(height: 8),
@@ -210,7 +214,9 @@ class _IctusScreenState extends State<IctusScreen> {
         const SizedBox(height: 16),
         if (result != null)
           Card(
-            color: (result.suspectedStroke ? AppColors.severitySevere : AppColors.severityMild)
+            color: (result.suspectedStroke
+                    ? AppColors.severitySevere
+                    : AppColors.severityMild)
                 .withValues(alpha: 0.15),
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -225,7 +231,9 @@ class _IctusScreenState extends State<IctusScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    result.suspectedStroke ? 'SOSPECHA DE ICTUS' : 'SIN SOSPECHA',
+                    result.suspectedStroke
+                        ? 'SOSPECHA DE ICTUS'
+                        : 'SIN SOSPECHA',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -271,11 +279,13 @@ class _IctusScreenState extends State<IctusScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ]),
             const SizedBox(height: 4),
-            Text(instruction, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(instruction,
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
             const SizedBox(height: 12),
             Row(children: [
               Expanded(
@@ -316,7 +326,9 @@ class _IctusScreenState extends State<IctusScreen> {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.1),
+          color: selected
+              ? color.withValues(alpha: 0.2)
+              : Colors.grey.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: selected ? color : Colors.grey.shade300,
@@ -326,8 +338,12 @@ class _IctusScreenState extends State<IctusScreen> {
         child: Column(
           children: [
             Text(label,
-                style: TextStyle(fontWeight: FontWeight.bold, color: selected ? color : Colors.grey)),
-            Text(description, style: const TextStyle(fontSize: 10), textAlign: TextAlign.center),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: selected ? color : Colors.grey)),
+            Text(description,
+                style: const TextStyle(fontSize: 10),
+                textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -346,7 +362,8 @@ class _IctusScreenState extends State<IctusScreen> {
               child: Text('Madrid-DIRECT',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
-            IconButton(icon: const Icon(Icons.refresh), onPressed: _resetMadridDirect),
+            IconButton(
+                icon: const Icon(Icons.refresh), onPressed: _resetMadridDirect),
           ],
         ),
         const Text(
@@ -420,12 +437,14 @@ class _IctusScreenState extends State<IctusScreen> {
                   children: [
                     const Icon(Icons.speed, color: Colors.orange),
                     const SizedBox(width: 8),
-                    Text('TAS: $_tas mmHg', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('TAS: $_tas mmHg',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     const Spacer(),
                     if (_tas >= 180)
                       Text(
                         '-${((_tas - 180) ~/ 10) + 1} pts',
-                        style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            color: Colors.orange, fontWeight: FontWeight.bold),
                       ),
                   ],
                 ),
@@ -454,12 +473,14 @@ class _IctusScreenState extends State<IctusScreen> {
                   children: [
                     const Icon(Icons.cake, color: Colors.purple),
                     const SizedBox(width: 8),
-                    Text('Edad: $_age años', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('Edad: $_age años',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     const Spacer(),
                     if (_age >= 85)
                       Text(
                         '-${_age - 84} pts',
-                        style: const TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            color: Colors.purple, fontWeight: FontWeight.bold),
                       ),
                   ],
                 ),
@@ -480,7 +501,9 @@ class _IctusScreenState extends State<IctusScreen> {
         const SizedBox(height: 12),
         // Result
         Card(
-          color: (result.requiresThrombectomy ? AppColors.severitySevere : AppColors.severityMild)
+          color: (result.requiresThrombectomy
+                  ? AppColors.severitySevere
+                  : AppColors.severityMild)
               .withValues(alpha: 0.15),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -550,11 +573,13 @@ class _IctusScreenState extends State<IctusScreen> {
     return Card(
       margin: const EdgeInsets.only(bottom: 6),
       child: SwitchListTile(
-        secondary: Icon(icon, color: value ? AppColors.severitySevere : Colors.grey),
-        title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        secondary:
+            Icon(icon, color: value ? AppColors.severitySevere : Colors.grey),
+        title: Text(title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         subtitle: Text(description, style: const TextStyle(fontSize: 11)),
         value: value,
-        activeColor: AppColors.severitySevere,
+        activeThumbColor: AppColors.severitySevere,
         onChanged: (v) => onChanged(v),
       ),
     );

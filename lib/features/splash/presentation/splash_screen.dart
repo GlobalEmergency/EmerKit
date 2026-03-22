@@ -9,7 +9,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeIn;
   late Animation<double> _scaleIn;
@@ -22,10 +23,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       duration: const Duration(milliseconds: 1500),
     );
     _fadeIn = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0, 0.6, curve: Curves.easeOut)),
     );
     _scaleIn = Tween<double>(begin: 0.8, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.easeOutBack)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0, 0.6, curve: Curves.easeOutBack)),
     );
     _controller.forward();
 
@@ -108,9 +113,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.accent.withValues(alpha: 0.5)),
+                      border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.5)),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
@@ -138,13 +145,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     children: [
                       Text(
                         'Desarrollado por',
-                        style: TextStyle(fontSize: 11, color: Colors.white.withValues(alpha: 0.4)),
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white.withValues(alpha: 0.4)),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.public, size: 16, color: AppColors.accent.withValues(alpha: 0.8)),
+                          Icon(Icons.public,
+                              size: 16,
+                              color: AppColors.accent.withValues(alpha: 0.8)),
                           const SizedBox(width: 6),
                           Text(
                             'Global Emergency',

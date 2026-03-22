@@ -32,10 +32,14 @@ class ToolScreenBase extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.menu_book_outlined),
             tooltip: 'Info',
-            onPressed: () => showInfoSheet(context, title: title, child: infoBody),
+            onPressed: () =>
+                showInfoSheet(context, title: title, child: infoBody),
           ),
           if (onReset != null)
-            IconButton(icon: const Icon(Icons.refresh), tooltip: 'Reiniciar', onPressed: onReset),
+            IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Reiniciar',
+                onPressed: onReset),
         ],
       ),
       body: SafeArea(

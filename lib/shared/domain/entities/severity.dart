@@ -8,7 +8,8 @@ class Severity {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Severity && label == other.label && level == other.level;
+      identical(this, other) ||
+      other is Severity && label == other.label && level == other.level;
 
   @override
   int get hashCode => label.hashCode ^ level.hashCode;

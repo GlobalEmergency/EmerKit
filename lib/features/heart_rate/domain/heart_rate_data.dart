@@ -4,15 +4,12 @@ class HeartRateData {
   HeartRateData._();
 
   static const Map<String, String> infoSections = {
-    'Como funciona':
-        'Toca la pantalla cada vez que sientas una pulsacion. '
+    'Como funciona': 'Toca la pantalla cada vez que sientas una pulsacion. '
         'La app calcula los lpm basandose en el intervalo entre toques.',
-    'Valores normales (adulto)':
-        'Bradicardia: < 60 lpm\n'
+    'Valores normales (adulto)': 'Bradicardia: < 60 lpm\n'
         'Normal: 60-100 lpm\n'
         'Taquicardia: > 100 lpm',
-    'Puntos de palpacion':
-        'Radial: cara anterior muneca\n'
+    'Puntos de palpacion': 'Radial: cara anterior muneca\n'
         'Carotideo: lateral del cuello\n'
         'Femoral: ingle\n'
         'Pedial: dorso del pie',

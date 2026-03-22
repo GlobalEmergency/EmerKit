@@ -9,13 +9,12 @@ class AppTheme {
     brightness: Brightness.light,
     colorSchemeSeed: AppColors.primary,
     scaffoldBackgroundColor: AppColors.surfaceLight,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
       backgroundColor: AppColors.primaryDark,
       foregroundColor: Colors.white,
-      titleTextStyle: const TextStyle(
-        
+      titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,
@@ -44,12 +43,11 @@ class AppTheme {
     brightness: Brightness.dark,
     colorSchemeSeed: AppColors.primary,
     scaffoldBackgroundColor: AppColors.surfaceDark,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
       backgroundColor: AppColors.primaryDark,
-      titleTextStyle: const TextStyle(
-        
+      titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,

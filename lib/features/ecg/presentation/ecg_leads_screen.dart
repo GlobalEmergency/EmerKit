@@ -21,10 +21,10 @@ class EcgLeadsScreen extends StatelessWidget {
                 buildInfoCard(
                   'Errores comunes',
                   '- Inversión de electrodos de miembros: genera trazados confusos.\n'
-                  '- Colocación de V1-V2 demasiado altas: simula patología (patrón Brugada).\n'
-                  '- Electrodos sobre hueso o músculo: artefactos y bajo voltaje.\n'
-                  '- Piel húmeda o vellosa: mala adherencia y artefactos.\n'
-                  '- Cables mal conectados: derivaciones intercambiadas.',
+                      '- Colocación de V1-V2 demasiado altas: simula patología (patrón Brugada).\n'
+                      '- Electrodos sobre hueso o músculo: artefactos y bajo voltaje.\n'
+                      '- Piel húmeda o vellosa: mala adherencia y artefactos.\n'
+                      '- Cables mal conectados: derivaciones intercambiadas.',
                 ),
                 buildInfoCard(
                   'Sistema Europeo (IEC) vs Americano (AHA)',
@@ -74,12 +74,19 @@ class EcgLeadsScreen extends StatelessWidget {
         ]),
         const SizedBox(height: 16),
         _buildSection('ECG 12 derivaciones - Precordiales', [
-          _lead('V1 (Rojo)', '4º espacio intercostal, borde esternal derecho', Colors.red),
-          _lead('V2 (Amarillo)', '4º espacio intercostal, borde esternal izquierdo', Colors.amber),
+          _lead('V1 (Rojo)', '4º espacio intercostal, borde esternal derecho',
+              Colors.red),
+          _lead('V2 (Amarillo)',
+              '4º espacio intercostal, borde esternal izquierdo', Colors.amber),
           _lead('V3 (Verde)', 'Entre V2 y V4', Colors.green),
-          _lead('V4 (Marrón)', '5º espacio intercostal, línea medioclavicular izq.', Colors.brown),
-          _lead('V5 (Negro)', 'Mismo nivel V4, línea axilar anterior', Colors.black),
-          _lead('V6 (Violeta)', 'Mismo nivel V4-V5, línea axilar media', Colors.purple),
+          _lead(
+              'V4 (Marrón)',
+              '5º espacio intercostal, línea medioclavicular izq.',
+              Colors.brown),
+          _lead('V5 (Negro)', 'Mismo nivel V4, línea axilar anterior',
+              Colors.black),
+          _lead('V6 (Violeta)', 'Mismo nivel V4-V5, línea axilar media',
+              Colors.purple),
         ]),
         const SizedBox(height: 16),
         _buildSection('Derivaciones posteriores', [
@@ -127,7 +134,9 @@ class EcgLeadsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             const Divider(),
             ...children,
           ],

@@ -20,7 +20,8 @@ class _NihssScreenState extends State<NihssScreen> {
 
   NihssResult get _result => _calculator.calculate(_scores);
 
-  void _reset() => setState(() => _scores = List.filled(NihssData.items.length, 0));
+  void _reset() =>
+      setState(() => _scores = List.filled(NihssData.items.length, 0));
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +42,36 @@ class _NihssScreenState extends State<NihssScreen> {
           return Card(
             margin: const EdgeInsets.only(bottom: 4),
             child: ExpansionTile(
-              title: Text(item.name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              title: Text(item.name,
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
               trailing: CircleAvatar(
                 radius: 14,
-                backgroundColor: _scores[index] > 0 ? AppColors.severitySevere : AppColors.severityMild,
-                child: Text('${_scores[index]}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                backgroundColor: _scores[index] > 0
+                    ? AppColors.severitySevere
+                    : AppColors.severityMild,
+                child: Text('${_scores[index]}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold)),
               ),
-              children: List.generate(item.options.length, (optIndex) {
-                return RadioListTile<int>(
-                  title: Text(item.options[optIndex].label, style: const TextStyle(fontSize: 12)),
-                  value: item.options[optIndex].score,
+              children: [
+                RadioGroup<int>(
                   groupValue: _scores[index],
-                  dense: true,
                   onChanged: (v) => setState(() => _scores[index] = v!),
-                );
-              }),
+                  child: Column(
+                    children: List.generate(item.options.length, (optIndex) {
+                      return RadioListTile<int>(
+                        title: Text(item.options[optIndex].label,
+                            style: const TextStyle(fontSize: 12)),
+                        value: item.options[optIndex].score,
+                        dense: true,
+                      );
+                    }),
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -71,9 +87,12 @@ class _NihssScreenState extends State<NihssScreen> {
 extension _SeverityColor on SeverityLevel {
   Color get color {
     switch (this) {
-      case SeverityLevel.mild: return AppColors.severityMild;
-      case SeverityLevel.moderate: return AppColors.severityModerate;
-      case SeverityLevel.severe: return AppColors.severitySevere;
+      case SeverityLevel.mild:
+        return AppColors.severityMild;
+      case SeverityLevel.moderate:
+        return AppColors.severityModerate;
+      case SeverityLevel.severe:
+        return AppColors.severitySevere;
     }
   }
 }

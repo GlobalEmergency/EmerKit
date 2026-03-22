@@ -8,7 +8,9 @@ void main() {
   group('Paciente estable (todos normales)', () {
     test('3 lados normales = ESTABLE', () {
       final r = calculator.calculate(
-        appearance: true, breathing: true, circulation: true,
+        appearance: true,
+        breathing: true,
+        circulation: true,
       );
       expect(r.diagnosis, 'ESTABLE');
       expect(r.abnormalCount, 0);
@@ -19,7 +21,9 @@ void main() {
   group('Un lado alterado', () {
     test('solo apariencia anormal = DISFUNCION DEL SNC', () {
       final r = calculator.calculate(
-        appearance: false, breathing: true, circulation: true,
+        appearance: false,
+        breathing: true,
+        circulation: true,
       );
       expect(r.diagnosis, 'DISFUNCION DEL SNC');
       expect(r.abnormalCount, 1);
@@ -28,7 +32,9 @@ void main() {
 
     test('solo respiracion anormal = DIFICULTAD RESPIRATORIA', () {
       final r = calculator.calculate(
-        appearance: true, breathing: false, circulation: true,
+        appearance: true,
+        breathing: false,
+        circulation: true,
       );
       expect(r.diagnosis, 'DIFICULTAD RESPIRATORIA');
       expect(r.abnormalCount, 1);
@@ -36,7 +42,9 @@ void main() {
 
     test('solo circulacion anormal = SHOCK COMPENSADO', () {
       final r = calculator.calculate(
-        appearance: true, breathing: true, circulation: false,
+        appearance: true,
+        breathing: true,
+        circulation: false,
       );
       expect(r.diagnosis, 'SHOCK COMPENSADO');
       expect(r.abnormalCount, 1);
@@ -46,7 +54,9 @@ void main() {
   group('Dos lados alterados', () {
     test('apariencia + respiracion = FALLO RESPIRATORIO', () {
       final r = calculator.calculate(
-        appearance: false, breathing: false, circulation: true,
+        appearance: false,
+        breathing: false,
+        circulation: true,
       );
       expect(r.diagnosis, 'FALLO RESPIRATORIO');
       expect(r.abnormalCount, 2);
@@ -55,7 +65,9 @@ void main() {
 
     test('apariencia + circulacion = SHOCK DESCOMPENSADO', () {
       final r = calculator.calculate(
-        appearance: false, breathing: true, circulation: false,
+        appearance: false,
+        breathing: true,
+        circulation: false,
       );
       expect(r.diagnosis, 'SHOCK DESCOMPENSADO');
       expect(r.abnormalCount, 2);
@@ -63,7 +75,9 @@ void main() {
 
     test('respiracion + circulacion = FALLO CARDIORRESPIRATORIO', () {
       final r = calculator.calculate(
-        appearance: true, breathing: false, circulation: false,
+        appearance: true,
+        breathing: false,
+        circulation: false,
       );
       expect(r.diagnosis, 'FALLO CARDIORRESPIRATORIO');
       expect(r.abnormalCount, 2);
@@ -73,7 +87,9 @@ void main() {
   group('Parada cardiorrespiratoria (todos anormales)', () {
     test('3 lados anormales = PARADA CARDIORRESPIRATORIA', () {
       final r = calculator.calculate(
-        appearance: false, breathing: false, circulation: false,
+        appearance: false,
+        breathing: false,
+        circulation: false,
       );
       expect(r.diagnosis, 'PARADA CARDIORRESPIRATORIA');
       expect(r.abnormalCount, 3);

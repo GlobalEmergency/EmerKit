@@ -9,7 +9,8 @@ class FeedbackScreen extends StatelessWidget {
   // TODO: Reemplazar con tu Google Form real cuando lo crees
   static const _googleFormUrl = 'https://forms.gle/PLACEHOLDER';
   static const _emailAddress = 'info@globalemergency.online';
-  static const _githubIssuesUrl = 'https://github.com/GlobalEmergency/NavajaSuizaSanitaria/issues';
+  static const _githubIssuesUrl =
+      'https://github.com/GlobalEmergency/NavajaSuizaSanitaria/issues';
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,8 @@ class FeedbackScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           children: [
             const SizedBox(height: 8),
-            const Icon(Icons.lightbulb_outline, size: 48, color: AppColors.accent),
+            const Icon(Icons.lightbulb_outline,
+                size: 48, color: AppColors.accent),
             const SizedBox(height: 12),
             const Text(
               '¿Echas en falta alguna herramienta?',
@@ -32,7 +34,8 @@ class FeedbackScreen extends StatelessWidget {
             Text(
               'Ayúdanos a mejorar. Puedes solicitar nuevas calculadoras, escalas, protocolos o cualquier funcionalidad que te sea útil en tu trabajo.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+              style: TextStyle(
+                  fontSize: 14, color: Colors.grey.shade600, height: 1.4),
             ),
             const SizedBox(height: 28),
 
@@ -65,7 +68,8 @@ class FeedbackScreen extends StatelessWidget {
               icon: Icons.code,
               color: const Color(0xFF333333),
               title: 'GitHub Issues',
-              subtitle: 'Si tienes cuenta de GitHub, abre un issue directamente.',
+              subtitle:
+                  'Si tienes cuenta de GitHub, abre un issue directamente.',
               buttonText: 'Abrir en GitHub',
               onTap: () => _launch(_githubIssuesUrl),
             ),
@@ -124,13 +128,18 @@ class FeedbackScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(title,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
-                    Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                    Text(subtitle,
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.grey.shade600)),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
+              Icon(Icons.arrow_forward_ios,
+                  size: 16, color: Colors.grey.shade400),
             ],
           ),
         ),

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// Call [buildInfoAction] to get an IconButton for AppBar actions.
 /// Call [showScreenInfo] to open the modal bottom sheet directly.
 
-IconButton buildInfoAction(BuildContext context, String title, List<Widget> children) {
+IconButton buildInfoAction(
+    BuildContext context, String title, List<Widget> children) {
   return IconButton(
     icon: const Icon(Icons.menu_book_outlined),
     tooltip: 'Información',
@@ -48,7 +49,8 @@ void showScreenInfo(BuildContext context, String title, List<Widget> children) {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 IconButton(
@@ -84,7 +86,9 @@ Widget buildInfoCard(String title, String body) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(body, style: const TextStyle(fontSize: 13, height: 1.5)),
         ],
@@ -106,7 +110,8 @@ Widget buildReferencesCard(List<String> references) {
             children: [
               Icon(Icons.library_books, size: 18, color: Colors.grey),
               SizedBox(width: 8),
-              Text('Referencias', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              Text('Referencias',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 8),
@@ -120,7 +125,10 @@ Widget buildReferencesCard(List<String> references) {
                   Expanded(
                     child: Text(
                       ref,
-                      style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, height: 1.4),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          height: 1.4),
                     ),
                   ),
                 ],

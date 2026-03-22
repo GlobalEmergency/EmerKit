@@ -66,22 +66,20 @@ class LundBrowderData {
   ];
 
   static const Map<String, String> infoSections = {
-    'Que es':
-        'La tabla de Lund-Browder es el metodo mas preciso para estimar la superficie corporal '
+    'Que es': 'La tabla de Lund-Browder es el metodo mas preciso para estimar la superficie corporal '
         'quemada (SCQ). A diferencia de la regla de los 9 de Wallace, tiene en cuenta las '
         'variaciones de proporciones corporales segun la edad del paciente, siendo especialmente '
         'importante en pediatria.',
     'Como funciona':
         'Selecciona el grupo de edad del paciente y marca cada zona corporal afectada con '
-        'el grado de quemadura correspondiente:\n\n'
-        '0 - Sin quemadura\n'
-        '1 - Superficial (epidermica): Eritema, dolor, sin ampollas\n'
-        '2 - Espesor parcial (dermica): Ampollas, dolor intenso, exudado\n'
-        '3 - Espesor total (subdermica): Escara, indolora, aspecto acartonado\n\n'
-        'El porcentaje de cada zona varia segun la edad, reflejando las diferencias '
-        'anatomicas reales del paciente.',
-    'Clasificacion de gravedad':
-        '< 15% SCQ: Quemadura menor\n'
+            'el grado de quemadura correspondiente:\n\n'
+            '0 - Sin quemadura\n'
+            '1 - Superficial (epidermica): Eritema, dolor, sin ampollas\n'
+            '2 - Espesor parcial (dermica): Ampollas, dolor intenso, exudado\n'
+            '3 - Espesor total (subdermica): Escara, indolora, aspecto acartonado\n\n'
+            'El porcentaje de cada zona varia segun la edad, reflejando las diferencias '
+            'anatomicas reales del paciente.',
+    'Clasificacion de gravedad': '< 15% SCQ: Quemadura menor\n'
         '15-29% SCQ: Quemadura moderada\n'
         '>= 30% SCQ: Gran quemado (criterio de traslado a unidad de quemados)\n\n'
         'Otros criterios de gravedad independientes del porcentaje:\n'

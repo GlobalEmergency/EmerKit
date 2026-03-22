@@ -107,7 +107,7 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HipertermiaData.infoSections,
         references: HipertermiaData.references,
       ),
@@ -128,17 +128,14 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(title,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: color)),
+                      fontWeight: FontWeight.bold, fontSize: 16, color: color)),
             ),
             const SizedBox(height: 12),
             const Text('Sintomas:',
@@ -150,8 +147,7 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                     children: [
                       const Text('\u2022 '),
                       Expanded(
-                          child:
-                              Text(s, style: const TextStyle(fontSize: 13))),
+                          child: Text(s, style: const TextStyle(fontSize: 13))),
                     ],
                   ),
                 )),
@@ -165,8 +161,7 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                     children: [
                       const Text('\u2022 '),
                       Expanded(
-                          child:
-                              Text(t, style: const TextStyle(fontSize: 13))),
+                          child: Text(t, style: const TextStyle(fontSize: 13))),
                     ],
                   ),
                 )),

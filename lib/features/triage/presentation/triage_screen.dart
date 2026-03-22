@@ -14,7 +14,7 @@ class TriageScreen extends StatefulWidget {
 }
 
 class _TriageScreenState extends State<TriageScreen> {
-  static final _engine = TriageEngine(nodes: TriageData.triageNodes);
+  static const _engine = TriageEngine(nodes: TriageData.triageNodes);
 
   String _currentNodeId = TriageData.startNodeId;
   final List<String> _history = [];
@@ -61,10 +61,8 @@ class _TriageScreenState extends State<TriageScreen> {
               color: _colorForTriageColor(result.color),
             )
           : null,
-      toolBody: result != null
-          ? _buildResult(result)
-          : _buildQuestion(),
-      infoBody: ToolInfoPanel(
+      toolBody: result != null ? _buildResult(result) : _buildQuestion(),
+      infoBody: const ToolInfoPanel(
         sections: TriageData.infoSections,
         references: TriageData.references,
       ),
@@ -84,7 +82,8 @@ class _TriageScreenState extends State<TriageScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, color: AppColors.severityModerate),
+                    const Icon(Icons.info_outline,
+                        color: AppColors.severityModerate),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -110,9 +109,11 @@ class _TriageScreenState extends State<TriageScreen> {
                 child: SizedBox(
                   height: 60,
                   child: FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: AppColors.severityMild),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.severityMild),
                     onPressed: () => _answer(true),
-                    child: const Text('SI', style: TextStyle(fontSize: 20, color: Colors.white)),
+                    child: const Text('SI',
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
                   ),
                 ),
               ),
@@ -121,9 +122,11 @@ class _TriageScreenState extends State<TriageScreen> {
                 child: SizedBox(
                   height: 60,
                   child: FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: AppColors.severitySevere),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.severitySevere),
                     onPressed: () => _answer(false),
-                    child: const Text('NO', style: TextStyle(fontSize: 20, color: Colors.white)),
+                    child: const Text('NO',
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
                   ),
                 ),
               ),
@@ -179,7 +182,9 @@ class _TriageScreenState extends State<TriageScreen> {
               child: Icon(
                 result.color == TriageColor.black ? Icons.close : Icons.check,
                 size: 60,
-                color: result.color == TriageColor.yellow ? Colors.black : Colors.white,
+                color: result.color == TriageColor.yellow
+                    ? Colors.black
+                    : Colors.white,
               ),
             ),
             const SizedBox(height: 24),

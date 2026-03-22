@@ -21,7 +21,8 @@ class ToolInfoPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...sections.entries.map((e) => InfoCard(title: e.key, content: e.value)),
+          ...sections.entries
+              .map((e) => InfoCard(title: e.key, content: e.value)),
           if (references.isNotEmpty)
             InfoCard(
               title: 'Referencias',

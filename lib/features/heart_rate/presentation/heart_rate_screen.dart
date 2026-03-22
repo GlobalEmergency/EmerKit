@@ -91,8 +91,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
                 _isRunning ? 'Toca con cada latido' : 'Toca para empezar',
                 style: TextStyle(
                     fontSize: 18,
-                    color:
-                        _isRunning ? AppColors.soporteVital : Colors.grey),
+                    color: _isRunning ? AppColors.soporteVital : Colors.grey),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -104,7 +103,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
           ),
         ),
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HeartRateData.infoSections,
         references: HeartRateData.references,
       ),

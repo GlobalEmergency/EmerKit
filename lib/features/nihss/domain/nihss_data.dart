@@ -115,11 +115,10 @@ class NihssData {
   static const infoSections = <String, String>{
     '¿Qué es?':
         'La National Institutes of Health Stroke Scale (NIHSS) es una escala '
-        'de valoracion neurologica estandarizada que cuantifica la gravedad '
-        'del ictus. Evalua 11 dominios neurologicos con una puntuacion '
-        'total de 0 a 42 puntos.',
-    'Interpretacion':
-        '0: Sin deficit neurologico\n'
+            'de valoracion neurologica estandarizada que cuantifica la gravedad '
+            'del ictus. Evalua 11 dominios neurologicos con una puntuacion '
+            'total de 0 a 42 puntos.',
+    'Interpretacion': '0: Sin deficit neurologico\n'
         '1-4: Deficit menor\n'
         '5-15: Deficit moderado\n'
         '16-20: Deficit moderado-grave\n'
@@ -128,12 +127,11 @@ class NihssData {
         'con fibrinolisis intravenosa (en ventana terapeutica).',
     'Cuando aplicarla':
         'Valoracion inicial del paciente con sospecha de ictus.\n'
-        'Seguimiento evolutivo del paciente con ictus.\n'
-        'Criterio de inclusion/exclusion para tratamiento fibrinolitico.\n'
-        'Comunicacion estandarizada entre profesionales.\n'
-        'Prediccion pronostica funcional.',
-    'Limitaciones':
-        'Infravalora ictus de circulacion posterior.\n'
+            'Seguimiento evolutivo del paciente con ictus.\n'
+            'Criterio de inclusion/exclusion para tratamiento fibrinolitico.\n'
+            'Comunicacion estandarizada entre profesionales.\n'
+            'Prediccion pronostica funcional.',
+    'Limitaciones': 'Infravalora ictus de circulacion posterior.\n'
         'Mayor peso del hemisferio izquierdo (lenguaje).\n'
         'No sustituye la exploracion neurologica completa.\n'
         'Variabilidad interobservador en algunos items.',

@@ -86,18 +86,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   fillColor: Theme.of(context).brightness == Brightness.dark
                       ? Colors.white.withValues(alpha: 0.08)
                       : Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+                    borderSide:
+                        BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+                    borderSide:
+                        const BorderSide(color: AppColors.accent, width: 1.5),
                   ),
                 ),
               ),
@@ -109,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off, size: 48, color: Colors.grey.shade400),
+                          Icon(Icons.search_off,
+                              size: 48, color: Colors.grey.shade400),
                           const SizedBox(height: 8),
                           Text('No se encontraron herramientas',
                               style: TextStyle(color: Colors.grey.shade500)),
@@ -121,17 +125,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, sectionIndex) {
                         final category = categories[sectionIndex];
                         final tools = groups[category]!;
-                        final color = _categoryColors[category] ?? AppColors.primary;
+                        final color =
+                            _categoryColors[category] ?? AppColors.primary;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SectionHeader(title: category.label, color: color),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
                                   childAspectRatio: 0.9,
                                   crossAxisSpacing: 8,
@@ -146,8 +153,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: color,
                                     isExternal: tool.isExternal,
                                     onTap: () {
-                                      if (tool.isExternal && tool.externalPackage != null) {
-                                        ExternalAppLauncher.launchOrStore(packageName: tool.externalPackage!);
+                                      if (tool.isExternal &&
+                                          tool.externalPackage != null) {
+                                        ExternalAppLauncher.launchOrStore(
+                                            packageName: tool.externalPackage!);
                                       } else {
                                         context.push(tool.route);
                                       }

@@ -12,8 +12,7 @@ class TepData {
   static const sides = [
     TepSide(
       title: 'Apariencia',
-      description:
-          'Tono, interaccion, consolabilidad, mirada, habla/llanto',
+      description: 'Tono, interaccion, consolabilidad, mirada, habla/llanto',
     ),
     TepSide(
       title: 'Trabajo respiratorio',
@@ -27,21 +26,19 @@ class TepData {
   ];
 
   static const infoSections = <String, String>{
-    '¿Qué es?':
-        'El Triangulo de Evaluacion Pediatrica (TEP) es una herramienta de valoracion '
+    '¿Qué es?': 'El Triangulo de Evaluacion Pediatrica (TEP) es una herramienta de valoracion '
         'inicial rapida del paciente pediatrico. Permite identificar en segundos el tipo '
         'y gravedad de la situacion clinica mediante la observacion visual y auditiva, '
         'sin necesidad de tocar al paciente.',
     'Lados del triangulo':
         'Apariencia: Valora la funcion del SNC. Se evalua tono muscular, interactividad, '
-        'consolabilidad, mirada y habla/llanto. Es el indicador mas importante de gravedad.\n\n'
-        'Trabajo respiratorio: Valora la funcion respiratoria. Se buscan sonidos anormales '
-        '(estridor, quejido, sibilancias), posicion anormal (tripode, olfateo), retracciones '
-        'y aleteo nasal.\n\n'
-        'Circulacion cutanea: Valora la funcion circulatoria. Se observa palidez, cianosis '
-        'o cutis reticular (moteado) como signos de mala perfusion.',
-    'Interpretacion':
-        'Estable: Los 3 lados normales.\n\n'
+            'consolabilidad, mirada y habla/llanto. Es el indicador mas importante de gravedad.\n\n'
+            'Trabajo respiratorio: Valora la funcion respiratoria. Se buscan sonidos anormales '
+            '(estridor, quejido, sibilancias), posicion anormal (tripode, olfateo), retracciones '
+            'y aleteo nasal.\n\n'
+            'Circulacion cutanea: Valora la funcion circulatoria. Se observa palidez, cianosis '
+            'o cutis reticular (moteado) como signos de mala perfusion.',
+    'Interpretacion': 'Estable: Los 3 lados normales.\n\n'
         'Disfuncion del SNC: Solo apariencia alterada.\n'
         'Dificultad respiratoria: Solo trabajo respiratorio alterado.\n'
         'Shock compensado: Solo circulacion alterada.\n\n'

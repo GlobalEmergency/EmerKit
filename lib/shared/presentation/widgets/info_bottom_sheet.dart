@@ -38,9 +38,12 @@ void showInfoSheet(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
             child: Row(
               children: [
-                Icon(Icons.menu_book, color: Theme.of(context).colorScheme.primary, size: 22),
+                Icon(Icons.menu_book,
+                    color: Theme.of(context).colorScheme.primary, size: 22),
                 const SizedBox(width: 8),
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.close, size: 20),

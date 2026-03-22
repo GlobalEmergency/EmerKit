@@ -60,8 +60,7 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
           // Temperature slider
           Card(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,7 +99,7 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HipotermiaData.infoSections,
         references: HipotermiaData.references,
       ),
@@ -121,8 +120,7 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
@@ -141,11 +139,9 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('\u2022 ',
-                          style: TextStyle(fontSize: 14)),
+                      const Text('\u2022 ', style: TextStyle(fontSize: 14)),
                       Expanded(
-                          child:
-                              Text(s, style: const TextStyle(fontSize: 13))),
+                          child: Text(s, style: const TextStyle(fontSize: 13))),
                     ],
                   ),
                 )),
@@ -157,11 +153,9 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('\u2022 ',
-                          style: TextStyle(fontSize: 14)),
+                      const Text('\u2022 ', style: TextStyle(fontSize: 14)),
                       Expanded(
-                          child:
-                              Text(t, style: const TextStyle(fontSize: 13))),
+                          child: Text(t, style: const TextStyle(fontSize: 13))),
                     ],
                   ),
                 )),
