@@ -45,7 +45,7 @@ jobs:
           fi
 
       # Setup
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         if: github.event_name == 'push'
         with:
           distribution: temurin
