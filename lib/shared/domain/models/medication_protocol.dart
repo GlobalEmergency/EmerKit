@@ -31,15 +31,10 @@ class MedicationTracker {
       ? DateTime.now().difference(_lastAdministered!)
       : null;
 
-  bool get isAlertDue {
-    if (isMaxReached) return false;
-    if (_lastAdministered == null) return true;
-    return timeSinceLastDose! >= medication.interval;
-  }
-
   /// Returns 0.0 (just given) to 1.0+ (overdue).
   double get urgencyRatio {
     if (_lastAdministered == null) return 1.0;
+    if (medication.interval.inSeconds == 0) return 0.0;
     return timeSinceLastDose!.inSeconds / medication.interval.inSeconds;
   }
 

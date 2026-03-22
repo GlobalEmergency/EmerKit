@@ -39,9 +39,6 @@ class _RcpScreenState extends State<RcpScreen> {
   int _elapsedSeconds = 0;
   bool _twoMinAlertPending = false; // Visual alert banner
 
-  // Track completed actions for visual check marks
-  final Set<String> _completedActions = {};
-
   // Fixed BPM per ERC 2025
   static const _bpm = 120;
   static final _beatInterval = Duration(milliseconds: (60000 / _bpm).round());
@@ -526,7 +523,6 @@ class _RcpScreenState extends State<RcpScreen> {
 
   void _logQuickAction(String id, String logText) {
     _actionCounts[id] = (_actionCounts[id] ?? 0) + 1;
-    _completedActions.add(id);
     _actionLog.add(logText, 'evento');
     HapticFeedback.lightImpact();
     setState(() {});
@@ -539,7 +535,7 @@ class _RcpScreenState extends State<RcpScreen> {
   }
 
   int _countOf(String id) => _actionCounts[id] ?? 0;
-  bool _isDone(String id) => _completedActions.contains(id);
+  bool _isDone(String id) => (_actionCounts[id] ?? 0) > 0;
 
   Widget _actionTile({
     required String id,
@@ -897,139 +893,142 @@ class _RcpScreenState extends State<RcpScreen> {
   void _showRhythmAnalysis() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (ctx) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Ritmo identificado',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Analisis #${_countOf('rhythm') + 1}',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'DESFIBRILABLE',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Ritmo identificado',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'FV',
-                      subtitle: 'Fibrilacion ventricular',
-                      color: Colors.red,
-                      icon: Icons.show_chart,
-                      shockable: true,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'TVSP',
-                      subtitle: 'Taquicardia ventricular sin pulso',
-                      color: Colors.red,
-                      icon: Icons.timeline,
-                      shockable: true,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'NO DESFIBRILABLE',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                const SizedBox(height: 4),
+                Text(
+                  'Analisis #${_countOf('rhythm') + 1}',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'Asistolia',
-                      subtitle: 'Linea plana',
-                      color: Colors.blue,
-                      icon: Icons.horizontal_rule,
-                      shockable: false,
-                    ),
+                const SizedBox(height: 12),
+                const Text(
+                  'DESFIBRILABLE',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'AESP',
-                      subtitle: 'Actividad electrica sin pulso',
-                      color: Colors.blue,
-                      icon: Icons.monitor_heart,
-                      shockable: false,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'OTROS',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
                 ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'Bradicardia',
-                      subtitle: 'FC < 60 lpm',
-                      color: Colors.grey,
-                      icon: Icons.trending_down,
-                      shockable: false,
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'FV',
+                        subtitle: 'Fibrilacion ventricular',
+                        color: Colors.red,
+                        icon: Icons.show_chart,
+                        shockable: true,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'Taq. sinusal',
-                      subtitle: 'Taquicardia sinusal',
-                      color: Colors.grey,
-                      icon: Icons.trending_up,
-                      shockable: false,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'TVSP',
+                        subtitle: 'Taquicardia ventricular sin pulso',
+                        color: Colors.red,
+                        icon: Icons.timeline,
+                        shockable: true,
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'NO DESFIBRILABLE',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _rhythmCard(
-                      ctx: ctx,
-                      label: 'BAV completo',
-                      subtitle: 'Bloqueo AV 3er grado',
-                      color: Colors.grey,
-                      icon: Icons.block,
-                      shockable: false,
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'Asistolia',
+                        subtitle: 'Linea plana',
+                        color: Colors.blue,
+                        icon: Icons.horizontal_rule,
+                        shockable: false,
+                      ),
                     ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'AESP',
+                        subtitle: 'Actividad electrica sin pulso',
+                        color: Colors.blue,
+                        icon: Icons.monitor_heart,
+                        shockable: false,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'OTROS',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'Bradicardia',
+                        subtitle: 'FC < 60 lpm',
+                        color: Colors.grey,
+                        icon: Icons.trending_down,
+                        shockable: false,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'Taq. sinusal',
+                        subtitle: 'Taquicardia sinusal',
+                        color: Colors.grey,
+                        icon: Icons.trending_up,
+                        shockable: false,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _rhythmCard(
+                        ctx: ctx,
+                        label: 'BAV completo',
+                        subtitle: 'Bloqueo AV 3er grado',
+                        color: Colors.grey,
+                        icon: Icons.block,
+                        shockable: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
