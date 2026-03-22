@@ -119,6 +119,16 @@ jobs:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
+          # Set manual signing for distribution in the Runner target only
+          # Pods targets must NOT have CODE_SIGN_IDENTITY overridden
+          ruby -e '
+            pbx = File.read("Runner.xcodeproj/project.pbxproj")
+            # For Runner target: set manual signing with distribution identity
+            pbx.gsub!(/CODE_SIGN_STYLE = Automatic;/, "CODE_SIGN_STYLE = Manual;")
+            pbx.gsub!(/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = .*;/, "\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Distribution\";")
+            File.write("Runner.xcodeproj/project.pbxproj", pbx)
+          '
+
           xcodebuild archive \
             -workspace Runner.xcworkspace \
             -scheme Runner \
@@ -129,9 +139,7 @@ jobs:
             -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
             -authenticationKeyID "$KEY_ID" \
             -authenticationKeyIssuerID "$ISSUER_ID" \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="Apple Distribution"
+            DEVELOPMENT_TEAM="$TEAM_ID"
 
           echo "✅ Archive created"
           ls -la ../build/ios/archive/Runner.xcarchive/
