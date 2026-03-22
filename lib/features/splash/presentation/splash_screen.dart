@@ -73,52 +73,40 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 children: [
                   // App icon
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 140,
+                    height: 140,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.accent.withValues(alpha: 0.4),
+                          color: AppColors.accent.withValues(alpha: 0.3),
                           blurRadius: 30,
                           spreadRadius: 5,
                         ),
                       ],
                     ),
-                    child: const Center(
-                      child: Text(
-                        '\u{1FA7A}',
-                        style: TextStyle(fontSize: 60),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: Image.asset(
+                        'assets/icons/app_icon.png',
+                        width: 140,
+                        height: 140,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   const SizedBox(height: 32),
                   // App name
                   const Text(
-                    'Navaja Suiza',
+                    'EmerKit',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      letterSpacing: -0.5,
+                      letterSpacing: 1,
                     ),
                   ),
-                  ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [AppColors.accent, Color(0xFFFF6B35)],
-                    ).createShader(bounds),
-                    child: const Text(
-                      'SANITARIA',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: 4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(

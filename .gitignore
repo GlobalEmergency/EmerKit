@@ -1,3 +1,7 @@
+# Signing credentials
+/android/app/signing/
+/android/key.properties
+
 # Miscellaneous
 *.class
 *.log
