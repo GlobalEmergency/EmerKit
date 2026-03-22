@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       upload_to_testflight:
@@ -21,16 +29,22 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
-      # Extract version from version.json
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+          VERSION="${{ inputs.version || '' }}"
+          if [ -z "$VERSION" ]; then
+            VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+          fi
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
           BUILD_NUMBER=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          TAG="${{ inputs.tag || github.ref_name }}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "📦 Version: $VERSION (build: $BUILD_NUMBER)"
 
       - uses: subosito/flutter-action@v2
@@ -38,13 +52,21 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Cache pub packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ios-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ios-pub-
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Run tests
         run: flutter test
 
-      # Install the App Store Connect API key for automatic signing
       - name: Install App Store Connect API Key
         env:
           API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
@@ -52,26 +74,17 @@ jobs:
         run: |
           mkdir -p ~/private_keys
           echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
-          echo "✅ API key installed"
 
-      # Update iOS project settings
       - name: Configure iOS project
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
-
-          # Update bundle identifier and team
           sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
           sed -i '' "s/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ${TEAM_ID};/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
-
-          # Set version
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
 
-          echo "✅ iOS project configured"
-
-      # Build iOS archive with automatic signing
       - name: Build iOS
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -82,14 +95,12 @@ jobs:
             --build-number=${{ steps.version.outputs.build_number }} \
             --export-options-plist=ios/ExportOptions.plist
 
-      # Upload to TestFlight using App Store Connect API
       - name: Upload to TestFlight
         if: ${{ inputs.upload_to_testflight != false }}
         env:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          xcrun notarytool --version 2>/dev/null || true
           xcrun altool --upload-app \
             --type ios \
             --file build/ios/ipa/*.ipa \
@@ -103,13 +114,11 @@ jobs:
           name: release-ipa
           path: build/ios/ipa/*.ipa
 
-      # Attach IPA to GitHub Release
       - name: Upload IPA to Release
-        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           IPA=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
           if [ -n "$IPA" ]; then
-            gh release upload "${{ github.ref_name }}" "$IPA" --clobber || echo "⚠️ Could not attach to release"
+            gh release upload "${{ steps.version.outputs.tag }}" "$IPA" --clobber || echo "⚠️ Could not attach to release"
           fi

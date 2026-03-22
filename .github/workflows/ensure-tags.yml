@@ -11,48 +11,66 @@ permissions:
 
 jobs:
   tag-and-release:
-    name: Create Tag & Trigger Release
+    name: Create Tag & Release
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+      created: ${{ steps.check.outputs.exists == 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # Use PAT so tag push triggers other workflows
-          token: ${{ secrets.PAT_GITHUB }}
 
-      - name: Extract version from version.json
+      - name: Extract version
         id: version
         run: |
           VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "📦 Version: $VERSION"
 
       - name: Check if tag exists
         id: check
         run: |
           if git rev-parse "refs/tags/${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "⏭️ Tag ${{ steps.version.outputs.tag }} already exists"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "🆕 Tag ${{ steps.version.outputs.tag }} will be created"
           fi
 
-      - name: Create tag and push
+      - name: Create tag
         if: steps.check.outputs.exists == 'false'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.version }}"
           git push origin "${{ steps.version.outputs.tag }}"
-          echo "🏷️ Tag ${{ steps.version.outputs.tag }} pushed (will trigger build workflows)"
 
       - name: Create GitHub Release
         if: steps.check.outputs.exists == 'false'
         env:
-          GH_TOKEN: ${{ secrets.PAT_GITHUB }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
             --title "v${{ steps.version.outputs.version }}" \
             --generate-notes
+
+  build-android:
+    name: Build & Deploy Android
+    needs: tag-and-release
+    if: needs.tag-and-release.outputs.created == 'true'
+    uses: ./.github/workflows/build-android.yml
+    with:
+      version: ${{ needs.tag-and-release.outputs.version }}
+      tag: ${{ needs.tag-and-release.outputs.tag }}
+    secrets: inherit
+
+  build-ios:
+    name: Build & Deploy iOS
+    needs: tag-and-release
+    if: needs.tag-and-release.outputs.created == 'true'
+    uses: ./.github/workflows/build-ios.yml
+    with:
+      version: ${{ needs.tag-and-release.outputs.version }}
+      tag: ${{ needs.tag-and-release.outputs.tag }}
+    secrets: inherit
