@@ -56,19 +56,22 @@ class _NihssScreenState extends State<NihssScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.bold)),
               ),
-              children: List.generate(item.options.length, (optIndex) {
-                // ignore: deprecated_member_use
-                return RadioListTile<int>(
-                  title: Text(item.options[optIndex].label,
-                      style: const TextStyle(fontSize: 12)),
-                  value: item.options[optIndex].score,
-                  // ignore: deprecated_member_use
+              children: [
+                RadioGroup<int>(
                   groupValue: _scores[index],
-                  dense: true,
-                  // ignore: deprecated_member_use
                   onChanged: (v) => setState(() => _scores[index] = v!),
-                );
-              }),
+                  child: Column(
+                    children: List.generate(item.options.length, (optIndex) {
+                      return RadioListTile<int>(
+                        title: Text(item.options[optIndex].label,
+                            style: const TextStyle(fontSize: 12)),
+                        value: item.options[optIndex].score,
+                        dense: true,
+                      );
+                    }),
+                  ),
+                ),
+              ],
             ),
           );
         },
