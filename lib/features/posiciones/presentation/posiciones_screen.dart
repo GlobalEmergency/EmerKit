@@ -6,14 +6,14 @@ class _Position {
   final String indication;
   final String description;
   final IconData icon;
-  final String imagePath;
+  final String? imagePath;
 
   const _Position({
     required this.name,
     required this.indication,
     required this.description,
     required this.icon,
-    required this.imagePath,
+    this.imagePath,
   });
 }
 
@@ -147,18 +147,19 @@ class PosicionesScreen extends StatelessWidget {
                     style:
                         TextStyle(fontSize: 12, color: Colors.orange.shade700)),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        pos.imagePath,
-                        height: 180,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
+                  if (pos.imagePath != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          pos.imagePath!,
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: Text(pos.description),
