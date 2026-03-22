@@ -28,14 +28,9 @@ class _RcpScreenState extends State<RcpScreen> {
   bool _flash = false;
   int _elapsedSeconds = 0;
 
-  // Config
-  RcpMode _mode = RcpMode.svb;
-  int _bpm = 120;
-  bool _ventilationEnabled = true;
-
-  // Session
-  late RcpSession _session;
+  // Session (persists across config changes)
   late ActionLog _actionLog;
+  late RcpSession _session;
 
   @override
   void initState() {
@@ -44,43 +39,48 @@ class _RcpScreenState extends State<RcpScreen> {
     _audioPlayer.setPlayerMode(PlayerMode.lowLatency);
     _audioPlayer.setSource(AssetSource('audio/metronome_click.wav'));
     _actionLog = ActionLog();
-    _session = _buildSession();
-  }
-
-  RcpSession _buildSession() {
-    final trackers = _mode == RcpMode.sva
-        ? RcpData.svaMedications.map(MedicationTracker.new).toList()
-        : <MedicationTracker>[];
-    return RcpSession(
-      mode: _mode,
-      ventilationEnabled: _ventilationEnabled,
-      bpm: _bpm,
+    _session = RcpSession(
+      mode: RcpMode.svb,
+      ventilationEnabled: true,
+      bpm: 120,
       actionLog: _actionLog,
-      medicationTrackers: trackers,
+      medicationTrackers: [],
     );
   }
 
   void _start() {
-    _actionLog = ActionLog();
-    _session = _buildSession();
+    if (_session.compressionCount == 0 &&
+        _session.cycleCount == 0 &&
+        _actionLog.entries.isEmpty) {
+      // Fresh start
+      _actionLog = ActionLog();
+      _session.actionLog.clear();
+      _session = RcpSession(
+        mode: _session.mode,
+        ventilationEnabled: _session.ventilationEnabled,
+        bpm: _session.bpm,
+        actionLog: _actionLog,
+        medicationTrackers: _session.mode == RcpMode.sva
+            ? RcpData.svaMedications.map(MedicationTracker.new).toList()
+            : [],
+      );
+    }
     _actionLog.add(
-      'RCP iniciada - ${_mode == RcpMode.sva ? 'SVA' : 'SVB'} '
-          '- ${_bpm}bpm'
-          '${_ventilationEnabled ? ' - 30:2' : ' - sin ventilacion'}',
+      'RCP iniciada - ${_session.mode == RcpMode.sva ? "SVA" : "SVB"} '
+          '- ${_session.bpm}bpm'
+          '${_session.ventilationEnabled ? " - 30:2" : " - continuo"}',
       'evento',
     );
     setState(() {
       _isRunning = true;
-      _elapsedSeconds = 0;
+      _elapsedSeconds = _actionLog.entries.isEmpty ? 0 : _elapsedSeconds;
     });
     _startMetronome();
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() => _elapsedSeconds++);
     });
-    if (_mode == RcpMode.sva) {
-      _medicationRefreshTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-        if (mounted) setState(() {});
-      });
+    if (_session.mode == RcpMode.sva) {
+      _startMedicationRefresh();
     }
   }
 
@@ -89,7 +89,7 @@ class _RcpScreenState extends State<RcpScreen> {
     _clockTimer?.cancel();
     _medicationRefreshTimer?.cancel();
     if (_isRunning) {
-      _actionLog.add('RCP detenida', 'evento');
+      _actionLog.add('RCP pausada', 'evento');
     }
     setState(() => _isRunning = false);
   }
@@ -97,16 +97,64 @@ class _RcpScreenState extends State<RcpScreen> {
   void _reset() {
     _stop();
     _actionLog = ActionLog();
-    _session = _buildSession();
-    setState(() {
-      _elapsedSeconds = 0;
-    });
+    _session = RcpSession(
+      mode: _session.mode,
+      ventilationEnabled: _session.ventilationEnabled,
+      bpm: _session.bpm,
+      actionLog: _actionLog,
+      medicationTrackers: _session.mode == RcpMode.sva
+          ? RcpData.svaMedications.map(MedicationTracker.new).toList()
+          : [],
+    );
+    setState(() => _elapsedSeconds = 0);
   }
+
+  // -- Config changes (work while running) --
+
+  void _onModeChanged(RcpMode newMode) {
+    final trackers = newMode == RcpMode.sva
+        ? RcpData.svaMedications.map(MedicationTracker.new).toList()
+        : <MedicationTracker>[];
+    _session.setMode(newMode, trackers);
+    if (_isRunning && newMode == RcpMode.sva) {
+      _startMedicationRefresh();
+    } else {
+      _medicationRefreshTimer?.cancel();
+    }
+    setState(() {});
+  }
+
+  void _onBpmChanged(int newBpm) {
+    _session.setBpm(newBpm);
+    if (_isRunning && !_session.isBreathPhase) {
+      _startMetronome();
+    }
+    setState(() {});
+  }
+
+  void _onVentilationChanged(bool enabled) {
+    final wasBreathPhase = _session.isBreathPhase;
+    _session.setVentilation(enabled);
+    if (wasBreathPhase && !enabled && _isRunning) {
+      // Was paused for breath, now continuous - restart metronome
+      _startMetronome();
+    }
+    setState(() {});
+  }
+
+  // -- Timer logic --
 
   void _startMetronome() {
     _timer?.cancel();
-    final interval = Duration(milliseconds: (60000 / _bpm).round());
+    final interval = Duration(milliseconds: (60000 / _session.bpm).round());
     _timer = Timer.periodic(interval, (_) => _onBeat());
+  }
+
+  void _startMedicationRefresh() {
+    _medicationRefreshTimer?.cancel();
+    _medicationRefreshTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
   }
 
   void _onBeat() {
@@ -172,11 +220,12 @@ class _RcpScreenState extends State<RcpScreen> {
   String get _bannerValue {
     if (!_isRunning &&
         _session.compressionCount == 0 &&
-        _session.cycleCount == 0) {
+        _session.cycleCount == 0 &&
+        _actionLog.entries.isEmpty) {
       return '\u25b6';
     }
     if (_session.isBreathPhase) return '\u00a1VENTILAR!';
-    if (!_ventilationEnabled) {
+    if (!_session.ventilationEnabled) {
       return '${_session.compressionCount}';
     }
     return '${_session.compressionCount}/${RcpSession.compressionsPerCycle}';
@@ -185,13 +234,14 @@ class _RcpScreenState extends State<RcpScreen> {
   String get _bannerLabel {
     if (!_isRunning &&
         _session.compressionCount == 0 &&
-        _session.cycleCount == 0) {
+        _session.cycleCount == 0 &&
+        _actionLog.entries.isEmpty) {
       return 'Pulsa Play para iniciar';
     }
     if (_session.isBreathPhase) {
       return '${RcpSession.breathsPerCycle} ventilaciones';
     }
-    if (!_ventilationEnabled) {
+    if (!_session.ventilationEnabled) {
       return 'Compresiones \u00b7 $_elapsedText';
     }
     return 'Ciclo ${_session.cycleCount + 1} \u00b7 $_elapsedText';
@@ -200,7 +250,8 @@ class _RcpScreenState extends State<RcpScreen> {
   Color get _bannerColor {
     if (!_isRunning &&
         _session.compressionCount == 0 &&
-        _session.cycleCount == 0) {
+        _session.cycleCount == 0 &&
+        _actionLog.entries.isEmpty) {
       return Colors.grey;
     }
     if (_session.isBreathPhase) return AppColors.valoracion;
@@ -244,78 +295,17 @@ class _RcpScreenState extends State<RcpScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Config section - only when stopped
-            if (!_isRunning) ...[
-              // Mode selector
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: SegmentedButton<RcpMode>(
-                  segments: const [
-                    ButtonSegment(value: RcpMode.svb, label: Text('SVB')),
-                    ButtonSegment(value: RcpMode.sva, label: Text('SVA')),
-                  ],
-                  selected: {_mode},
-                  onSelectionChanged: (selected) {
-                    setState(() => _mode = selected.first);
-                  },
-                ),
-              ),
-
-              // BPM selector
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('BPM: ',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                    for (final bpm in [100, 110, 120])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: ChoiceChip(
-                          label: Text('$bpm'),
-                          selected: _bpm == bpm,
-                          selectedColor: AppColors.soporteVital,
-                          labelStyle: TextStyle(
-                            color: _bpm == bpm ? Colors.white : null,
-                            fontWeight: _bpm == bpm ? FontWeight.bold : null,
-                          ),
-                          onSelected: (_) {
-                            setState(() => _bpm = bpm);
-                          },
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              // Ventilation toggle
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: SwitchListTile(
-                  title: const Text(
-                    'Parada para ventilaciones',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  value: _ventilationEnabled,
-                  onChanged: (v) => setState(() => _ventilationEnabled = v),
-                  activeThumbColor: AppColors.soporteVital,
-                  dense: true,
-                ),
-              ),
-            ],
+            // Config section - ALWAYS visible, compact when running
+            _buildConfigSection(),
 
             // Play/Stop button
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: _isRunning ? 12 : 24),
               child: GestureDetector(
                 onTap: _isRunning ? _stop : _start,
                 child: Container(
-                  width: 160,
-                  height: 160,
+                  width: _isRunning ? 100 : 160,
+                  height: _isRunning ? 100 : 160,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _isRunning
@@ -333,16 +323,16 @@ class _RcpScreenState extends State<RcpScreen> {
                     ],
                   ),
                   child: Icon(
-                    _isRunning ? Icons.stop : Icons.play_arrow,
-                    size: 80,
+                    _isRunning ? Icons.pause : Icons.play_arrow,
+                    size: _isRunning ? 50 : 80,
                     color: Colors.white,
                   ),
                 ),
               ),
             ),
 
-            // SVA medications section - only in SVA mode when running
-            if (_mode == RcpMode.sva && _isRunning) ...[
+            // SVA medications section
+            if (_session.mode == RcpMode.sva && _isRunning) ...[
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: Row(
@@ -376,8 +366,9 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ],
 
-            // Action log + export - only in SVA mode
-            if (_mode == RcpMode.sva && _isRunning) ...[
+            // Action log + export
+            if (_session.mode == RcpMode.sva &&
+                (_isRunning || _actionLog.entries.isNotEmpty)) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
@@ -409,8 +400,8 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ],
 
-            // Info card when not running
-            if (!_isRunning)
+            // Info card when not running and no log
+            if (!_isRunning && _actionLog.entries.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Card(
@@ -441,6 +432,127 @@ class _RcpScreenState extends State<RcpScreen> {
         sections: RcpData.infoSections,
         references: RcpData.references,
       ),
+    );
+  }
+
+  Widget _buildConfigSection() {
+    if (_isRunning) {
+      // Compact inline controls while running
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+        child: Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          alignment: WrapAlignment.center,
+          children: [
+            // Mode toggle
+            ChoiceChip(
+              label: const Text('SVB'),
+              selected: _session.mode == RcpMode.svb,
+              selectedColor: AppColors.soporteVital,
+              labelStyle: TextStyle(
+                color: _session.mode == RcpMode.svb ? Colors.white : null,
+                fontSize: 12,
+              ),
+              onSelected: (_) => _onModeChanged(RcpMode.svb),
+              visualDensity: VisualDensity.compact,
+            ),
+            ChoiceChip(
+              label: const Text('SVA'),
+              selected: _session.mode == RcpMode.sva,
+              selectedColor: AppColors.soporteVital,
+              labelStyle: TextStyle(
+                color: _session.mode == RcpMode.sva ? Colors.white : null,
+                fontSize: 12,
+              ),
+              onSelected: (_) => _onModeChanged(RcpMode.sva),
+              visualDensity: VisualDensity.compact,
+            ),
+            const SizedBox(width: 4),
+            // BPM chips
+            for (final bpm in [100, 110, 120])
+              ChoiceChip(
+                label: Text('$bpm'),
+                selected: _session.bpm == bpm,
+                selectedColor: AppColors.primary,
+                labelStyle: TextStyle(
+                  color: _session.bpm == bpm ? Colors.white : null,
+                  fontSize: 12,
+                ),
+                onSelected: (_) => _onBpmChanged(bpm),
+                visualDensity: VisualDensity.compact,
+              ),
+            const SizedBox(width: 4),
+            // Ventilation chip
+            FilterChip(
+              label: const Text('30:2'),
+              selected: _session.ventilationEnabled,
+              selectedColor: AppColors.valoracion.withValues(alpha: 0.3),
+              onSelected: _onVentilationChanged,
+              visualDensity: VisualDensity.compact,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Full controls when stopped
+    return Column(
+      children: [
+        // Mode selector
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: SegmentedButton<RcpMode>(
+            segments: const [
+              ButtonSegment(value: RcpMode.svb, label: Text('SVB')),
+              ButtonSegment(value: RcpMode.sva, label: Text('SVA')),
+            ],
+            selected: {_session.mode},
+            onSelectionChanged: (selected) => _onModeChanged(selected.first),
+          ),
+        ),
+
+        // BPM selector
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('BPM: ',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              for (final bpm in [100, 110, 120])
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ChoiceChip(
+                    label: Text('$bpm'),
+                    selected: _session.bpm == bpm,
+                    selectedColor: AppColors.soporteVital,
+                    labelStyle: TextStyle(
+                      color: _session.bpm == bpm ? Colors.white : null,
+                      fontWeight: _session.bpm == bpm ? FontWeight.bold : null,
+                    ),
+                    onSelected: (_) => _onBpmChanged(bpm),
+                  ),
+                ),
+            ],
+          ),
+        ),
+
+        // Ventilation toggle
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: SwitchListTile(
+            title: const Text(
+              'Parada para ventilaciones',
+              style: TextStyle(fontSize: 14),
+            ),
+            value: _session.ventilationEnabled,
+            onChanged: _onVentilationChanged,
+            activeThumbColor: AppColors.soporteVital,
+            dense: true,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -4,11 +4,11 @@ import 'package:navaja_suiza_sanitaria/shared/domain/models/medication_protocol.
 enum RcpMode { svb, sva }
 
 class RcpSession {
-  final RcpMode mode;
-  final bool ventilationEnabled;
-  final int bpm;
+  RcpMode mode;
+  bool ventilationEnabled;
+  int bpm;
   final ActionLog actionLog;
-  final List<MedicationTracker> medicationTrackers;
+  List<MedicationTracker> medicationTrackers;
 
   int compressionCount = 0;
   int cycleCount = 0;
@@ -44,6 +44,37 @@ class RcpSession {
       'Ciclo $cycleCount completado (30:2)',
       'ventilacion',
     );
+  }
+
+  /// Switch ventilation mode mid-session.
+  void setVentilation(bool enabled) {
+    if (ventilationEnabled == enabled) return;
+    ventilationEnabled = enabled;
+    if (!enabled && isBreathPhase) {
+      isBreathPhase = false;
+    }
+    actionLog.add(
+      enabled ? 'Ventilacion activada (30:2)' : 'Compresiones continuas',
+      'evento',
+    );
+  }
+
+  /// Switch SVB/SVA mode mid-session.
+  void setMode(RcpMode newMode, List<MedicationTracker> trackers) {
+    if (mode == newMode) return;
+    mode = newMode;
+    medicationTrackers = trackers;
+    actionLog.add(
+      'Cambio a ${newMode == RcpMode.sva ? 'SVA' : 'SVB'}',
+      'evento',
+    );
+  }
+
+  /// Change BPM mid-session.
+  void setBpm(int newBpm) {
+    if (bpm == newBpm) return;
+    bpm = newBpm;
+    actionLog.add('Frecuencia: $newBpm bpm', 'evento');
   }
 
   /// Administers a medication and logs it.
