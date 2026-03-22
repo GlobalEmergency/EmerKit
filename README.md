@@ -3,7 +3,7 @@
 **Tu kit de emergencias sanitarias en el bolsillo.**
 *Your pocket emergency medical toolkit.*
 
-[![CI](https://github.com/GlobalEmergency/NavajaSuizaSanitaria/actions/workflows/ci.yml/badge.svg)](https://github.com/GlobalEmergency/NavajaSuizaSanitaria/actions/workflows/ci.yml)
+[![CI](https://github.com/GlobalEmergency/EmerKit/actions/workflows/ci.yml/badge.svg)](https://github.com/GlobalEmergency/EmerKit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
@@ -31,7 +31,7 @@
 | Glasgow (GCS) | Glasgow (GCS) | Escala de Coma de Glasgow con clasificacion de gravedad / Glasgow Coma Scale with severity classification |
 | Triage START | START Triage | Triage multiple victimas con protocolo START / Mass casualty triage with START protocol |
 | TEP | PAT | Triangulo de Evaluacion Pediatrica / Pediatric Assessment Triangle |
-| Ictus (Cincinnati) | Stroke (Cincinnati) | Escala prehospitalaria de Cincinnati para ictus / Cincinnati Prehospital Stroke Scale |
+| Ictus (Cincinnati + Madrid-DIRECT) | Stroke | Escalas prehospitalarias de ictus / Prehospital stroke scales |
 | NIHSS | NIHSS | National Institutes of Health Stroke Scale |
 | Rankin | Rankin | Escala de Rankin modificada / Modified Rankin Scale |
 
@@ -39,7 +39,7 @@
 | Herramienta | Tool | Descripcion / Description |
 |---|---|---|
 | Constantes Vitales | Vital Signs | Rangos normales por edad / Normal ranges by age |
-| Frecuencia Cardiaca | Heart Rate | Calculadora de FC a partir de intervalo R-R / HR calculator from R-R interval |
+| Frecuencia Cardiaca | Heart Rate | Calculadora de FC por palpacion / HR calculator by palpation |
 | Glucemia | Blood Glucose | Clasificacion e interpretacion de glucemia / Blood glucose classification and interpretation |
 | Hipotermia | Hypothermia | Clasificacion de hipotermia por temperatura / Hypothermia classification by temperature |
 | Hipertermia | Hyperthermia | Clasificacion de hipertermia por temperatura / Hyperthermia classification by temperature |
@@ -80,7 +80,7 @@
 | Lenguaje / Language | Dart 3.5+ |
 | Arquitectura / Architecture | Feature-First DDD |
 | Navegacion / Navigation | GoRouter |
-| Testing | flutter_test |
+| Testing | flutter_test (86+ tests) |
 | CI/CD | GitHub Actions |
 | Analisis / Analysis | flutter_lints |
 
@@ -99,8 +99,8 @@
 
 ```bash
 # Clonar el repositorio / Clone the repository
-git clone https://github.com/GlobalEmergency/NavajaSuizaSanitaria.git
-cd NavajaSuizaSanitaria/navaja_suiza_sanitaria
+git clone https://github.com/GlobalEmergency/EmerKit.git
+cd EmerKit
 
 # Instalar dependencias / Install dependencies
 flutter pub get
@@ -147,11 +147,6 @@ lib/
 │   │   ├── router/                    # Configuracion de GoRouter
 │   │   ├── theme/                     # Tema de la app / App theme
 │   │   └── widgets/                   # Widgets reutilizables / Reusable widgets
-│   │       ├── tool_screen_base.dart
-│   │       ├── result_banner.dart
-│   │       ├── info_card.dart
-│   │       ├── scored_item_selector.dart
-│   │       └── tool_info_panel.dart
 │   └── utils/                         # Utilidades / Utilities
 ├── features/                          # Una carpeta por herramienta / One folder per tool
 │   ├── glasgow/
@@ -165,15 +160,35 @@ lib/
 │   └── home/
 │       └── presentation/
 │           └── tool_registry.dart     # Registro central de herramientas
-└── screens/                           # Pantallas generales / General screens
+├── version.json                       # Version unica de la app / Single source of version
+└── scripts/
+    └── propagate-version.sh           # Propaga version a pubspec.yaml y assets
+```
+
+---
+
+## Versionado / Versioning
+
+La version se gestiona desde `version.json`. Al hacer push a main con cambios en este fichero, el CI automaticamente:
+
+1. Crea un tag `vX.Y.Z`
+2. Crea un GitHub Release
+3. Dispara los builds de Android (Google Play) e iOS (TestFlight)
+
+```bash
+# Propagar version a pubspec.yaml y assets
+bash scripts/propagate-version.sh
+
+# Verificar que todo esta sincronizado
+bash scripts/propagate-version.sh --check
 ```
 
 ---
 
 ## Testing
 
-La app incluye **85+ tests unitarios** que verifican casos de uso clinicos reales.
-The app includes **85+ unit tests** that verify real clinical use cases.
+La app incluye **86+ tests unitarios** que verifican casos de uso clinicos reales.
+The app includes **86+ unit tests** that verify real clinical use cases.
 
 ```
 test/
@@ -181,14 +196,14 @@ test/
     ├── glasgow_calculator_test.dart
     ├── triage_engine_test.dart
     ├── cincinnati_calculator_test.dart
+    ├── madrid_direct_calculator_test.dart
     ├── o2_calculator_test.dart
     ├── nihss_calculator_test.dart
     ├── rankin_calculator_test.dart
     ├── tep_calculator_test.dart
     ├── heart_rate_calculator_test.dart
     ├── lund_browder_calculator_test.dart
-    ├── temperature_classifier_test.dart
-    └── madrid_direct_calculator_test.dart
+    └── temperature_classifier_test.dart
 ```
 
 ### Ejemplo / Example

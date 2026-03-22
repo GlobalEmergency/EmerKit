@@ -5,5 +5,5 @@ import 'shared/di/register_services.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   registerServices();
-  runApp(const NavajaSuizaApp());
+  runApp(const EmerKitApp());
 }

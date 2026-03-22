@@ -9,8 +9,8 @@ Thank you for your interest in contributing to EmerKit.
 
 ```bash
 # 1. Fork y clona / Fork and clone
-git clone https://github.com/<tu-usuario>/NavajaSuizaSanitaria.git
-cd NavajaSuizaSanitaria/navaja_suiza_sanitaria
+git clone https://github.com/<tu-usuario>/EmerKit.git
+cd EmerKit
 
 # 2. Instala dependencias / Install dependencies
 flutter pub get

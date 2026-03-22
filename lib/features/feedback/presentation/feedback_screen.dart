@@ -10,7 +10,7 @@ class FeedbackScreen extends StatelessWidget {
   static const _googleFormUrl = 'https://forms.gle/PLACEHOLDER';
   static const _emailAddress = 'info@globalemergency.online';
   static const _githubIssuesUrl =
-      'https://github.com/GlobalEmergency/NavajaSuizaSanitaria/issues';
+      'https://github.com/GlobalEmergency/EmerKit/issues';
 
   @override
   Widget build(BuildContext context) {

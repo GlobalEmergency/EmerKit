@@ -1,6 +1,6 @@
 {
-    "name": "navaja_suiza_sanitaria",
-    "short_name": "navaja_suiza_sanitaria",
+    "name": "EmerKit",
+    "short_name": "EmerKit",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
