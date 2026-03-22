@@ -633,48 +633,147 @@ class _RcpScreenState extends State<RcpScreen> {
     );
   }
 
+  Widget _resultCard({
+    required BuildContext ctx,
+    required String label,
+    required String subtitle,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 36),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: color.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showPulseOptions() {
+    final pulseCount =
+        _countOf('pulse_check') + _countOf('rosc') + _countOf('no_pulse');
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _actionTile(
-                id: 'pulse_check',
-                icon: Icons.favorite_border,
-                label: 'Comprobacion de pulso',
-                logText: 'Comprobacion de pulso',
-                sheetContext: ctx),
-            _actionTile(
-                id: 'rosc',
-                icon: Icons.favorite,
-                label: 'ROSC - Pulso recuperado',
-                logText: 'ROSC - Recuperacion de circulacion espontanea',
-                iconColor: Colors.green,
-                sheetContext: ctx),
-            _actionTile(
-                id: 'no_pulse',
-                icon: Icons.favorite_border,
-                label: 'Sin pulso',
-                logText: 'Sin pulso - continuar RCP',
-                iconColor: Colors.red,
-                sheetContext: ctx),
-            const Divider(height: 1),
-            _actionTile(
-                id: 'lucas',
-                icon: Icons.precision_manufacturing,
-                label: 'LUCAS colocado',
-                logText: 'Dispositivo LUCAS de compresiones mecanicas colocado',
-                iconColor: AppColors.tecnicas,
-                sheetContext: ctx),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.favorite, color: AppColors.soporteVital),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Comprobar pulso',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (pulseCount > 0) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Text(
+                        'x$pulseCount',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _resultCard(
+                    ctx: ctx,
+                    label: 'CON PULSO',
+                    subtitle: '(ROSC)',
+                    color: Colors.green,
+                    icon: Icons.favorite,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _logQuickAction('pulse_check', 'Comprobacion de pulso');
+                      _logQuickAction('rosc',
+                          'ROSC - Recuperacion de circulacion espontanea');
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  _resultCard(
+                    ctx: ctx,
+                    label: 'SIN PULSO',
+                    subtitle: '(Continuar RCP)',
+                    color: Colors.red,
+                    icon: Icons.heart_broken,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _logQuickAction('pulse_check', 'Comprobacion de pulso');
+                      _logQuickAction('no_pulse', 'Sin pulso - continuar RCP');
+                    },
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              _actionTile(
+                  id: 'lucas',
+                  icon: Icons.precision_manufacturing,
+                  label: 'LUCAS colocado',
+                  logText:
+                      'Dispositivo LUCAS de compresiones mecanicas colocado',
+                  iconColor: AppColors.tecnicas,
+                  sheetContext: ctx),
+            ],
+          ),
         ),
       ),
     );
   }
 
   void _showDeaOptions() {
+    final isSvb = _session.mode == RcpMode.svb;
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
@@ -702,7 +801,7 @@ class _RcpScreenState extends State<RcpScreen> {
                     ),
                 ],
               ),
-              title: const Text('Analisis de ritmo'),
+              title: Text(isSvb ? 'Analisis DEA' : 'Analisis de ritmo'),
               trailing: _countOf('rhythm') > 0
                   ? Container(
                       padding: const EdgeInsets.symmetric(
@@ -724,7 +823,11 @@ class _RcpScreenState extends State<RcpScreen> {
                   : null,
               onTap: () {
                 Navigator.pop(ctx);
-                _showRhythmAnalysis();
+                if (isSvb) {
+                  _showDeaAnalysis();
+                } else {
+                  _showRhythmAnalysis();
+                }
               },
             ),
             _actionTile(
@@ -734,13 +837,58 @@ class _RcpScreenState extends State<RcpScreen> {
                 logText: 'Descarga DEA administrada',
                 iconColor: Colors.orange,
                 sheetContext: ctx),
-            _actionTile(
-                id: 'no_shock',
-                icon: Icons.flash_off,
-                label: 'Descarga NO indicada',
-                logText: 'Descarga NO indicada',
-                sheetContext: ctx),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeaAnalysis() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Analisis DEA #${_countOf('rhythm') + 1}',
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _resultCard(
+                    ctx: ctx,
+                    label: 'DESCARGA\nRECOMENDADA',
+                    subtitle: 'Pulsar descarga',
+                    color: Colors.red,
+                    icon: Icons.flash_on,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _logQuickAction('rhythm', 'DEA: Descarga recomendada');
+                      _logQuickAction('shock', 'Descarga DEA administrada');
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  _resultCard(
+                    ctx: ctx,
+                    label: 'DESCARGA NO\nRECOMENDADA',
+                    subtitle: 'Continuar RCP',
+                    color: Colors.blue,
+                    icon: Icons.flash_off,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _logQuickAction('rhythm', 'DEA: Descarga no recomendada');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -836,21 +984,49 @@ class _RcpScreenState extends State<RcpScreen> {
                 ],
               ),
               const SizedBox(height: 16),
+              const Text(
+                'OTROS',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 6),
               Row(
                 children: [
                   Expanded(
                     child: _rhythmCard(
                       ctx: ctx,
-                      label: 'ROSC',
-                      subtitle: 'Ritmo organizado con pulso',
-                      color: Colors.green,
-                      icon: Icons.favorite,
+                      label: 'Bradicardia',
+                      subtitle: 'FC < 60 lpm',
+                      color: Colors.grey,
+                      icon: Icons.trending_down,
                       shockable: false,
-                      isRosc: true,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(child: SizedBox()),
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'Taq. sinusal',
+                      subtitle: 'Taquicardia sinusal',
+                      color: Colors.grey,
+                      icon: Icons.trending_up,
+                      shockable: false,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _rhythmCard(
+                      ctx: ctx,
+                      label: 'BAV completo',
+                      subtitle: 'Bloqueo AV 3er grado',
+                      color: Colors.grey,
+                      icon: Icons.block,
+                      shockable: false,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -867,19 +1043,13 @@ class _RcpScreenState extends State<RcpScreen> {
     required Color color,
     required IconData icon,
     required bool shockable,
-    bool isRosc = false,
   }) {
     return InkWell(
       onTap: () {
         Navigator.pop(ctx);
-        final logText = isRosc
-            ? 'Ritmo: $label - $subtitle'
-            : 'Ritmo: $label (${shockable ? "DESFIBRILABLE" : "NO desfibrilable"}) - $subtitle';
+        final logText =
+            'Ritmo: $label (${shockable ? "DESFIBRILABLE" : "NO desfibrilable"}) - $subtitle';
         _logQuickAction('rhythm', logText);
-        if (isRosc) {
-          _logQuickAction(
-              'rosc', 'ROSC - Recuperacion de circulacion espontanea');
-        }
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -978,7 +1148,7 @@ class _RcpScreenState extends State<RcpScreen> {
             label: 'DEA',
             color: AppColors.tecnicas,
             onTap: _showDeaOptions,
-            doneIds: const ['dea_pads', 'rhythm', 'shock', 'no_shock'],
+            doneIds: const ['dea_pads', 'rhythm', 'shock'],
           ),
           _quickActionButton(
             icon: Icons.edit_note,
