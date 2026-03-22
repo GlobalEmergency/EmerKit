@@ -173,13 +173,26 @@ jobs:
           EOF
 
       - name: Export IPA
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
+          # Install API key for export
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$API_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
+          mkdir -p ~/private_keys
+          echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
+
           cd ios
           xcodebuild -exportArchive \
             -archivePath ../build/ios/archive/Runner.xcarchive \
             -exportPath ../build/ios/ipa \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
-            -allowProvisioningUpdates=NO
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID "$KEY_ID" \
+            -authenticationKeyIssuerID "$ISSUER_ID" \
+            -allowProvisioningUpdates
 
           echo "✅ IPA exported"
           ls -la ../build/ios/ipa/
