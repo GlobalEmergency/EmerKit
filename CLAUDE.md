@@ -2,7 +2,11 @@
 
 ## Project Overview
 
-EmerKit (navaja_suiza_sanitaria) is a cross-platform Flutter app with 24 clinical tools for emergency healthcare professionals. Developed by Global Emergency.
+EmerKit is a cross-platform Flutter app with 24 clinical tools for emergency healthcare professionals. Developed by Global Emergency (globalemergency.online).
+
+- **Package name**: `online.globalemergency.emerkit`
+- **Dart package**: `navaja_suiza_sanitaria` (legacy, do not rename)
+- **Repo**: https://github.com/GlobalEmergency/EmerKit
 
 ## Architecture
 
@@ -22,26 +26,52 @@ lib/
 │   └── <feature>/
 │       ├── domain/      # Pure Dart calculators and data (NO Flutter imports)
 │       └── presentation/# Screens and feature-specific widgets
-└── app.dart             # MaterialApp entry point
+├── version.json         # Single source of truth for app version
+└── app.dart             # MaterialApp entry point (class EmerKitApp)
 ```
+
+## Pre-Push Checklist (MANDATORY)
+
+Before every push, run these commands **in order**. All must pass:
+
+```bash
+dart format .                        # 1. Format - must have 0 changes
+flutter analyze                      # 2. Lint - must have 0 issues (no warnings, no info)
+flutter test                         # 3. Test - all 86+ tests must pass
+bash scripts/propagate-version.sh --check  # 4. Version sync check
+```
+
+If you change app code (`lib/`, `assets/`, `pubspec.yaml`), you MUST bump `version.json` before pushing.
 
 ## Key Commands
 
 ```bash
-flutter test                # Run all tests (85+ unit tests)
-flutter analyze             # Static analysis with flutter_lints
-flutter build apk --debug   # Debug APK
-flutter build apk --release # Release APK
-flutter pub get             # Install dependencies
-flutter run                 # Run on connected device
+dart format .                        # Format all code
+dart format --set-exit-if-changed .   # Check format (CI mode)
+flutter analyze                      # Static analysis (0 issues required)
+flutter test                         # Run all tests (86+)
+flutter build apk --debug            # Debug APK
+flutter build apk --release          # Release APK
+flutter pub get                      # Install dependencies
+flutter run                          # Run on connected device
+bash scripts/propagate-version.sh    # Propagate version.json to pubspec.yaml + assets
 ```
+
+## Versioning
+
+- Version lives in `version.json` (single source of truth)
+- `scripts/propagate-version.sh` syncs it to `pubspec.yaml` and `assets/version.json`
+- Build number is computed: `MAJOR * 10000 + MINOR * 100 + PATCH`
+- When `version.json` changes on main, CI auto-creates tag + GitHub Release + deploys to stores
+- PRs that change app code (`lib/`, `assets/`, `pubspec.yaml`) MUST bump the version
+- PRs that only touch CI, docs, or config do NOT need a version bump
 
 ## Code Conventions
 
 ### Imports
 - **Cross-feature**: use `package:navaja_suiza_sanitaria/...`
 - **Within same feature**: use relative imports
-- Example: a screen in `features/glasgow/presentation/` importing its calculator uses `../domain/glasgow_calculator.dart`
+- **NEVER** import across features directly (use shared layer)
 
 ### File Naming Patterns
 | Type | Pattern | Example |
@@ -54,11 +84,28 @@ flutter run                 # Run on connected device
 ### Dart Style
 - `analysis_options.yaml` enforces: `prefer_const_constructors`, `prefer_const_declarations`, `avoid_print`
 - Linter: `flutter_lints`
+- **ZERO** warnings and info issues allowed — fix them, do NOT suppress with `// ignore:`
+- Always run `dart format .` before committing
 
 ## Critical Rules
 
 ### Calculators are Pure Dart
 Calculators in `domain/` must NOT import `package:flutter/...`. They contain only pure Dart logic. This allows them to be tested without Flutter framework overhead and keeps domain logic framework-independent.
+
+### No Cross-Feature Domain Imports
+Features must NOT import from another feature's `domain/`. If two features share logic, move it to `lib/shared/domain/`.
+
+### Every Feature Needs domain/
+Every feature folder must have a `domain/` subfolder with at least a `_data.dart` file containing `infoSections` and `references`.
+
+### Tool Screen Pattern
+Every tool screen follows this pattern:
+- `ToolScreenBase` as the scaffold
+- `ResultBanner` at the top (result always visible first)
+- Tool body below (interactive part)
+- Info button in AppBar (opens `ToolInfoPanel` via bottom sheet)
+- Reset button in AppBar
+- Each tool has two modes: **emergency mode** (quick use) and **study mode** (detailed info + references)
 
 ### Testing Rules
 - Use `flutter_test`, NOT `package:test`
@@ -88,7 +135,7 @@ Reuse these widgets from `lib/shared/presentation/widgets/`:
 - `SectionHeader` -- section divider headers
 
 ### Dependency Injection
-Uses a **service locator pattern** in `lib/shared/di/`.
+Uses a **service locator pattern** in `lib/shared/di/`. All calculators are registered in `register_services.dart` and called from `main.dart`.
 
 ### Navigation
 Uses **GoRouter** (`go_router` package). Routes defined in `lib/shared/presentation/router/`.
@@ -113,15 +160,33 @@ All tools are registered in `lib/features/home/presentation/tool_registry.dart` 
 ## Adding a New Tool
 
 1. Create `lib/features/<tool>/domain/<tool>_calculator.dart` (pure Dart)
-2. Create `lib/features/<tool>/domain/<tool>_data.dart` (static data)
-3. Create `lib/features/<tool>/presentation/<tool>_screen.dart` (use shared widgets)
+2. Create `lib/features/<tool>/domain/<tool>_data.dart` (static data with `infoSections` + `references`)
+3. Create `lib/features/<tool>/presentation/<tool>_screen.dart` (use `ToolScreenBase` + `ResultBanner`)
 4. Add route in `lib/shared/presentation/router/`
 5. Register in `lib/features/home/presentation/tool_registry.dart`
-6. Write tests in `test/domain/<tool>_calculator_test.dart`
-7. Run `flutter analyze && flutter test`
+6. Register calculator in `lib/shared/di/register_services.dart`
+7. Write tests in `test/domain/<tool>_calculator_test.dart`
+8. Run full pre-push checklist: `dart format . && flutter analyze && flutter test`
+
+## CI/CD Pipeline
+
+### PR checks (fast ~1-2 min)
+- Version bump required (only if app code changed)
+- Version sync check (`propagate-version.sh --check`)
+- `dart format --set-exit-if-changed .`
+- `flutter analyze`
+- `flutter test`
+
+### Push to main
+- Same as PR + `flutter build apk --debug`
+
+### Release (on version.json change)
+- `ensure-tags.yml` → creates tag + GitHub Release
+- Calls `build-android.yml` → signed APK/AAB → Google Play (internal track)
+- Calls `build-ios.yml` → IPA → TestFlight
 
 ## Commit Convention
 
 Conventional Commits: `<type>(<scope>): <description>`
-Types: feat, fix, test, docs, refactor, ci, chore
-Scopes: glasgow, triage, ictus, o2, rcp, tep, nihss, rankin, shared, ci, docs
+- Types: `feat`, `fix`, `test`, `docs`, `refactor`, `ci`, `chore`
+- Scopes: `glasgow`, `triage`, `ictus`, `o2`, `rcp`, `tep`, `nihss`, `rankin`, `shared`, `ci`, `docs`, `ui`
