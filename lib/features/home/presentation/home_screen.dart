@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Navaja Suiza Sanitaria'),
+        title: const Text('EmerKit'),
         actions: [
           IconButton(
             icon: const Icon(Icons.lightbulb_outline),

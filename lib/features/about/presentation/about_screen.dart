@@ -1,9 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
+
+  Future<String> _loadVersion() async {
+    try {
+      final jsonStr = await rootBundle.loadString('assets/version.json');
+      final map = json.decode(jsonStr) as Map<String, dynamic>;
+      return map['version'] as String? ?? '0.1.0';
+    } catch (_) {
+      return '0.1.0';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +34,6 @@ class AboutScreen extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryDark,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
@@ -31,40 +43,51 @@ class AboutScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Text('\u{1FA7A}', style: TextStyle(fontSize: 50)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.asset(
+                    'assets/icons/app_icon.png',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
               const Text(
-                'Navaja Suiza Sanitaria',
+                'EmerKit',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
-              Text(
-                'v1.0.0',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              FutureBuilder<String>(
+                future: _loadVersion(),
+                builder: (context, snapshot) {
+                  final version = snapshot.data ?? '...';
+                  return Text(
+                    'v$version',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  );
+                },
               ),
               const SizedBox(height: 24),
 
-              // Description
+              // Disclaimer
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
+                color: AppColors.severityModerate.withValues(alpha: 0.08),
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.medical_services, size: 32, color: AppColors.accent),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Herramientas de referencia para profesionales sanitarios de emergencias.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Escalas de valoración, calculadoras clínicas, protocolos y guías de actuación al alcance de tu mano.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      Icon(Icons.info_outline, size: 20, color: AppColors.severityModerate),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Esta aplicaci\u00f3n es una herramienta de referencia y apoyo. '
+                          'No sustituye el juicio cl\u00ednico profesional ni la formaci\u00f3n sanitaria. '
+                          'Los protocolos y valores deben contrastarse con las gu\u00edas oficiales vigentes.',
+                          style: TextStyle(fontSize: 12, height: 1.4),
+                        ),
                       ),
                     ],
                   ),
@@ -135,38 +158,6 @@ class AboutScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-
-              // Disclaimer
-              Card(
-                color: AppColors.severityModerate.withValues(alpha: 0.08),
-                child: const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.info_outline, size: 20, color: AppColors.severityModerate),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Esta aplicación es una herramienta de referencia y apoyo. '
-                          'No sustituye el juicio clínico profesional ni la formación sanitaria. '
-                          'Los protocolos y valores deben contrastarse con las guías oficiales vigentes.',
-                          style: TextStyle(fontSize: 12, height: 1.4),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Credits
-              Text(
-                'Protocolos basados en:\nERC Guidelines 2025\nPlan de Atención al Ictus - Comunidad de Madrid 2021',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade500, height: 1.5),
               ),
               const SizedBox(height: 24),
             ],

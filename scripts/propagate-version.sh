@@ -50,6 +50,20 @@ else
   echo "✅ pubspec.yaml is in sync"
 fi
 
+# Copy version.json to assets/ for Flutter runtime access
+ASSETS_VERSION="$PROJECT_DIR/assets/version.json"
+if ! $CHECK_MODE; then
+  cp "$PROJECT_DIR/version.json" "$ASSETS_VERSION"
+  echo "✅ assets/version.json synced"
+else
+  if ! diff -q "$PROJECT_DIR/version.json" "$ASSETS_VERSION" > /dev/null 2>&1; then
+    echo "❌ assets/version.json is out of sync with version.json"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "✅ assets/version.json is in sync"
+  fi
+fi
+
 if $CHECK_MODE && [ $ERRORS -gt 0 ]; then
   echo ""
   echo "❌ Version is out of sync in $ERRORS file(s)"

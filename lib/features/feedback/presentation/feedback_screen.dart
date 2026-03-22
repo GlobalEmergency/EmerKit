@@ -55,7 +55,7 @@ class FeedbackScreen extends StatelessWidget {
               subtitle: _emailAddress,
               buttonText: 'Escribir email',
               onTap: () => _launch(
-                'mailto:$_emailAddress?subject=${Uri.encodeComponent('Sugerencia - Navaja Suiza Sanitaria')}&body=${Uri.encodeComponent('Hola,\n\nMe gustaría sugerir:\n\n')}',
+                'mailto:$_emailAddress?subject=${Uri.encodeComponent('Sugerencia - EmerKit')}&body=${Uri.encodeComponent('Hola,\n\nMe gustaría sugerir:\n\n')}',
               ),
             ),
             const SizedBox(height: 12),

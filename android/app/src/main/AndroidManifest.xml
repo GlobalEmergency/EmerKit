@@ -49,5 +49,7 @@
             <action android:name="android.intent.action.SENDTO"/>
             <data android:scheme="mailto"/>
         </intent>
+        <!-- DEA Map app: allow checking if installed before launching -->
+        <package android:name="es.deamap.mobile" />
     </queries>
 </manifest>
