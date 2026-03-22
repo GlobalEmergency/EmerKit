@@ -67,33 +67,82 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      # Install the App Store Connect API key for automatic signing
       - name: Install App Store Connect API Key
         env:
           API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
         run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$API_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
           mkdir -p ~/private_keys
           echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
 
+      # Configure the Xcode project for automatic signing
       - name: Configure iOS project
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
-          sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
-          sed -i '' "s/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ${TEAM_ID};/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
+
+          # Set bundle ID and team
+          sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;/g" Runner.xcodeproj/project.pbxproj
+          sed -i '' "s/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ${TEAM_ID};/g" Runner.xcodeproj/project.pbxproj
+
+          # Enable automatic signing
+          sed -i '' "s/CODE_SIGN_STYLE = Manual/CODE_SIGN_STYLE = Automatic/g" Runner.xcodeproj/project.pbxproj
+
+          # Ensure automatic signing is set (add if not present)
+          ruby -e '
+            pbx = File.read("Runner.xcodeproj/project.pbxproj")
+            # Ensure CODE_SIGN_STYLE = Automatic for all targets
+            pbx.gsub!(/CODE_SIGN_STYLE = .*;/, "CODE_SIGN_STYLE = Automatic;")
+            File.write("Runner.xcodeproj/project.pbxproj", pbx)
+          '
+
+          # Update version in Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
 
-      - name: Build iOS
+      # Build using xcodebuild directly with API key authentication
+      - name: Build iOS Archive
         env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          flutter build ipa \
-            --release \
+          # First, build the Flutter assets
+          flutter build ios --release --no-codesign \
             --build-name=${{ steps.version.outputs.version }} \
-            --build-number=${{ steps.version.outputs.build_number }} \
-            --export-options-plist=ios/ExportOptions.plist
+            --build-number=${{ steps.version.outputs.build_number }}
+
+          cd ios
+
+          # Archive with API key for automatic signing
+          xcodebuild archive \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath ../build/ios/archive/Runner.xcarchive \
+            -destination 'generic/platform=iOS' \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID "$KEY_ID" \
+            -authenticationKeyIssuerID "$ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            | tail -20
+
+          # Export IPA
+          xcodebuild -exportArchive \
+            -archivePath ../build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath ../build/ios/ipa \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID "$KEY_ID" \
+            -authenticationKeyIssuerID "$ISSUER_ID" \
+            | tail -10
 
       - name: Upload to TestFlight
         if: ${{ inputs.upload_to_testflight != false }}
@@ -101,6 +150,11 @@ jobs:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
+          xcrun notarytool store-credentials "AC_PASSWORD" \
+            --key ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            --key-id "$KEY_ID" \
+            --issuer "$ISSUER_ID" 2>/dev/null || true
+
           xcrun altool --upload-app \
             --type ios \
             --file build/ios/ipa/*.ipa \
@@ -115,6 +169,7 @@ jobs:
           path: build/ios/ipa/*.ipa
 
       - name: Upload IPA to Release
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
