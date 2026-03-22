@@ -33,7 +33,9 @@ jobs:
           echo "Base: $BASE_VERSION -> PR: $PR_VERSION"
 
           if [ "$PR_VERSION" = "$BASE_VERSION" ]; then
-            echo "⚠️ Warning: version.json has not been bumped"
+            echo "❌ ERROR: version.json has not been bumped ($BASE_VERSION -> $PR_VERSION)"
+            echo "Please update version.json before merging."
+            exit 1
           else
             echo "✅ Version bumped: $BASE_VERSION -> $PR_VERSION"
           fi

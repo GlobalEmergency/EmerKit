@@ -1,7 +1,7 @@
 name: navaja_suiza_sanitaria
 description: La Navaja Suiza Sanitaria - Herramientas para profesionales de emergencias
 publish_to: 'none'
-version: 0.1.1+101
+version: 0.1.2+102
 
 environment:
   sdk: ^3.5.0
