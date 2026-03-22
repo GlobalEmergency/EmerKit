@@ -168,7 +168,7 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: LundBrowderData.infoSections,
         references: LundBrowderData.references,
       ),

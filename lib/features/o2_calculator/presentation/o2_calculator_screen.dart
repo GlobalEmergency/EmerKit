@@ -102,7 +102,7 @@ class _O2CalculatorScreenState extends State<O2CalculatorScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: O2CalculatorData.infoSections,
         references: O2CalculatorData.references,
       ),

@@ -554,7 +554,7 @@ class _IctusScreenState extends State<IctusScreen> {
         title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         subtitle: Text(description, style: const TextStyle(fontSize: 11)),
         value: value,
-        activeColor: AppColors.severitySevere,
+        activeThumbColor: AppColors.severitySevere,
         onChanged: (v) => onChanged(v),
       ),
     );

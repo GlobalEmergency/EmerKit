@@ -1,5 +1,6 @@
 /// Pure Dart triage START decision engine.
 /// NO Flutter imports.
+library;
 
 enum TriageColor { green, yellow, red, black }
 

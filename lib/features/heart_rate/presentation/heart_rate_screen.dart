@@ -104,7 +104,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
           ),
         ),
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HeartRateData.infoSections,
         references: HeartRateData.references,
       ),

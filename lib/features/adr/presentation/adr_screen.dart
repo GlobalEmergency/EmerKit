@@ -64,12 +64,12 @@ class AdrScreen extends StatelessWidget {
         child: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          Card(
+          const Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text('Panel naranja', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   SizedBox(height: 8),
                   Text('Número superior: Código de peligro (Kemler)\n'

@@ -100,7 +100,7 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HipotermiaData.infoSections,
         references: HipotermiaData.references,
       ),

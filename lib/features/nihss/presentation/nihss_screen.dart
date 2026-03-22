@@ -48,11 +48,14 @@ class _NihssScreenState extends State<NihssScreen> {
                 child: Text('${_scores[index]}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
               ),
               children: List.generate(item.options.length, (optIndex) {
+                // ignore: deprecated_member_use
                 return RadioListTile<int>(
                   title: Text(item.options[optIndex].label, style: const TextStyle(fontSize: 12)),
                   value: item.options[optIndex].score,
+                  // ignore: deprecated_member_use
                   groupValue: _scores[index],
                   dense: true,
+                  // ignore: deprecated_member_use
                   onChanged: (v) => setState(() => _scores[index] = v!),
                 );
               }),

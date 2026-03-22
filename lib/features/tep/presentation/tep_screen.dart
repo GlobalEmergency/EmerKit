@@ -26,9 +26,13 @@ class _TepScreenState extends State<TepScreen> {
   List<bool?> get _values => [_appearance, _breathing, _circulation];
 
   void _setValue(int index, bool value) => setState(() {
-    if (index == 0) _appearance = value;
-    else if (index == 1) _breathing = value;
-    else _circulation = value;
+    if (index == 0) {
+      _appearance = value;
+    } else if (index == 1) {
+      _breathing = value;
+    } else {
+      _circulation = value;
+    }
   });
 
   void _reset() => setState(() {

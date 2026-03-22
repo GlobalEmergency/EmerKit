@@ -1,23 +1,26 @@
 import 'service_locator.dart';
-
-// Los calculators se importarán aquí cuando estén creados por los agentes.
-// Por ahora es el placeholder que se rellenará en la Fase 4.
+import 'package:navaja_suiza_sanitaria/features/glasgow/domain/glasgow_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/o2_calculator/domain/o2_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/hipotermia/domain/temperature_classifier.dart';
+import 'package:navaja_suiza_sanitaria/features/ictus/domain/madrid_direct_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/ictus/domain/cincinnati_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/nihss/domain/nihss_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/tep/domain/tep_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/lund_browder/domain/lund_browder_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/heart_rate/domain/heart_rate_calculator.dart';
+import 'package:navaja_suiza_sanitaria/features/rankin/domain/rankin_calculator.dart';
 
 /// Registra todos los servicios/calculators en el contenedor.
 /// Se llama una vez en main.dart.
 void registerServices() {
-  // Los calculators son stateless, así que se registran como singletons.
-  // Se irán añadiendo a medida que se creen las features:
-  //
-  // ServiceLocator.register(GlasgowCalculator());
-  // ServiceLocator.register(O2Calculator());
-  // ServiceLocator.register(TriageEngine(TriageData.nodes));
-  // ServiceLocator.register(TemperatureClassifier());
-  // ServiceLocator.register(MadridDirectCalculator());
-  // ServiceLocator.register(CincinnatiCalculator());
-  // ServiceLocator.register(NihssCalculator());
-  // ServiceLocator.register(TepCalculator());
-  // ServiceLocator.register(LundBrowderCalculator());
-  // ServiceLocator.register(HeartRateCalculator());
-  // ServiceLocator.register(RankinCalculator());
+  ServiceLocator.register(const GlasgowCalculator());
+  ServiceLocator.register(O2Calculator());
+  ServiceLocator.register(TemperatureClassifier());
+  ServiceLocator.register(const MadridDirectCalculator());
+  ServiceLocator.register(const CincinnatiCalculator());
+  ServiceLocator.register(const NihssCalculator());
+  ServiceLocator.register(const TepCalculator());
+  ServiceLocator.register(LundBrowderCalculator());
+  ServiceLocator.register(HeartRateCalculator());
+  ServiceLocator.register(const RankinCalculator());
 }

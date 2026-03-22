@@ -3,10 +3,10 @@
 ///
 /// Uso:
 ///   // En main.dart
-///   ServiceLocator.register<GlasgowCalculator>(GlasgowCalculator());
+///   ServiceLocator.register(GlasgowCalculator());
 ///
 ///   // En cualquier screen
-///   final calc = ServiceLocator.get<GlasgowCalculator>();
+///   final calc = ServiceLocator.get();
 class ServiceLocator {
   ServiceLocator._();
 

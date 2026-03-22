@@ -14,7 +14,7 @@ class TriageScreen extends StatefulWidget {
 }
 
 class _TriageScreenState extends State<TriageScreen> {
-  static final _engine = TriageEngine(nodes: TriageData.triageNodes);
+  static const _engine = TriageEngine(nodes: TriageData.triageNodes);
 
   String _currentNodeId = TriageData.startNodeId;
   final List<String> _history = [];
@@ -64,7 +64,7 @@ class _TriageScreenState extends State<TriageScreen> {
       toolBody: result != null
           ? _buildResult(result)
           : _buildQuestion(),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: TriageData.infoSections,
         references: TriageData.references,
       ),

@@ -1,5 +1,6 @@
 /// Pure Dart Madrid-DIRECT scale calculator.
 /// NO Flutter imports.
+library;
 
 import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
 

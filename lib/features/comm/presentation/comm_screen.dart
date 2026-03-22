@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navaja_suiza_sanitaria/shared/presentation/theme/app_colors.dart';
 import 'package:navaja_suiza_sanitaria/shared/presentation/widgets/screen_info_helper.dart';
 
 class CommScreen extends StatelessWidget {

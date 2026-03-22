@@ -107,7 +107,7 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
           ),
         ],
       ),
-      infoBody: ToolInfoPanel(
+      infoBody: const ToolInfoPanel(
         sections: HipertermiaData.infoSections,
         references: HipertermiaData.references,
       ),

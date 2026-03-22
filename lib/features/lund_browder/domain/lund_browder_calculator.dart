@@ -21,7 +21,7 @@ class LundBrowderCalculator {
     required int ageGroupIndex,
   }) {
     double total = 0;
-    final zones = LundBrowderData.zonePercentages;
+    const zones = LundBrowderData.zonePercentages;
 
     for (int i = 0; i < zones.length && i < burnDegrees.length; i++) {
       if (burnDegrees[i] > 0) {

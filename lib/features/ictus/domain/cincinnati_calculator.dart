@@ -1,5 +1,6 @@
 /// Pure Dart Cincinnati Prehospital Stroke Scale calculator.
 /// NO Flutter imports.
+library;
 
 import 'package:navaja_suiza_sanitaria/shared/domain/entities/severity.dart';
 
