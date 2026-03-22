@@ -111,13 +111,33 @@ jobs:
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "PROVISIONING_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
 
-      - name: Configure iOS project
+      - name: Configure iOS project for manual distribution signing
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
+
+          # Update version
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
+
+          # Configure signing IN the pbxproj so it only applies to Runner target
+          # Pods targets are left untouched (they use their own signing)
+          ruby -e '
+            pbx = File.read("Runner.xcodeproj/project.pbxproj")
+            # Set bundle ID
+            pbx.gsub!(/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/, "PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;")
+            # Set team
+            pbx.gsub!(/DEVELOPMENT_TEAM = [^;]*;/, "DEVELOPMENT_TEAM = '"$TEAM_ID"';")
+            # Set manual signing
+            pbx.gsub!(/CODE_SIGN_STYLE = [^;]*;/, "CODE_SIGN_STYLE = Manual;")
+            # Set provisioning profile UUID
+            pbx.gsub!(/PROVISIONING_PROFILE = [^;]*;/, "PROVISIONING_PROFILE = \"'"$PROVISIONING_PROFILE_UUID"'\";")
+            # Add CODE_SIGN_IDENTITY if not already present
+            pbx.gsub!(/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = [^;]*;/, "\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Distribution\";")
+            File.write("Runner.xcodeproj/project.pbxproj", pbx)
+          '
+          echo "✅ Runner.xcodeproj configured for manual signing"
 
       - name: Build Flutter iOS
         run: |
@@ -126,23 +146,17 @@ jobs:
             --build-number=${{ steps.version.outputs.build_number }}
 
       - name: Xcode Archive
-        env:
-          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios
+          # Signing is configured in Runner.xcodeproj (not as xcodebuild args)
+          # This prevents signing settings from leaking to Pods targets
           xcodebuild archive \
             -workspace Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
             -archivePath ../build/ios/archive/Runner.xcarchive \
             -destination "generic/platform=iOS" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            PROVISIONING_PROFILE="$PROVISIONING_PROFILE_UUID" \
-            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
-            -allowProvisioningUpdates
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"
 
           echo "✅ Archive created"
           ls -la ../build/ios/archive/Runner.xcarchive/
