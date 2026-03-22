@@ -126,7 +126,7 @@ jobs:
           packageName: online.globalemergency.emerkit
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: ${{ inputs.android_track || 'internal' }}
-          status: completed
+          status: draft
           releaseName: ${{ steps.version.outputs.version }}
 
       - name: Upload APK to Release
