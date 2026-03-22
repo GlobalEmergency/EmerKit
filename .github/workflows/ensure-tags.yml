@@ -63,3 +63,7 @@ jobs:
           echo "🚀 Triggering Android build..."
           gh workflow run build-android.yml \
             --ref "${{ steps.version.outputs.tag }}"
+
+          echo "🍎 Triggering iOS build..."
+          gh workflow run build-ios.yml \
+            --ref "${{ steps.version.outputs.tag }}"

@@ -4,9 +4,16 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      upload_to_testflight:
+        description: 'Upload to TestFlight'
+        required: false
+        default: true
+        type: boolean
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -14,6 +21,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Extract version from version.json
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          BUILD_NUMBER=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "📦 Version: $VERSION (build: $BUILD_NUMBER)"
 
       - uses: subosito/flutter-action@v2
         with:
@@ -26,48 +44,58 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      # Install Apple certificate and provisioning profile
-      - name: Install Apple Certificate
+      # Install the App Store Connect API key for automatic signing
+      - name: Install App Store Connect API Key
         env:
-          P12_BASE64: ${{ secrets.IOS_P12_BASE64 }}
-          P12_PASSWORD: ${{ secrets.IOS_P12_PASSWORD }}
-          PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
-          KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
         run: |
-          # Create temporary keychain
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          mkdir -p ~/private_keys
+          echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
+          echo "✅ API key installed"
 
-          # Import certificate
-          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
-          echo -n "$P12_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+      # Update iOS project settings
+      - name: Configure iOS project
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cd ios
 
-          # Install provisioning profile
-          PP_PATH=$HOME/Library/MobileDevice/Provisioning\ Profiles
-          mkdir -p "$PP_PATH"
-          echo -n "$PROVISION_PROFILE_BASE64" | base64 --decode -o "$PP_PATH/emerkit.mobileprovision"
+          # Update bundle identifier and team
+          sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
+          sed -i '' "s/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ${TEAM_ID};/" Runner.xcodeproj/project.pbxproj 2>/dev/null || true
 
+          # Set version
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
+
+          echo "✅ iOS project configured"
+
+      # Build iOS archive with automatic signing
       - name: Build iOS
-        run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
-
-      # Upload to TestFlight
-      - name: Upload to TestFlight
-        if: env.APP_STORE_CONNECT_API_KEY != ''
         env:
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          flutter build ipa \
+            --release \
+            --build-name=${{ steps.version.outputs.version }} \
+            --build-number=${{ steps.version.outputs.build_number }} \
+            --export-options-plist=ios/ExportOptions.plist
+
+      # Upload to TestFlight using App Store Connect API
+      - name: Upload to TestFlight
+        if: ${{ inputs.upload_to_testflight != false }}
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcrun notarytool --version 2>/dev/null || true
           xcrun altool --upload-app \
             --type ios \
-            --file build/ios/ipa/emerkit.ipa \
-            --apiKey "$APP_STORE_CONNECT_KEY_ID" \
-            --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+            --file build/ios/ipa/*.ipa \
+            --apiKey "$KEY_ID" \
+            --apiIssuer "$ISSUER_ID" \
+            --verbose
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
@@ -75,7 +103,13 @@ jobs:
           name: release-ipa
           path: build/ios/ipa/*.ipa
 
-      # Cleanup keychain
-      - name: Cleanup
-        if: always()
-        run: security delete-keychain $RUNNER_TEMP/app-signing.keychain-db 2>/dev/null || true
+      # Attach IPA to GitHub Release
+      - name: Upload IPA to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          IPA=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
+          if [ -n "$IPA" ]; then
+            gh release upload "${{ github.ref_name }}" "$IPA" --clobber || echo "⚠️ Could not attach to release"
+          fi
