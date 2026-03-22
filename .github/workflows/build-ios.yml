@@ -111,9 +111,7 @@ jobs:
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "PROVISIONING_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
 
-      - name: Configure iOS project for manual distribution signing
-        env:
-          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      - name: Configure iOS project for distribution
         run: |
           cd ios
 
@@ -121,23 +119,27 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" Runner/Info.plist
 
-          # Configure signing IN the pbxproj so it only applies to Runner target
-          # Pods targets are left untouched (they use their own signing)
-          ruby -e '
-            pbx = File.read("Runner.xcodeproj/project.pbxproj")
-            # Set bundle ID
-            pbx.gsub!(/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/, "PRODUCT_BUNDLE_IDENTIFIER = online.globalemergency.emerkit;")
-            # Set team
-            pbx.gsub!(/DEVELOPMENT_TEAM = [^;]*;/, "DEVELOPMENT_TEAM = '"$TEAM_ID"';")
-            # Set manual signing
-            pbx.gsub!(/CODE_SIGN_STYLE = [^;]*;/, "CODE_SIGN_STYLE = Manual;")
-            # Set provisioning profile UUID
-            pbx.gsub!(/PROVISIONING_PROFILE = [^;]*;/, "PROVISIONING_PROFILE = \"'"$PROVISIONING_PROFILE_UUID"'\";")
-            # Add CODE_SIGN_IDENTITY if not already present
-            pbx.gsub!(/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = [^;]*;/, "\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Distribution\";")
-            File.write("Runner.xcodeproj/project.pbxproj", pbx)
-          '
-          echo "✅ Runner.xcodeproj configured for manual signing"
+          # Set manual signing + distribution identity + provisioning profile
+          # Only modifies Runner.xcodeproj (Pods are untouched)
+          python3 -c "
+import re
+with open('Runner.xcodeproj/project.pbxproj', 'r') as f:
+    c = f.read()
+c = c.replace('CODE_SIGN_STYLE = Automatic;', 'CODE_SIGN_STYLE = Manual;')
+c = re.sub(r'\"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]\" = [^;]*;',
+           '\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Distribution\";', c)
+# Add PROVISIONING_PROFILE after each DEVELOPMENT_TEAM for Runner
+lines = c.split('\n')
+out = []
+for i, l in enumerate(lines):
+    out.append(l)
+    if 'DEVELOPMENT_TEAM = ' in l and 'PROVISIONING_PROFILE' not in (lines[i+1] if i+1 < len(lines) else ''):
+        indent = l[:len(l)-len(l.lstrip())]
+        out.append(f'{indent}PROVISIONING_PROFILE = \"$PROVISIONING_PROFILE_UUID\";')
+with open('Runner.xcodeproj/project.pbxproj', 'w') as f:
+    f.write('\n'.join(out))
+"
+          echo "✅ Configured manual signing with profile $PROVISIONING_PROFILE_UUID"
 
       - name: Build Flutter iOS
         run: |
