@@ -5,38 +5,55 @@ class _Vendaje {
   final String name;
   final String indication;
   final String technique;
-  const _Vendaje(this.name, this.indication, this.technique);
+  final String? imagePath;
+  const _Vendaje(this.name, this.indication, this.technique, {this.imagePath});
 }
 
 const _vendajes = [
   _Vendaje('Circular', 'Fijar apósitos, extremos de vendajes',
       'Vueltas superpuestas sobre sí mismas. Cada vuelta cubre la anterior.'),
   _Vendaje('Espiral', 'Extremidades (zonas uniformes)',
-      'Vueltas ascendentes en espiral. Cada vuelta cubre 2/3 de la anterior.'),
+      'Vueltas ascendentes en espiral. Cada vuelta cubre 2/3 de la anterior.',
+      imagePath: 'assets/images/vendaje_espiral.png'),
   _Vendaje('Espiral con inverso', 'Extremidades (zonas cónicas como antebrazo)',
-      'Como espiral pero con pliegue en cada vuelta para adaptarse a la conicidad.'),
+      'Como espiral pero con pliegue en cada vuelta para adaptarse a la conicidad.',
+      imagePath: 'assets/images/vendaje_espiral_con_inverso.png'),
   _Vendaje('En ocho (espiga)', 'Articulaciones: codo, rodilla',
-      'Vueltas en forma de 8 alrededor de la articulación. Permite flexión parcial.'),
+      'Vueltas en forma de 8 alrededor de la articulación. Permite flexión parcial.',
+      imagePath: 'assets/images/vendaje_codo_rodilla.png'),
   _Vendaje('Recurrente', 'Muñones, dedos, cabeza',
-      'Vueltas de adelante atrás sobre el extremo, fijadas con circulares.'),
+      'Vueltas de adelante atrás sobre el extremo, fijadas con circulares.',
+      imagePath: 'assets/images/vendaje_recurrente.png'),
   _Vendaje('Velpeau', 'Inmovilización de hombro y brazo',
-      'Inmoviliza hombro con brazo pegado al cuerpo. Codo flexionado 90°.'),
+      'Inmoviliza hombro con brazo pegado al cuerpo. Codo flexionado 90°.',
+      imagePath: 'assets/images/vendaje_velpeau.png'),
   _Vendaje('Mano', 'Heridas en mano',
-      'Recurrente sobre dedos + espiral sobre mano + fijación en muñeca en ocho.'),
+      'Recurrente sobre dedos + espiral sobre mano + fijación en muñeca en ocho.',
+      imagePath: 'assets/images/vendaje_mano.png'),
   _Vendaje('Dedos', 'Heridas en dedos',
-      'Recurrente sobre punta del dedo + espiral descendente + fijación en muñeca.'),
+      'Recurrente sobre punta del dedo + espiral descendente + fijación en muñeca.',
+      imagePath: 'assets/images/vendaje_dedos.png'),
   _Vendaje('Muñeca', 'Esguince, heridas en muñeca',
-      'Circulares en muñeca + ocho pasando por mano + circulares finales.'),
+      'Circulares en muñeca + ocho pasando por mano + circulares finales.',
+      imagePath: 'assets/images/vendaje_muneca.png'),
   _Vendaje('Tobillo', 'Esguince de tobillo',
-      'Estribo + circular + ocho alrededor del tobillo. Dejar talón libre.'),
+      'Estribo + circular + ocho alrededor del tobillo. Dejar talón libre.',
+      imagePath: 'assets/images/vendaje_tobillo.png'),
   _Vendaje('Pie', 'Heridas en pie',
-      'Recurrente sobre dedos + espiral sobre pie + fijación en tobillo en ocho.'),
+      'Recurrente sobre dedos + espiral sobre pie + fijación en tobillo en ocho.',
+      imagePath: 'assets/images/vendaje_pie.png'),
   _Vendaje('Tórax', 'Heridas en tórax',
-      'Circulares alrededor del tórax. Aplicar en espiración.'),
+      'Circulares alrededor del tórax. Aplicar en espiración.',
+      imagePath: 'assets/images/vendaje_torax.png'),
   _Vendaje('Abdomen', 'Heridas abdominales, evisceración',
-      'Circulares ascendentes desde pelvis. No comprimir contenido eviscerado.'),
+      'Circulares ascendentes desde pelvis. No comprimir contenido eviscerado.',
+      imagePath: 'assets/images/vendaje_abdomen.png'),
   _Vendaje('Axila/Hombro', 'Heridas en hombro',
-      'Espiga pasando por axila del lado sano + sobre hombro afectado.'),
+      'Espiga pasando por axila del lado sano + sobre hombro afectado.',
+      imagePath: 'assets/images/vendaje_axila_hombro.png'),
+  _Vendaje('Muslo/Cadera', 'Heridas en muslo o cadera',
+      'Espiral ascendente desde rodilla + espiga en cadera.',
+      imagePath: 'assets/images/vendaje_muslo_cadera.png'),
 ];
 
 class VendajesScreen extends StatelessWidget {
@@ -88,6 +105,19 @@ class VendajesScreen extends StatelessWidget {
                 subtitle: Text(v.indication,
                     style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 children: [
+                  if (v.imagePath != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          v.imagePath!,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child:

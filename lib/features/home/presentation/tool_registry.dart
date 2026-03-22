@@ -26,7 +26,7 @@ class ToolRegistry {
     // Soporte Vital
     ToolEntry(
         id: 'rcp_rithm',
-        name: 'Metrónomo RCP',
+        name: 'RCP',
         icon: Icons.monitor_heart,
         route: '/rcp-rithm',
         category: ToolCategory.soporteVital),
@@ -64,10 +64,16 @@ class ToolRegistry {
         route: '/tep',
         category: ToolCategory.valoracion),
     ToolEntry(
-        id: 'ictus',
-        name: 'Ictus',
-        icon: Icons.emergency,
-        route: '/ictus',
+        id: 'cincinnati',
+        name: 'Cincinnati',
+        icon: Icons.favorite,
+        route: '/cincinnati',
+        category: ToolCategory.valoracion),
+    ToolEntry(
+        id: 'madrid_direct',
+        name: 'Madrid-DIRECT',
+        icon: Icons.local_hospital,
+        route: '/madrid-direct',
         category: ToolCategory.valoracion),
     ToolEntry(
         id: 'nihss',
@@ -175,6 +181,12 @@ class ToolRegistry {
         name: 'SBAR',
         icon: Icons.forum,
         route: '/comm',
+        category: ToolCategory.comunicacion),
+    ToolEntry(
+        id: 'glosario',
+        name: 'Glosario',
+        icon: Icons.menu_book,
+        route: '/glosario',
         category: ToolCategory.comunicacion),
   ];
 
