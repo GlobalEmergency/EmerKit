@@ -67,12 +67,18 @@ class EcgLeadsScreen extends StatelessWidget {
         const Text('Código de colores europeo (IEC)',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
+        _buildImageCard('assets/images/ecg_pinzas.png',
+            'Derivaciones de extremidades (EU)'),
+        const SizedBox(height: 16),
         _buildSection('Monitor 3 derivaciones', [
           _lead('Rojo', 'Hombro derecho (RA)', Colors.red),
           _lead('Amarillo', 'Hombro izquierdo (LA)', Colors.amber),
           _lead('Verde', 'Costilla izquierda inferior (LL)', Colors.green),
         ]),
         const SizedBox(height: 16),
+        _buildImageCard('assets/images/ecg_eu_leads.png',
+            'Colocación de electrodos precordiales (EU)'),
+        const SizedBox(height: 12),
         _buildSection('ECG 12 derivaciones - Precordiales', [
           _lead('V1 (Rojo)', '4º espacio intercostal, borde esternal derecho',
               Colors.red),
@@ -89,6 +95,9 @@ class EcgLeadsScreen extends StatelessWidget {
               Colors.purple),
         ]),
         const SizedBox(height: 16),
+        _buildImageCard(
+            'assets/images/ecg_posterior.png', 'Derivaciones posteriores'),
+        const SizedBox(height: 12),
         _buildSection('Derivaciones posteriores', [
           _lead('V7', 'Línea axilar posterior izquierda', Colors.blue),
           _lead('V8', 'Punta de escápula izquierda', Colors.blue),
@@ -105,11 +114,17 @@ class EcgLeadsScreen extends StatelessWidget {
         const Text('Código de colores americano (AHA)',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
+        _buildImageCard('assets/images/ecg_pinzas_usa.png',
+            'Derivaciones de extremidades (AHA)'),
+        const SizedBox(height: 16),
         _buildSection('Monitor 3 derivaciones', [
           _lead('Blanco (RA)', 'Hombro derecho', Colors.grey.shade300),
           _lead('Negro (LA)', 'Hombro izquierdo', Colors.black),
           _lead('Verde (LL)', 'Costilla izquierda inferior', Colors.green),
         ]),
+        const SizedBox(height: 16),
+        _buildImageCard('assets/images/ecg_base_usa.png',
+            'Colocación de electrodos precordiales (AHA)'),
         const SizedBox(height: 16),
         _buildSection('Mnemotecnia', [
           const ListTile(
@@ -124,6 +139,35 @@ class EcgLeadsScreen extends StatelessWidget {
           ),
         ]),
       ],
+    );
+  }
+
+  Widget _buildImageCard(String assetPath, String caption) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              assetPath,
+              width: double.infinity,
+              fit: BoxFit.contain,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              caption,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
