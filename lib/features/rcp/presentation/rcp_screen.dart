@@ -21,13 +21,21 @@ class RcpScreen extends StatefulWidget {
 }
 
 class _RcpScreenState extends State<RcpScreen> {
-  // Audio: use AudioPool for reliable low-latency playback
-  AudioPool? _audioPool;
+  // Audio: two players alternating (double buffer) to avoid memory leak
+  // and ensure reliable playback at 120bpm (500ms intervals)
+  static final _clickSource = AssetSource('audio/metronome_click.wav');
+  static final _alertSource = AssetSource('audio/alert_tone.wav');
+  late final AudioPlayer _playerA;
+  late final AudioPlayer _playerB;
+  final AudioPlayer _alertPlayer = AudioPlayer();
+  bool _usePlayerA = true;
   Timer? _timer;
   Timer? _clockTimer;
   Timer? _medicationRefreshTimer;
+  Timer? _twoMinTimer;
   bool _isRunning = false;
   bool _flash = false;
+  bool _muted = false; // Only mutes compression clicks
   int _elapsedSeconds = 0;
 
   // Fixed BPM per ERC 2025
@@ -41,7 +49,8 @@ class _RcpScreenState extends State<RcpScreen> {
   @override
   void initState() {
     super.initState();
-    _initAudio();
+    _playerA = AudioPlayer();
+    _playerB = AudioPlayer();
     _actionLog = ActionLog();
     _session = RcpSession(
       mode: RcpMode.svb,
@@ -51,15 +60,28 @@ class _RcpScreenState extends State<RcpScreen> {
     );
   }
 
-  Future<void> _initAudio() async {
-    _audioPool = await AudioPool.create(
-      source: AssetSource('audio/metronome_click.wav'),
-      maxPlayers: 3,
-    );
+  void _playClick() {
+    if (_muted) return;
+    final active = _usePlayerA ? _playerA : _playerB;
+    final idle = _usePlayerA ? _playerB : _playerA;
+    _usePlayerA = !_usePlayerA;
+    idle.stop();
+    active.play(_clickSource);
   }
 
-  void _playClick() {
-    _audioPool?.start();
+  void _playAlert() {
+    // Alert tone is NEVER muted - always plays
+    _alertPlayer.stop();
+    _alertPlayer.play(_alertSource);
+  }
+
+  void _onTwoMinAlert() {
+    _playAlert();
+    _actionLog.add(
+      'Alerta 2 min: comprobar pulso / cambio reanimador',
+      'evento',
+    );
+    setState(() {});
   }
 
   void _start() {
@@ -88,6 +110,12 @@ class _RcpScreenState extends State<RcpScreen> {
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() => _elapsedSeconds++);
     });
+    // 2-minute alert: check pulse / switch rescuer
+    _twoMinTimer?.cancel();
+    _twoMinTimer = Timer.periodic(
+      const Duration(minutes: 2),
+      (_) => _onTwoMinAlert(),
+    );
     if (_session.mode == RcpMode.sva) {
       _startMedicationRefresh();
     }
@@ -97,6 +125,7 @@ class _RcpScreenState extends State<RcpScreen> {
     _timer?.cancel();
     _clockTimer?.cancel();
     _medicationRefreshTimer?.cancel();
+    _twoMinTimer?.cancel();
     if (_isRunning) {
       _actionLog.add('RCP pausada', 'evento');
     }
@@ -203,7 +232,10 @@ class _RcpScreenState extends State<RcpScreen> {
     _timer?.cancel();
     _clockTimer?.cancel();
     _medicationRefreshTimer?.cancel();
-    _audioPool?.dispose();
+    _twoMinTimer?.cancel();
+    _playerA.dispose();
+    _playerB.dispose();
+    _alertPlayer.dispose();
     super.dispose();
   }
 
@@ -261,6 +293,13 @@ class _RcpScreenState extends State<RcpScreen> {
     return ToolScreenBase(
       title: 'RCP',
       onReset: _reset,
+      extraActions: [
+        IconButton(
+          icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
+          tooltip: _muted ? 'Activar sonido' : 'Silenciar',
+          onPressed: () => setState(() => _muted = !_muted),
+        ),
+      ],
       resultWidget: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
         width: double.infinity,
@@ -329,6 +368,9 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ),
 
+            // Quick action buttons - always visible when running
+            if (_isRunning) _buildQuickActions(),
+
             // SVA medications
             if (_session.mode == RcpMode.sva && _isRunning) ...[
               const Padding(
@@ -364,9 +406,8 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
             ],
 
-            // Action log
-            if (_session.mode == RcpMode.sva &&
-                (_isRunning || _actionLog.entries.isNotEmpty)) ...[
+            // Action log - visible whenever there are entries
+            if (_isRunning || _actionLog.entries.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
@@ -429,6 +470,255 @@ class _RcpScreenState extends State<RcpScreen> {
       infoBody: const ToolInfoPanel(
         sections: RcpData.infoSections,
         references: RcpData.references,
+      ),
+    );
+  }
+
+  void _logQuickAction(String action) {
+    _actionLog.add(action, 'evento');
+    HapticFeedback.lightImpact();
+    setState(() {});
+  }
+
+  void _showAirwayOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.air),
+              title: const Text('Apertura via aerea'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Apertura via aerea');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.straighten),
+              title: const Text('Guedel colocado'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Canula orofaringea (Guedel) colocada');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.masks),
+              title: const Text('IOT realizada'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Intubacion orotraqueal (IOT) realizada');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.face),
+              title: const Text('Mascarilla laringea'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Mascarilla laringea colocada');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.cancel_outlined),
+              title: const Text('Aspiracion de secreciones'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Aspiracion de secreciones');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPulseOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.favorite_border),
+              title: const Text('Comprobacion de pulso'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Comprobacion de pulso');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite, color: Colors.green),
+              title: const Text('ROSC - Pulso recuperado'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction(
+                    'ROSC - Recuperacion de circulacion espontanea');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite_border, color: Colors.red),
+              title: const Text('Sin pulso'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Sin pulso - continuar RCP');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeaOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.electric_bolt),
+              title: const Text('Parches DEA colocados'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Parches DEA colocados');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.search),
+              title: const Text('Analisis de ritmo'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Analisis de ritmo');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.flash_on, color: Colors.orange),
+              title: const Text('Descarga administrada'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Descarga DEA administrada');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.flash_off),
+              title: const Text('Descarga NO indicada'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _logQuickAction('Descarga NO indicada');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCustomEventDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Registrar evento'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Descripcion del evento...',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) {
+              _logQuickAction(value.trim());
+            }
+            Navigator.pop(ctx);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                _logQuickAction(controller.text.trim());
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Registrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _quickActionButton(
+            icon: Icons.air,
+            label: 'Via aerea',
+            color: AppColors.valoracion,
+            onTap: _showAirwayOptions,
+          ),
+          _quickActionButton(
+            icon: Icons.favorite,
+            label: 'Pulso',
+            color: AppColors.soporteVital,
+            onTap: _showPulseOptions,
+          ),
+          _quickActionButton(
+            icon: Icons.electric_bolt,
+            label: 'DEA',
+            color: AppColors.tecnicas,
+            onTap: _showDeaOptions,
+          ),
+          _quickActionButton(
+            icon: Icons.edit_note,
+            label: 'Evento',
+            color: AppColors.comunicacion,
+            onTap: _showCustomEventDialog,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(fontSize: 10, color: color),
+            ),
+          ],
+        ),
       ),
     );
   }

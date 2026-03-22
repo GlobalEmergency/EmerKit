@@ -51,9 +51,12 @@ class ActionLog {
 
     for (final entry in _entries) {
       final relative = entry.timestamp.difference(startTime);
-      final mm = relative.inMinutes.toString().padLeft(2, '0');
-      final ss = (relative.inSeconds % 60).toString().padLeft(2, '0');
-      buffer.writeln('$mm:$ss - ${entry.action}');
+      final relMm = relative.inMinutes.toString().padLeft(2, '0');
+      final relSs = (relative.inSeconds % 60).toString().padLeft(2, '0');
+      final hh = entry.timestamp.hour.toString().padLeft(2, '0');
+      final mm = entry.timestamp.minute.toString().padLeft(2, '0');
+      final ss = entry.timestamp.second.toString().padLeft(2, '0');
+      buffer.writeln('$hh:$mm:$ss (+$relMm:$relSs) - ${entry.action}');
     }
 
     return buffer.toString().trimRight();

@@ -12,11 +12,32 @@ class ActionLogViewer extends StatefulWidget {
 
 class _ActionLogViewerState extends State<ActionLogViewer> {
   final ScrollController _scrollController = ScrollController();
+  int _previousCount = 0;
+  bool _userScrolledUp = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    // User is "at the bottom" if within 50px of max
+    _userScrolledUp = pos.pixels < pos.maxScrollExtent - 50;
+  }
 
   @override
   void didUpdateWidget(covariant ActionLogViewer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _scrollToBottom();
+    final currentCount = widget.actionLog.entries.length;
+    if (currentCount > _previousCount && !_userScrolledUp) {
+      _previousCount = currentCount;
+      _scrollToBottom();
+    } else {
+      _previousCount = currentCount;
+    }
   }
 
   void _scrollToBottom() {
@@ -64,8 +85,11 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
       itemBuilder: (context, index) {
         final entry = entries[index];
         final relative = entry.timestamp.difference(startTime);
-        final mm = relative.inMinutes.toString().padLeft(2, '0');
-        final ss = (relative.inSeconds % 60).toString().padLeft(2, '0');
+        final relMm = relative.inMinutes.toString().padLeft(2, '0');
+        final relSs = (relative.inSeconds % 60).toString().padLeft(2, '0');
+        final clockHh = entry.timestamp.hour.toString().padLeft(2, '0');
+        final clockMm = entry.timestamp.minute.toString().padLeft(2, '0');
+        final clockSs = entry.timestamp.second.toString().padLeft(2, '0');
         final color = _categoryColor(entry.category);
 
         return Padding(
@@ -80,9 +104,18 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
                 decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               Text(
-                '$mm:$ss',
+                '$clockHh:$clockMm:$clockSs',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
+                  color: Colors.grey.shade600,
+                  fontFamily: 'monospace',
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '+$relMm:$relSs',
+                style: TextStyle(
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: color,
                   fontFamily: 'monospace',

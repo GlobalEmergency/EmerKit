@@ -12,6 +12,7 @@ class ToolScreenBase extends StatelessWidget {
   final Widget toolBody;
   final Widget infoBody;
   final VoidCallback? onReset;
+  final List<Widget>? extraActions;
 
   const ToolScreenBase({
     super.key,
@@ -21,6 +22,7 @@ class ToolScreenBase extends StatelessWidget {
     required this.toolBody,
     required this.infoBody,
     this.onReset,
+    this.extraActions,
   });
 
   @override
@@ -29,6 +31,7 @@ class ToolScreenBase extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
         actions: [
+          if (extraActions != null) ...extraActions!,
           IconButton(
             icon: const Icon(Icons.menu_book_outlined),
             tooltip: 'Info',
