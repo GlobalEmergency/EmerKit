@@ -150,14 +150,16 @@ jobs:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          xcrun notarytool store-credentials "AC_PASSWORD" \
-            --key ~/private_keys/AuthKey_${KEY_ID}.p8 \
-            --key-id "$KEY_ID" \
-            --issuer "$ISSUER_ID" 2>/dev/null || true
+          IPA_FILE=$(ls build/ios/ipa/*.ipa 2>/dev/null | head -1)
+          if [ -z "$IPA_FILE" ]; then
+            echo "❌ No IPA file found"
+            exit 1
+          fi
+          echo "📦 Uploading: $IPA_FILE"
 
           xcrun altool --upload-app \
             --type ios \
-            --file build/ios/ipa/*.ipa \
+            --file "$IPA_FILE" \
             --apiKey "$KEY_ID" \
             --apiIssuer "$ISSUER_ID" \
             --verbose
