@@ -11,6 +11,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  version-check:
+    name: Version Sync Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version is propagated
+        run: bash scripts/propagate-version.sh --check
+
+      - name: Check version bumped
+        run: |
+          # Get version from PR branch
+          PR_VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+
+          # Get version from base branch
+          git fetch origin ${{ github.base_ref }} --depth=1
+          BASE_VERSION=$(git show origin/${{ github.base_ref }}:version.json 2>/dev/null | grep -o '"version": *"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "0.0.0")
+
+          echo "Base: $BASE_VERSION -> PR: $PR_VERSION"
+
+          if [ "$PR_VERSION" = "$BASE_VERSION" ]; then
+            echo "⚠️ Warning: version.json has not been bumped"
+          else
+            echo "✅ Version bumped: $BASE_VERSION -> $PR_VERSION"
+          fi
+
   analyze:
     name: Analyze
     runs-on: ubuntu-latest

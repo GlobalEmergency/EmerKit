@@ -1,0 +1,65 @@
+name: Ensure Tags & Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'version.json'
+
+permissions:
+  contents: write
+
+jobs:
+  tag-and-release:
+    name: Create Tag & Trigger Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from version.json
+        id: version
+        run: |
+          VERSION=$(grep -o '"version": *"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "📦 Version: $VERSION"
+
+      - name: Check if tag exists
+        id: check
+        run: |
+          if git rev-parse "refs/tags/${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "⏭️ Tag ${{ steps.version.outputs.tag }} already exists"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "🆕 Tag ${{ steps.version.outputs.tag }} will be created"
+          fi
+
+      - name: Create tag
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+          echo "🏷️ Created and pushed tag ${{ steps.version.outputs.tag }}"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --generate-notes
+
+      - name: Trigger build workflows
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "🚀 Triggering Android build..."
+          gh workflow run build-android.yml \
+            --ref "${{ steps.version.outputs.tag }}"
