@@ -87,6 +87,10 @@ app.*.map.json
 # Exceptions to above rules
 !/packages/**/pubspec.lock
 
+# Generated screenshots (regenerate with: python screenshots/generate_screenshots.py)
+/screenshots/custom_pages/
+/screenshots/AppScreens-*/
+
 # Environment
 .env
 .env.*
