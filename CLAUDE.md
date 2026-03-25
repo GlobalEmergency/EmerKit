@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-EmerKit is a cross-platform Flutter app with 24 clinical tools for emergency healthcare professionals. Developed by Global Emergency (globalemergency.online).
+EmerKit is a cross-platform Flutter app with 25 clinical tools for emergency healthcare professionals. Developed by Global Emergency (globalemergency.online).
 
 - **Package name**: `online.globalemergency.emerkit`
 - **Dart package**: `emerkit`
@@ -37,7 +37,7 @@ Before every push, run these commands **in order**. All must pass:
 ```bash
 dart format .                        # 1. Format - must have 0 changes
 flutter analyze                      # 2. Lint - must have 0 issues (no warnings, no info)
-flutter test                         # 3. Test - all 86+ tests must pass
+flutter test                         # 3. Test - all 130+ tests must pass
 bash scripts/propagate-version.sh --check  # 4. Version sync check
 ```
 
@@ -49,7 +49,7 @@ If you change app code (`lib/`, `assets/`, `pubspec.yaml`), you MUST bump `versi
 dart format .                        # Format all code
 dart format --set-exit-if-changed .   # Check format (CI mode)
 flutter analyze                      # Static analysis (0 issues required)
-flutter test                         # Run all tests (86+)
+flutter test                         # Run all tests (130+)
 flutter build apk --debug            # Debug APK
 flutter build apk --release          # Release APK
 flutter pub get                      # Install dependencies
@@ -189,4 +189,4 @@ All tools are registered in `lib/features/home/presentation/tool_registry.dart` 
 
 Conventional Commits: `<type>(<scope>): <description>`
 - Types: `feat`, `fix`, `test`, `docs`, `refactor`, `ci`, `chore`
-- Scopes: `glasgow`, `triage`, `ictus`, `o2`, `rcp`, `tep`, `nihss`, `rankin`, `shared`, `ci`, `docs`, `ui`
+- Scopes: `glasgow`, `triage`, `ictus`, `o2`, `rcp`, `tep`, `nihss`, `rankin`, `respiratory-rate`, `shared`, `ci`, `docs`, `ui`
