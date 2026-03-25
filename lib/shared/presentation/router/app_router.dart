@@ -28,6 +28,7 @@ import 'package:emerkit/features/comm/presentation/comm_screen.dart';
 import 'package:emerkit/features/nihss/presentation/nihss_screen.dart';
 import 'package:emerkit/features/rankin/presentation/rankin_screen.dart';
 import 'package:emerkit/features/glosario/presentation/glosario_screen.dart';
+import 'package:emerkit/features/respiratory_rate/presentation/respiratory_rate_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -67,5 +68,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/nihss', builder: (_, __) => const NihssScreen()),
     GoRoute(path: '/rankin', builder: (_, __) => const RankinScreen()),
     GoRoute(path: '/glosario', builder: (_, __) => const GlosarioScreen()),
+    GoRoute(
+        path: '/respiratory-rate',
+        builder: (_, __) => const RespiratoryRateScreen()),
   ],
 );

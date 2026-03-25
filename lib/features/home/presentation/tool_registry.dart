@@ -101,6 +101,12 @@ class ToolRegistry {
         route: '/heart-rate',
         category: ToolCategory.signosValores),
     ToolEntry(
+        id: 'respiratory_rate',
+        name: 'Frecuencia Respiratoria',
+        icon: Icons.air,
+        route: '/respiratory-rate',
+        category: ToolCategory.signosValores),
+    ToolEntry(
         id: 'glucemia',
         name: 'Glucemia',
         icon: Icons.bloodtype,
