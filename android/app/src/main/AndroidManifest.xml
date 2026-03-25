@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
@@ -51,5 +53,10 @@
         </intent>
         <!-- DEA Map app: allow checking if installed before launching -->
         <package android:name="es.deamap.mobile" />
+        <!-- GPS Converter: allow launching map apps with geo: URI -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="geo"/>
+        </intent>
     </queries>
 </manifest>

@@ -68,5 +68,7 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>EmerKit necesita tu ubicacion para mostrar tus coordenadas GPS en diferentes formatos y facilitar la comunicacion de tu posicion en emergencias.</string>
 	</dict>
 </plist>

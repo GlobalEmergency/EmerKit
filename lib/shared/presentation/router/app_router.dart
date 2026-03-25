@@ -29,6 +29,7 @@ import 'package:emerkit/features/nihss/presentation/nihss_screen.dart';
 import 'package:emerkit/features/rankin/presentation/rankin_screen.dart';
 import 'package:emerkit/features/glosario/presentation/glosario_screen.dart';
 import 'package:emerkit/features/respiratory_rate/presentation/respiratory_rate_screen.dart';
+import 'package:emerkit/features/gps_converter/presentation/gps_converter_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -71,5 +72,7 @@ final appRouter = GoRouter(
     GoRoute(
         path: '/respiratory-rate',
         builder: (_, __) => const RespiratoryRateScreen()),
+    GoRoute(
+        path: '/gps-converter', builder: (_, __) => const GpsConverterScreen()),
   ],
 );

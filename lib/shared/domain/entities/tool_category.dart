@@ -5,7 +5,8 @@ enum ToolCategory {
   oxigenoterapia('Oxigenoterapia'),
   tecnicas('Técnicas'),
   proteccion('Protección'),
-  comunicacion('Comunicación');
+  comunicacion('Comunicación'),
+  utilidades('Utilidades');
 
   final String label;
   const ToolCategory(this.label);

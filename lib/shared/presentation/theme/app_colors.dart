@@ -18,6 +18,7 @@ class AppColors {
   static const tecnicas = Color(0xFFF97316); // Naranja GE
   static const proteccion = Color(0xFF8E24AA);
   static const comunicacion = Color(0xFF00897B);
+  static const utilidades = Color(0xFFF59E0B);
 
   // Severidad
   static const severityMild = Color(0xFF10B981);
