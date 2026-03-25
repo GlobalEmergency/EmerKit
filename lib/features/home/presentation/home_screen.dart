@@ -157,7 +157,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       if (tool.isExternal &&
                                           tool.externalPackage != null) {
                                         ExternalAppLauncher.launchOrStore(
-                                            packageName: tool.externalPackage!);
+                                          packageName: tool.externalPackage!,
+                                          appScheme:
+                                              'deamap://open?source=emerkit',
+                                          fallbackUrl:
+                                              'https://deamap.es/open?source=emerkit',
+                                        );
                                       } else {
                                         context.push(tool.route);
                                       }
