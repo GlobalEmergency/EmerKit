@@ -1,7 +1,7 @@
 name: emerkit
 description: EmerKit - Herramientas clinicas para profesionales de emergencias
 publish_to: 'none'
-version: 0.1.8+108
+version: 0.1.9+109
 
 environment:
   sdk: ^3.5.0
@@ -12,6 +12,8 @@ dependencies:
   go_router: ^17.1.0
   audioplayers: ^6.1.0
   url_launcher: ^6.3.1
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
 
 dependency_overrides:
   # Pin to avoid objective_c native assets issue in Flutter 3.41.x iOS CI

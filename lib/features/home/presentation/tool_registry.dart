@@ -194,6 +194,13 @@ class ToolRegistry {
         icon: Icons.menu_book,
         route: '/glosario',
         category: ToolCategory.comunicacion),
+    // Utilidades
+    ToolEntry(
+        id: 'gps_converter',
+        name: 'GPS Convertidor',
+        icon: Icons.explore,
+        route: '/gps-converter',
+        category: ToolCategory.utilidades),
   ];
 
   static List<ToolEntry> search(String query) {

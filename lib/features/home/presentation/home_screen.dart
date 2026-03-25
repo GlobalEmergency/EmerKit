@@ -16,6 +16,7 @@ const _categoryColors = <ToolCategory, Color>{
   ToolCategory.tecnicas: AppColors.tecnicas,
   ToolCategory.proteccion: AppColors.proteccion,
   ToolCategory.comunicacion: AppColors.comunicacion,
+  ToolCategory.utilidades: AppColors.utilidades,
 };
 
 class HomeScreen extends StatefulWidget {
