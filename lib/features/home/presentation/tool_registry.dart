@@ -145,6 +145,12 @@ class ToolRegistry {
         route: '/ecg-leads',
         category: ToolCategory.tecnicas),
     ToolEntry(
+        id: 'wallace',
+        name: 'Regla de Wallace',
+        icon: Icons.local_fire_department_outlined,
+        route: '/wallace',
+        category: ToolCategory.valoracion),
+    ToolEntry(
         id: 'lund_browder',
         name: 'Lund-Browder',
         icon: Icons.local_fire_department,
