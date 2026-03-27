@@ -102,14 +102,13 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   const SizedBox(height: 32),
                   // App name
-                  const Text(
+                  Text(
                     'EmerKit',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1,
-                    ),
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 1,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -120,13 +119,12 @@ class _SplashScreenState extends State<SplashScreen>
                           color: AppColors.accent.withValues(alpha: 0.5)),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Herramientas para profesionales sanitarios',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white70,
-                        letterSpacing: 0.5,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Colors.white70,
+                            letterSpacing: 0.5,
+                          ),
                     ),
                   ),
                   const SizedBox(height: 60),
@@ -145,8 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       Text(
                         'Desarrollado por',
-                        style: TextStyle(
-                            fontSize: 11,
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
                             color: Colors.white.withValues(alpha: 0.4)),
                       ),
                       const SizedBox(height: 4),
@@ -159,11 +156,13 @@ class _SplashScreenState extends State<SplashScreen>
                           const SizedBox(width: 6),
                           Text(
                             'Global Emergency',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white.withValues(alpha: 0.7),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                ),
                           ),
                         ],
                       ),

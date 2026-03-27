@@ -49,8 +49,7 @@ void showScreenInfo(BuildContext context, String title, List<Widget> children) {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 IconButton(
@@ -86,11 +85,17 @@ Widget buildInfoCard(String title, String body) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          Builder(builder: (context) {
+            return Text(title, style: Theme.of(context).textTheme.titleSmall);
+          }),
           const SizedBox(height: 8),
-          Text(body, style: const TextStyle(fontSize: 13, height: 1.5)),
+          Builder(builder: (context) {
+            return Text(body,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(height: 1.5));
+          }),
         ],
       ),
     ),
@@ -106,35 +111,41 @@ Widget buildReferencesCard(List<String> references) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.library_books, size: 18, color: Colors.grey),
-              SizedBox(width: 8),
-              Text('Referencias',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ...references.map(
-            (ref) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('• ', style: TextStyle(fontSize: 13)),
-                  Expanded(
-                    child: Text(
-                      ref,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                          height: 1.4),
+          Builder(builder: (context) {
+            final tt = Theme.of(context).textTheme;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.library_books,
+                        size: 18, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text('Referencias', style: tt.titleSmall),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ...references.map(
+                  (ref) => Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('\u2022 ', style: tt.bodyMedium),
+                        Expanded(
+                          child: Text(
+                            ref,
+                            style: tt.bodySmall?.copyWith(
+                                fontStyle: FontStyle.italic, height: 1.4),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                ),
+              ],
+            );
+          }),
         ],
       ),
     ),

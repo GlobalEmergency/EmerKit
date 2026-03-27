@@ -25,22 +25,28 @@ class FeedbackScreen extends StatelessWidget {
             const Icon(Icons.lightbulb_outline,
                 size: 48, color: AppColors.accent),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               '¿Echas en falta alguna herramienta?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Ayúdanos a mejorar. Puedes solicitar nuevas calculadoras, escalas, protocolos o cualquier funcionalidad que te sea útil en tu trabajo.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
+                  .copyWith(color: Colors.grey.shade600, height: 1.4),
             ),
             const SizedBox(height: 28),
 
             // Option 1: Google Form
             _buildOption(
+              context: context,
               icon: Icons.assignment,
               color: AppColors.accent,
               title: 'Formulario de sugerencias',
@@ -52,6 +58,7 @@ class FeedbackScreen extends StatelessWidget {
 
             // Option 2: Email
             _buildOption(
+              context: context,
               icon: Icons.email_outlined,
               color: AppColors.primary,
               title: 'Enviar por email',
@@ -65,6 +72,7 @@ class FeedbackScreen extends StatelessWidget {
 
             // Option 3: GitHub
             _buildOption(
+              context: context,
               icon: Icons.code,
               color: const Color(0xFF333333),
               title: 'GitHub Issues',
@@ -77,16 +85,20 @@ class FeedbackScreen extends StatelessWidget {
             const SizedBox(height: 24),
             Card(
               color: AppColors.primary.withValues(alpha: 0.08),
-              child: const Padding(
-                padding: EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.favorite, color: AppColors.accent, size: 20),
-                    SizedBox(width: 12),
+                    const Icon(Icons.favorite,
+                        color: AppColors.accent, size: 20),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Cada sugerencia nos ayuda a construir una herramienta mejor para todos los profesionales sanitarios.',
-                        style: TextStyle(fontSize: 12, height: 1.4),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(height: 1.4),
                       ),
                     ),
                   ],
@@ -100,6 +112,7 @@ class FeedbackScreen extends StatelessWidget {
   }
 
   Widget _buildOption({
+    required BuildContext context,
     required IconData icon,
     required Color color,
     required String title,
@@ -129,12 +142,16 @@ class FeedbackScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
                     Text(subtitle,
-                        style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.grey.shade600)),
                   ],
                 ),
               ),

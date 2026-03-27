@@ -63,14 +63,18 @@ class _MadridDirectScreenState extends State<MadridDirectScreen> {
             ? '>= 2 puntos: sospecha de oclusion de gran vaso'
             : '< 2 puntos: trasladar al hospital con UI mas cercano',
         color: r.severity.level.color,
+        severityLevel: r.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 4),
             child: Text('Items clinicos (+1 punto cada uno)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold)),
           ),
           _buildClinicalItem(
             'Brazo - No vence gravedad',
@@ -115,10 +119,13 @@ class _MadridDirectScreenState extends State<MadridDirectScreen> {
             }),
           ),
           const SizedBox(height: 16),
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 4),
             child: Text('Modificadores (restan puntos)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold)),
           ),
           // TAS modifier
           Card(
@@ -153,8 +160,11 @@ class _MadridDirectScreenState extends State<MadridDirectScreen> {
                         _tas >= 180 ? Colors.orange : AppColors.primary,
                     onChanged: (v) => setState(() => _tas = v.round()),
                   ),
-                  const Text('Restar 1 punto por cada 10 mmHg > 180',
-                      style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text('Restar 1 punto por cada 10 mmHg > 180',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
+                          .copyWith(color: Colors.grey)),
                 ],
               ),
             ),
@@ -191,29 +201,31 @@ class _MadridDirectScreenState extends State<MadridDirectScreen> {
                     activeColor: _age >= 85 ? Colors.purple : AppColors.primary,
                     onChanged: (v) => setState(() => _age = v.round()),
                   ),
-                  const Text('Restar 1 punto por cada ano a partir de 85',
-                      style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text('Restar 1 punto por cada ano a partir de 85',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
+                          .copyWith(color: Colors.grey)),
                 ],
               ),
             ),
           ),
           // Age caveat
           if (!r.requiresThrombectomy && _age >= 85)
-            const Padding(
-              padding: EdgeInsets.only(top: 8),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
               child: Card(
-                color: Color(0xFFFFF8E1),
+                color: const Color(0xFFFFF8E1),
                 child: Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   child: Text(
                     'Si la puntuacion es < 2 solo por la edad y el paciente '
                     'tiene excelente situacion basal, valorar con neurologo '
                     'la posibilidad de traslado directo a TM.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.orange,
-                      fontStyle: FontStyle.italic,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.orange,
+                          fontStyle: FontStyle.italic,
+                        ),
                   ),
                 ),
               ),
@@ -240,8 +252,12 @@ class _MadridDirectScreenState extends State<MadridDirectScreen> {
         secondary:
             Icon(icon, color: value ? AppColors.severitySevere : Colors.grey),
         title: Text(title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-        subtitle: Text(description, style: const TextStyle(fontSize: 11)),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w600)),
+        subtitle:
+            Text(description, style: Theme.of(context).textTheme.labelSmall),
         value: value,
         activeThumbColor: AppColors.severitySevere,
         onChanged: (v) => onChanged(v),

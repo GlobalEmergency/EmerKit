@@ -148,6 +148,7 @@ class _RespiratoryRateScreenState extends State<RespiratoryRateScreen>
         label: bannerLabel,
         subtitle: bannerSubtitle,
         color: color,
+        severityLevel: analysis?.severity.level,
       ),
       toolBody: GestureDetector(
         onTapDown: _onPressStart,
@@ -176,30 +177,34 @@ class _RespiratoryRateScreenState extends State<RespiratoryRateScreen>
               if (_isInspiring)
                 Text(
                   'Inspirando... ${(_inspMs / 1000).toStringAsFixed(1)}s',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.soporteVital,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.soporteVital,
+                      ),
                 )
               else if (_isRunning)
                 Text(
                   'Espirando...',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: AppColors.signosValores.withValues(alpha: 0.7),
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: AppColors.signosValores.withValues(alpha: 0.7),
+                      ),
                 )
               else
-                const Text(
+                Text(
                   'Manten pulsado para empezar',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(color: Colors.grey),
                 ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Pulsa mientras el paciente inspira\ny suelta cuando espire',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Colors.grey),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: Colors.grey),
               ),
             ],
           ),

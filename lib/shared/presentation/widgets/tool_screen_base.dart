@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'info_bottom_sheet.dart';
 
 /// Widget base para todas las herramientas interactivas de la app.
@@ -25,6 +26,33 @@ class ToolScreenBase extends StatelessWidget {
     this.extraActions,
   });
 
+  void _confirmReset(BuildContext context) {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reiniciar'),
+        content: const Text(
+          '\u00bfDescartar todos los valores y empezar de nuevo?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              onReset!();
+              HapticFeedback.lightImpact();
+            },
+            child: const Text('Reiniciar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,9 +68,10 @@ class ToolScreenBase extends StatelessWidget {
           ),
           if (onReset != null)
             IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: 'Reiniciar',
-                onPressed: onReset),
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Reiniciar',
+              onPressed: () => _confirmReset(context),
+            ),
         ],
       ),
       body: SafeArea(
@@ -57,7 +86,9 @@ class ToolScreenBase extends StatelessWidget {
                   child: Text(
                     emptyResultText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
                   ),
                 ),
             Expanded(child: toolBody),

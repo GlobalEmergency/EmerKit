@@ -41,9 +41,7 @@ void showInfoSheet(
                 Icon(Icons.menu_book,
                     color: Theme.of(context).colorScheme.primary, size: 22),
                 const SizedBox(width: 8),
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(title, style: Theme.of(context).textTheme.titleLarge),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.close, size: 20),

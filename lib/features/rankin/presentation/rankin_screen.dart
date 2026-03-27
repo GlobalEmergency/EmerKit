@@ -71,7 +71,7 @@ class _RankinScreenState extends State<RankinScreen> {
               subtitle:
                   level.description != null && level.description!.isNotEmpty
                       ? Text(level.description!,
-                          style: const TextStyle(fontSize: 12))
+                          style: Theme.of(context).textTheme.bodySmall)
                       : null,
             ),
           );

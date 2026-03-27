@@ -84,8 +84,10 @@ class VitalSignsScreen extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(g.name,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -94,13 +96,17 @@ class VitalSignsScreen extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildVitalChip('FC', g.fc, 'lpm', Colors.red),
-                        _buildVitalChip('FR', g.fr, 'rpm', Colors.blue),
-                        _buildVitalChip('TAS', g.tas, 'mmHg', Colors.orange),
+                        _buildVitalChip(context, 'FC', g.fc, 'lpm', Colors.red),
                         _buildVitalChip(
-                            'TAD', g.tad, 'mmHg', Colors.orange.shade700),
-                        _buildVitalChip('SpO₂', g.spo2, '', Colors.cyan),
-                        _buildVitalChip('Tª', g.temp, '', Colors.purple),
+                            context, 'FR', g.fr, 'rpm', Colors.blue),
+                        _buildVitalChip(
+                            context, 'TAS', g.tas, 'mmHg', Colors.orange),
+                        _buildVitalChip(context, 'TAD', g.tad, 'mmHg',
+                            Colors.orange.shade700),
+                        _buildVitalChip(
+                            context, 'SpO₂', g.spo2, '', Colors.cyan),
+                        _buildVitalChip(
+                            context, 'Tª', g.temp, '', Colors.purple),
                       ],
                     ),
                   ],
@@ -113,7 +119,8 @@ class VitalSignsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVitalChip(String label, String value, String unit, Color color) {
+  Widget _buildVitalChip(BuildContext context, String label, String value,
+      String unit, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
@@ -125,15 +132,22 @@ class VitalSignsScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(label,
-              style: TextStyle(
-                  fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(color: color, fontWeight: FontWeight.bold)),
           const SizedBox(height: 2),
           Text(value,
-              style:
-                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
+                  .copyWith(fontWeight: FontWeight.w600)),
           if (unit.isNotEmpty)
             Text(unit,
-                style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelSmall!
+                    .copyWith(color: Colors.grey)),
         ],
       ),
     );

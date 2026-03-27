@@ -144,8 +144,10 @@ class PosicionesScreen extends StatelessWidget {
                 title: Text(pos.name,
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(pos.indication,
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.orange.shade700)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.orange.shade700)),
                 children: [
                   if (pos.imagePath != null)
                     Padding(

@@ -65,6 +65,7 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
         label: result.severity.label,
         subtitle: 'SCQ - Superficie Corporal Quemada',
         color: color,
+        severityLevel: result.severity.level,
       ),
       toolBody: Column(
         children: [
@@ -81,11 +82,12 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                       label: Text(LundBrowderData.ageGroups[i]),
                       selected: _selectedAge == i,
                       selectedColor: AppColors.tecnicas,
-                      labelStyle: TextStyle(
-                        color: _selectedAge == i ? Colors.white : null,
-                        fontWeight: _selectedAge == i ? FontWeight.bold : null,
-                        fontSize: 12,
-                      ),
+                      labelStyle:
+                          Theme.of(context).textTheme.bodySmall!.copyWith(
+                                color: _selectedAge == i ? Colors.white : null,
+                                fontWeight:
+                                    _selectedAge == i ? FontWeight.bold : null,
+                              ),
                       onSelected: (_) => setState(() => _selectedAge = i),
                     ),
                   );
@@ -115,8 +117,10 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                         style: const TextStyle(fontWeight: FontWeight.w500)),
                     subtitle: Text(
                       '$pct% \u00b7 ${LundBrowderData.burnLabels[degree]}',
-                      style:
-                          TextStyle(fontSize: 12, color: _burnColors[degree]),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: _burnColors[degree]),
                     ),
                     trailing: SizedBox(
                       width: 160,
@@ -142,13 +146,15 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                               child: Center(
                                 child: Text(
                                   '$d',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                    color: degree == d
-                                        ? Colors.white
-                                        : Colors.black54,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: degree == d
+                                            ? Colors.white
+                                            : Colors.black54,
+                                      ),
                                 ),
                               ),
                             ),
@@ -174,7 +180,7 @@ class _LundBrowderScreenState extends State<LundBrowderScreen> {
                       Container(width: 12, height: 12, color: _burnColors[d]),
                       const SizedBox(width: 4),
                       Text(LundBrowderData.burnLabels[d],
-                          style: const TextStyle(fontSize: 10)),
+                          style: Theme.of(context).textTheme.labelSmall),
                     ],
                   ),
                 );

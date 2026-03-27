@@ -45,6 +45,7 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
         value: '${_temperature.toStringAsFixed(1)} C',
         label: result.label,
         color: color,
+        severityLevel: result.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.all(16),
@@ -61,15 +62,18 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                       const Icon(Icons.thermostat,
                           size: 20, color: AppColors.primary),
                       const SizedBox(width: 8),
-                      const Text('Temperatura corporal',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold)),
+                      Text('Temperatura corporal',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(fontWeight: FontWeight.bold)),
                       const Spacer(),
                       Text('${_temperature.toStringAsFixed(1)} C',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: color)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(
+                                  fontWeight: FontWeight.bold, color: color)),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -86,11 +90,15 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('36 C',
-                          style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade600)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey.shade600)),
                       Text('43 C',
-                          style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade600)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey.shade600)),
                     ],
                   ),
                 ],
@@ -134,8 +142,10 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(title,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold, color: color)),
             ),
             const SizedBox(height: 12),
             const Text('Sintomas:',
@@ -147,7 +157,8 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                     children: [
                       const Text('\u2022 '),
                       Expanded(
-                          child: Text(s, style: const TextStyle(fontSize: 13))),
+                          child: Text(s,
+                              style: Theme.of(context).textTheme.bodyMedium)),
                     ],
                   ),
                 )),
@@ -161,7 +172,8 @@ class _HipertermiaScreenState extends State<HipertermiaScreen> {
                     children: [
                       const Text('\u2022 '),
                       Expanded(
-                          child: Text(t, style: const TextStyle(fontSize: 13))),
+                          child: Text(t,
+                              style: Theme.of(context).textTheme.bodyMedium)),
                     ],
                   ),
                 )),

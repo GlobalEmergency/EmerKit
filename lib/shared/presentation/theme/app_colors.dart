@@ -34,4 +34,10 @@ class AppColors {
   // Backgrounds
   static const surfaceLight = Color(0xFFF1F5F9); // Slate 100
   static const surfaceDark = Color(0xFF0F172A); // Slate 900
+
+  // Text colors with WCAG AA contrast (>= 4.5:1 on white)
+  static const textPrimary = Color(0xFF1A1A1A); // ~16:1
+  static const textSecondary = Color(0xFF4A4A4A); // ~8:1
+  static const textTertiary = Color(0xFF6B6B6B); // ~5:1
+  static const textOnDarkSecondary = Color(0xFFB0B0B0); // ~5:1 on dark
 }

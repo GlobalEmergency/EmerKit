@@ -105,27 +105,25 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
               ),
               Text(
                 '$clockHh:$clockMm:$clockSs',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade600,
-                  fontFamily: 'monospace',
-                ),
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      color: Colors.grey.shade600,
+                      fontFamily: 'monospace',
+                    ),
               ),
               const SizedBox(width: 4),
               Text(
                 '+$relMm:$relSs',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                  fontFamily: 'monospace',
-                ),
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                      fontFamily: 'monospace',
+                    ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   entry.action,
-                  style: const TextStyle(fontSize: 12),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
             ],

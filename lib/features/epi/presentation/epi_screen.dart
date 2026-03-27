@@ -135,8 +135,8 @@ class EpiScreen extends StatelessWidget {
             ),
             title: Text(step.title,
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle:
-                Text(step.description, style: const TextStyle(fontSize: 13)),
+            subtitle: Text(step.description,
+                style: Theme.of(context).textTheme.bodyMedium),
             trailing: Icon(step.icon, color: accentColor),
           ),
         );

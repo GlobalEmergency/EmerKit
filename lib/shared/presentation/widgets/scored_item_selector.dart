@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../domain/entities/scored_item.dart';
 
 class ScoredItemSelector extends StatelessWidget {
@@ -33,9 +34,7 @@ class ScoredItemSelector extends StatelessWidget {
               children: [
                 Icon(icon, size: 20, color: color),
                 const SizedBox(width: 8),
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(title, style: Theme.of(context).textTheme.titleSmall),
               ],
             ),
           ),
@@ -50,7 +49,7 @@ class ScoredItemSelector extends StatelessWidget {
                       fontWeight: isSelected ? FontWeight.bold : null)),
               subtitle: item.description != null
                   ? Text(item.description!,
-                      style: const TextStyle(fontSize: 11))
+                      style: Theme.of(context).textTheme.labelSmall)
                   : null,
               trailing: Container(
                 width: 32,
@@ -68,7 +67,10 @@ class ScoredItemSelector extends StatelessWidget {
                   ),
                 ),
               ),
-              onTap: () => onChanged(item.score),
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onChanged(item.score);
+              },
             );
           }),
         ],

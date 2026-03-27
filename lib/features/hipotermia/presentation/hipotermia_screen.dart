@@ -53,6 +53,7 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
         label: result.label,
         subtitle: _gradeRange,
         color: color,
+        severityLevel: result.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.all(16),
@@ -64,13 +65,16 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Temperatura corporal',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text('Temperatura corporal',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Text('25 C', style: TextStyle(fontSize: 12)),
+                      Text('25 C',
+                          style: Theme.of(context).textTheme.bodySmall),
                       Expanded(
                         child: Slider(
                           value: _temperature,
@@ -82,7 +86,8 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
                           onChanged: (v) => setState(() => _temperature = v),
                         ),
                       ),
-                      const Text('37 C', style: TextStyle(fontSize: 12)),
+                      Text('37 C',
+                          style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                 ],
@@ -127,8 +132,10 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
               ),
               child: Text(
                 title,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 16, color: color),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(fontWeight: FontWeight.bold, color: color),
               ),
             ),
             const SizedBox(height: 12),
@@ -139,9 +146,11 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('\u2022 ', style: TextStyle(fontSize: 14)),
+                      Text('\u2022 ',
+                          style: Theme.of(context).textTheme.bodyLarge),
                       Expanded(
-                          child: Text(s, style: const TextStyle(fontSize: 13))),
+                          child: Text(s,
+                              style: Theme.of(context).textTheme.bodyMedium)),
                     ],
                   ),
                 )),
@@ -153,9 +162,11 @@ class _HipotermiaScreenState extends State<HipotermiaScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('\u2022 ', style: TextStyle(fontSize: 14)),
+                      Text('\u2022 ',
+                          style: Theme.of(context).textTheme.bodyLarge),
                       Expanded(
-                          child: Text(t, style: const TextStyle(fontSize: 13))),
+                          child: Text(t,
+                              style: Theme.of(context).textTheme.bodyMedium)),
                     ],
                   ),
                 )),
