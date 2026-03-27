@@ -1,7 +1,7 @@
 name: emerkit
 description: EmerKit - Herramientas clinicas para profesionales de emergencias
 publish_to: 'none'
-version: 0.1.10+110
+version: 0.1.11+111
 
 environment:
   sdk: ^3.5.0
