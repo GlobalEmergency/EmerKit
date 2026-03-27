@@ -54,9 +54,12 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'EmerKit',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               FutureBuilder<String>(
@@ -65,7 +68,10 @@ class AboutScreen extends StatelessWidget {
                   final version = snapshot.data ?? '...';
                   return Text(
                     'v$version',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.grey.shade600),
                   );
                 },
               ),
@@ -74,20 +80,23 @@ class AboutScreen extends StatelessWidget {
               // Disclaimer
               Card(
                 color: AppColors.severityModerate.withValues(alpha: 0.08),
-                child: const Padding(
-                  padding: EdgeInsets.all(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline,
+                      const Icon(Icons.info_outline,
                           size: 20, color: AppColors.severityModerate),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           'Esta aplicaci\u00f3n es una herramienta de referencia y apoyo. '
                           'No sustituye el juicio cl\u00ednico profesional ni la formaci\u00f3n sanitaria. '
                           'Los protocolos y valores deben contrastarse con las gu\u00edas oficiales vigentes.',
-                          style: TextStyle(fontSize: 12, height: 1.4),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(height: 1.4),
                         ),
                       ),
                     ],
@@ -106,9 +115,12 @@ class AboutScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Desarrollado por',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey),
                         ),
                         const SizedBox(height: 12),
                         Container(
@@ -132,20 +144,24 @@ class AboutScreen extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Global Emergency',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                   ),
                                   Text(
                                     'globalemergency.online',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.accent
-                                            .withValues(alpha: 0.8)),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(
+                                            color: AppColors.accent
+                                                .withValues(alpha: 0.8)),
                                   ),
                                 ],
                               ),
@@ -162,10 +178,12 @@ class AboutScreen extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'Visitar web',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color:
-                                      AppColors.accent.withValues(alpha: 0.7)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                      color: AppColors.accent
+                                          .withValues(alpha: 0.7)),
                             ),
                           ],
                         ),

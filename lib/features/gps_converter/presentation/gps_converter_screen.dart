@@ -313,16 +313,19 @@ class _GpsConverterScreenState extends State<GpsConverterScreen>
         ],
 
         if (_currentFormats == null && _error == null && !_loading)
-          const Padding(
-            padding: EdgeInsets.only(top: 48),
+          Padding(
+            padding: const EdgeInsets.only(top: 48),
             child: Column(
               children: [
-                Icon(Icons.explore, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
+                const Icon(Icons.explore, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
                 Text(
                   'Pulsa el boton para obtener\ntu ubicacion actual',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.grey),
                 ),
               ],
             ),
@@ -399,16 +402,14 @@ class _GpsConverterScreenState extends State<GpsConverterScreen>
           SizedBox(
             width: 130,
             child: Text(label,
-                style: TextStyle(
-                    fontSize: 13,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: highlight
                         ? AppColors.severityModerate
                         : Colors.grey.shade700)),
           ),
           Expanded(
             child: Text(value,
-                style: TextStyle(
-                    fontSize: 13,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w600,
                     fontFamily: 'monospace',
                     color: highlight ? AppColors.severityModerate : null)),
@@ -526,17 +527,20 @@ class _GpsConverterScreenState extends State<GpsConverterScreen>
         ],
 
         if (_convertedFormats == null && _convertError == null)
-          const Padding(
-            padding: EdgeInsets.only(top: 48),
+          Padding(
+            padding: const EdgeInsets.only(top: 48),
             child: Column(
               children: [
-                Icon(Icons.swap_horiz, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
+                const Icon(Icons.swap_horiz, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
                 Text(
                   'Introduce coordenadas en cualquier\n'
                   'formato para convertirlas',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.grey),
                 ),
               ],
             ),

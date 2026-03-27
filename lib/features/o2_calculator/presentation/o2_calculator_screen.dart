@@ -57,12 +57,16 @@ class _O2CalculatorScreenState extends State<O2CalculatorScreen> {
             ? '${O2CalculatorData.bottles[_selectedBottle].label} \u00b7 ${_pressure.round()} bar \u00b7 ${_flowRate.round()} L/min'
             : null,
         color: color,
+        severityLevel: result.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('Tamano de botella',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text('Tamano de botella',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -125,11 +129,12 @@ class _O2CalculatorScreenState extends State<O2CalculatorScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(fontWeight: FontWeight.bold)),
             Text(valueText,
-                style: const TextStyle(
-                    fontSize: 16,
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppColors.oxigenoterapia)),
           ],

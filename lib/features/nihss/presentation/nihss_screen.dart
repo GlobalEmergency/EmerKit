@@ -69,6 +69,7 @@ class _NihssScreenState extends State<NihssScreen> {
         value: '${r.total}',
         label: r.severity.label,
         color: r.severity.level.color,
+        severityLevel: r.severity.level,
       ),
       toolBody: ListView.builder(
         controller: _scrollController,
@@ -93,21 +94,19 @@ class _NihssScreenState extends State<NihssScreen> {
                 children: [
                   Text(
                     '${index + 1}. ',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: isExpanded
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.grey,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isExpanded
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.grey,
+                        ),
                   ),
                   Expanded(
                     child: Text(
                       item.name,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                 ],
@@ -119,11 +118,10 @@ class _NihssScreenState extends State<NihssScreen> {
                     : AppColors.severityMild,
                 child: Text(
                   '${_scores[index]}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
               children: [
@@ -135,7 +133,7 @@ class _NihssScreenState extends State<NihssScreen> {
                       return RadioListTile<int>(
                         title: Text(
                           item.options[optIndex].label,
-                          style: const TextStyle(fontSize: 12),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         value: item.options[optIndex].score,
                         dense: true,

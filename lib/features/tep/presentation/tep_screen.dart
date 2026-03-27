@@ -62,6 +62,7 @@ class _TepScreenState extends State<TepScreen> {
                   ? 'Sin alteraciones'
                   : '${result.abnormalCount} lado${result.abnormalCount > 1 ? 's' : ''} alterado${result.abnormalCount > 1 ? 's' : ''}',
               color: result.severity.level.color,
+              severityLevel: result.severity.level,
             )
           : null,
       toolBody: ListView.builder(
@@ -81,13 +82,17 @@ class _TepScreenState extends State<TepScreen> {
                       Icon(_icons[index], color: AppColors.primary),
                       const SizedBox(width: 8),
                       Text(side.title,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(fontWeight: FontWeight.bold)),
                     ]),
                     const SizedBox(height: 4),
                     Text(side.description,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.grey)),
                     const SizedBox(height: 12),
                     Row(children: [
                       Expanded(

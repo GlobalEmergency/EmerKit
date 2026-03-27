@@ -61,15 +61,16 @@ class MedicationAlertCard extends StatelessWidget {
                 children: [
                   Text(
                     medication.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     medication.dose,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -79,19 +80,19 @@ class MedicationAlertCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           _formatDuration(timeSince),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'monospace',
-                            color: border,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'monospace',
+                                    color: border,
+                                  ),
                         ),
                         const SizedBox(width: 12),
                       ],
                       Text(
                         'Dosis: ${tracker.dosesGiven}'
                         '${medication.maxDoses != null ? '/${medication.maxDoses}' : ''}',
-                        style: const TextStyle(fontSize: 11),
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
                   ),
@@ -110,7 +111,11 @@ class MedicationAlertCard extends StatelessWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Administrar', style: TextStyle(fontSize: 12)),
+              child: Text('Administrar',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: Colors.white)),
             ),
           ],
         ),
@@ -135,30 +140,36 @@ class MedicationAlertCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    medication.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                  Builder(builder: (context) {
+                    return Text(
+                      medication.name,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade600,
+                          ),
+                    );
+                  }),
                   const SizedBox(height: 2),
-                  Text(
-                    medication.dose,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                  ),
+                  Builder(builder: (context) {
+                    return Text(
+                      medication.dose,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Colors.grey.shade500,
+                          ),
+                    );
+                  }),
                 ],
               ),
             ),
-            Text(
-              'Maximo alcanzado',
-              style: TextStyle(
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-                color: Colors.grey.shade600,
-              ),
-            ),
+            Builder(builder: (context) {
+              return Text(
+                'Maximo alcanzado',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey.shade600,
+                    ),
+              );
+            }),
           ],
         ),
       ),

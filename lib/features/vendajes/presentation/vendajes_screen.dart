@@ -103,7 +103,10 @@ class VendajesScreen extends StatelessWidget {
                 title: Text(v.name,
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(v.indication,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.grey)),
                 children: [
                   if (v.imagePath != null)
                     Padding(
@@ -120,8 +123,8 @@ class VendajesScreen extends StatelessWidget {
                     ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child:
-                        Text(v.technique, style: const TextStyle(fontSize: 14)),
+                    child: Text(v.technique,
+                        style: Theme.of(context).textTheme.bodyLarge),
                   ),
                 ],
               ),

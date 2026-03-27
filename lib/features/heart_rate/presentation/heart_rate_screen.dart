@@ -73,6 +73,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
         label: result != null ? 'lpm' : 'Toca la pantalla con cada latido',
         subtitle: '${_taps.length} pulsaciones en ${_elapsedSeconds}s',
         color: color,
+        severityLevel: result?.severity.level,
       ),
       toolBody: GestureDetector(
         onTap: _tap,
@@ -89,15 +90,17 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
               const SizedBox(height: 16),
               Text(
                 _isRunning ? 'Toca con cada latido' : 'Toca para empezar',
-                style: TextStyle(
-                    fontSize: 18,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: _isRunning ? AppColors.soporteVital : Colors.grey),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Palpa el pulso y toca la pantalla\ncon cada pulsacion',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Colors.grey),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: Colors.grey),
               ),
             ],
           ),

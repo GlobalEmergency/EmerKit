@@ -317,19 +317,17 @@ class _RcpScreenState extends State<RcpScreen> {
           children: [
             Text(
               _bannerValue,
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: _bannerColor,
-              ),
+              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: _bannerColor,
+                  ),
             ),
             Text(
               _bannerLabel,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: _bannerColor,
-              ),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: _bannerColor,
+                  ),
             ),
           ],
         ),
@@ -347,29 +345,29 @@ class _RcpScreenState extends State<RcpScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   color: Colors.orange.shade700,
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.warning_amber, color: Colors.white, size: 24),
-                      SizedBox(width: 10),
+                      const Icon(Icons.warning_amber,
+                          color: Colors.white, size: 24),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'COMPROBAR PULSO / CAMBIO REANIMADOR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ),
                       Text(
                         'CONFIRMAR',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.white,
+                            ),
                       ),
                     ],
                   ),
@@ -417,20 +415,19 @@ class _RcpScreenState extends State<RcpScreen> {
 
             // SVA medications
             if (_session.mode == RcpMode.sva && _isRunning) ...[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: Row(
                   children: [
-                    Icon(Icons.medication,
+                    const Icon(Icons.medication,
                         size: 20, color: AppColors.soporteVital),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       'Medicacion SVA',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.soporteVital,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.soporteVital,
+                          ),
                     ),
                   ],
                 ),
@@ -459,14 +456,14 @@ class _RcpScreenState extends State<RcpScreen> {
                     const Icon(Icons.list_alt,
                         size: 20, color: AppColors.primary),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Registro de acciones',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
                       ),
                     ),
                     IconButton(
@@ -499,8 +496,10 @@ class _RcpScreenState extends State<RcpScreen> {
                           child: Text(
                             '120 bpm \u00b7 Ratio 30:2 \u00b7 Comprimir fuerte '
                             '(5-6 cm) \u00b7 Permitir reexpansion completa',
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.grey.shade600),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: Colors.grey.shade600),
                           ),
                         ),
                       ],
@@ -571,11 +570,10 @@ class _RcpScreenState extends State<RcpScreen> {
               ),
               child: Text(
                 'x$count',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade700,
-                ),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),
               ),
             )
           : null,
@@ -655,20 +653,18 @@ class _RcpScreenState extends State<RcpScreen> {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: color.withValues(alpha: 0.8),
-                ),
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      color: color.withValues(alpha: 0.8),
+                    ),
               ),
             ],
           ),
@@ -692,12 +688,11 @@ class _RcpScreenState extends State<RcpScreen> {
                 children: [
                   const Icon(Icons.favorite, color: AppColors.soporteVital),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Comprobar pulso',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   if (pulseCount > 0) ...[
                     const SizedBox(width: 8),
@@ -711,11 +706,10 @@ class _RcpScreenState extends State<RcpScreen> {
                       ),
                       child: Text(
                         'x$pulseCount',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green.shade700,
+                            ),
                       ),
                     ),
                   ],
@@ -809,11 +803,10 @@ class _RcpScreenState extends State<RcpScreen> {
                       ),
                       child: Text(
                         'x${_countOf('rhythm')}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green.shade700,
+                            ),
                       ),
                     )
                   : null,
@@ -851,8 +844,10 @@ class _RcpScreenState extends State<RcpScreen> {
             children: [
               Text(
                 'Analisis DEA #${_countOf('rhythm') + 1}',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Row(
@@ -902,23 +897,28 @@ class _RcpScreenState extends State<RcpScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Ritmo identificado',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Analisis #${_countOf('rhythm') + 1}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'DESFIBRILABLE',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -947,13 +947,12 @@ class _RcpScreenState extends State<RcpScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'NO DESFIBRILABLE',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -982,13 +981,12 @@ class _RcpScreenState extends State<RcpScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'OTROS',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -1064,18 +1062,19 @@ class _RcpScreenState extends State<RcpScreen> {
             const SizedBox(height: 6),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
             ),
             const SizedBox(height: 2),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style:
-                  TextStyle(fontSize: 10, color: color.withValues(alpha: 0.8)),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(color: color.withValues(alpha: 0.8)),
             ),
           ],
         ),
@@ -1203,7 +1202,10 @@ class _RcpScreenState extends State<RcpScreen> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(fontSize: 10, color: color),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(color: color),
             ),
           ],
         ),
@@ -1224,10 +1226,9 @@ class _RcpScreenState extends State<RcpScreen> {
               label: const Text('SVB'),
               selected: _session.mode == RcpMode.svb,
               selectedColor: AppColors.soporteVital,
-              labelStyle: TextStyle(
-                color: _session.mode == RcpMode.svb ? Colors.white : null,
-                fontSize: 12,
-              ),
+              labelStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: _session.mode == RcpMode.svb ? Colors.white : null,
+                  ),
               onSelected: (_) => _onModeChanged(RcpMode.svb),
               visualDensity: VisualDensity.compact,
             ),
@@ -1235,10 +1236,9 @@ class _RcpScreenState extends State<RcpScreen> {
               label: const Text('SVA'),
               selected: _session.mode == RcpMode.sva,
               selectedColor: AppColors.soporteVital,
-              labelStyle: TextStyle(
-                color: _session.mode == RcpMode.sva ? Colors.white : null,
-                fontSize: 12,
-              ),
+              labelStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: _session.mode == RcpMode.sva ? Colors.white : null,
+                  ),
               onSelected: (_) => _onModeChanged(RcpMode.sva),
               visualDensity: VisualDensity.compact,
             ),
@@ -1271,9 +1271,9 @@ class _RcpScreenState extends State<RcpScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: SwitchListTile(
-            title: const Text(
+            title: Text(
               'Parada para ventilaciones (30:2)',
-              style: TextStyle(fontSize: 14),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             value: _session.ventilationEnabled,
             onChanged: _onVentilationChanged,

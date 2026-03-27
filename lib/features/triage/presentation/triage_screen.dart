@@ -100,7 +100,10 @@ class _TriageScreenState extends State<TriageScreen> {
           Text(
             _currentNode.question,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 40),
           Row(
@@ -112,8 +115,11 @@ class _TriageScreenState extends State<TriageScreen> {
                     style: FilledButton.styleFrom(
                         backgroundColor: AppColors.severityMild),
                     onPressed: () => _answer(true),
-                    child: const Text('SI',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                    child: Text('SI',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: Colors.white)),
                   ),
                 ),
               ),
@@ -125,8 +131,11 @@ class _TriageScreenState extends State<TriageScreen> {
                     style: FilledButton.styleFrom(
                         backgroundColor: AppColors.severitySevere),
                     onPressed: () => _answer(false),
-                    child: const Text('NO',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                    child: Text('NO',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: Colors.white)),
                   ),
                 ),
               ),
@@ -190,17 +199,18 @@ class _TriageScreenState extends State<TriageScreen> {
             const SizedBox(height: 24),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: color == AppColors.triageYellow ? Colors.black87 : color,
-              ),
+              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: color == AppColors.triageYellow
+                        ? Colors.black87
+                        : color,
+                  ),
             ),
             const SizedBox(height: 16),
             Text(
               description,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 32),
             FilledButton.icon(

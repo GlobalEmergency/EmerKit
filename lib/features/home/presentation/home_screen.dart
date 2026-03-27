@@ -139,9 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 0.9,
+                                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 160,
+                                  childAspectRatio: 0.95,
                                   crossAxisSpacing: 8,
                                   mainAxisSpacing: 8,
                                 ),

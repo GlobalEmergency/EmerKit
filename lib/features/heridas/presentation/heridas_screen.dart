@@ -134,8 +134,10 @@ class HeridasScreen extends StatelessWidget {
                         Icon(w.icon, color: w.color),
                         const SizedBox(width: 8),
                         Text(w.name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -157,9 +159,7 @@ class HeridasScreen extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text.rich(
         TextSpan(
-          style: TextStyle(
-              fontSize: 13,
-              color: Theme.of(context).textTheme.bodyMedium?.color),
+          style: Theme.of(context).textTheme.bodyMedium,
           children: [
             TextSpan(
                 text: '$label: ',

@@ -56,6 +56,7 @@ class PlanRcpScreen extends StatelessWidget {
           child: TabBarView(
             children: [
               _buildAlgorithm(
+                context,
                 'SVB Adultos (ERC 2025)',
                 [
                   const _AlgorithmStep(
@@ -101,6 +102,7 @@ class PlanRcpScreen extends StatelessWidget {
                 ],
               ),
               _buildAlgorithm(
+                context,
                 'SVB Pediátrico (ERC 2025)',
                 [
                   const _AlgorithmStep('Seguridad', 'Garantizar seguridad',
@@ -146,12 +148,13 @@ class PlanRcpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAlgorithm(String title, List<_AlgorithmStep> steps) {
+  Widget _buildAlgorithm(
+      BuildContext context, String title, List<_AlgorithmStep> steps) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Text(title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center),
         const SizedBox(height: 16),
         ...List.generate(steps.length, (index) {
@@ -169,10 +172,12 @@ class PlanRcpScreen extends StatelessWidget {
                         radius: 14,
                         backgroundColor: step.color,
                         child: Text('${index + 1}',
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -186,7 +191,8 @@ class PlanRcpScreen extends StatelessWidget {
                             if (step.description.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(step.description,
-                                  style: const TextStyle(fontSize: 13)),
+                                  style:
+                                      Theme.of(context).textTheme.bodyMedium),
                             ],
                           ],
                         ),

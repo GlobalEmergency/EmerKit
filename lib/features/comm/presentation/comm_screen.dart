@@ -39,19 +39,26 @@ class CommScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text(
+            Text(
               'Técnica SBAR',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Herramienta de comunicación estructurada para transmisión de información clínica',
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             _buildSbarCard(
+              context,
               'S',
               'Situation (Situación)',
               'Identificación y motivo de la comunicación',
@@ -65,6 +72,7 @@ class CommScreen extends StatelessWidget {
               '"Soy [nombre], TES de la ambulancia [X]. Le llamo por el paciente [nombre], varón de 65 años, con dolor torácico de 30 minutos de evolución."',
             ),
             _buildSbarCard(
+              context,
               'B',
               'Background (Antecedentes)',
               'Contexto clínico relevante',
@@ -78,6 +86,7 @@ class CommScreen extends StatelessWidget {
               '"Antecedentes de HTA y diabetes tipo 2. Medicación: Enalapril, Metformina. Sin alergias conocidas. Estaba realizando esfuerzo físico."',
             ),
             _buildSbarCard(
+              context,
               'A',
               'Assessment (Evaluación)',
               'Hallazgos de la valoración actual',
@@ -91,6 +100,7 @@ class CommScreen extends StatelessWidget {
               '"TA 160/90, FC 95, FR 20, SpO₂ 96%, Glasgow 15. Dolor opresivo centrotorácico irradiado a brazo izquierdo. Sudoración. ECG: elevación ST en II, III, aVF."',
             ),
             _buildSbarCard(
+              context,
               'R',
               'Recommendation (Recomendación)',
               'Qué se necesita o se solicita',
@@ -110,6 +120,7 @@ class CommScreen extends StatelessWidget {
   }
 
   Widget _buildSbarCard(
+    BuildContext context,
     String letter,
     String title,
     String subtitle,
@@ -130,10 +141,12 @@ class CommScreen extends StatelessWidget {
                   radius: 20,
                   backgroundColor: color,
                   child: Text(letter,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold)),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -141,11 +154,15 @@ class CommScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(fontWeight: FontWeight.bold)),
                       Text(subtitle,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey)),
                     ],
                   ),
                 ),
@@ -159,7 +176,8 @@ class CommScreen extends StatelessWidget {
                     children: [
                       const Text('• '),
                       Expanded(
-                          child: Text(p, style: const TextStyle(fontSize: 13))),
+                          child: Text(p,
+                              style: Theme.of(context).textTheme.bodyMedium)),
                     ],
                   ),
                 )),
@@ -176,14 +194,16 @@ class CommScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Ejemplo:',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: color)),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(fontWeight: FontWeight.bold, color: color)),
                   const SizedBox(height: 4),
                   Text(example,
-                      style: const TextStyle(
-                          fontSize: 12, fontStyle: FontStyle.italic)),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(fontStyle: FontStyle.italic)),
                 ],
               ),
             ),

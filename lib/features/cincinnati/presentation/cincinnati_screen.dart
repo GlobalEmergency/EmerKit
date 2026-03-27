@@ -52,6 +52,7 @@ class _CincinnatiScreenState extends State<CincinnatiScreen> {
               label: r.suspectedStroke ? 'SOSPECHA DE ICTUS' : 'SIN SOSPECHA',
               subtitle: r.suspectedStroke ? 'Activar Codigo Ictus' : null,
               color: r.severity.level.color,
+              severityLevel: r.severity.level,
             )
           : null,
       toolBody: ListView(
@@ -115,13 +116,18 @@ class _CincinnatiScreenState extends State<CincinnatiScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.bold)),
               ),
             ]),
             const SizedBox(height: 4),
             Text(instruction,
-                style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: Colors.grey)),
             const SizedBox(height: 12),
             Row(children: [
               Expanded(
@@ -178,7 +184,7 @@ class _CincinnatiScreenState extends State<CincinnatiScreen> {
                     fontWeight: FontWeight.bold,
                     color: selected ? color : Colors.grey)),
             Text(description,
-                style: const TextStyle(fontSize: 10),
+                style: Theme.of(context).textTheme.labelSmall,
                 textAlign: TextAlign.center),
           ],
         ),

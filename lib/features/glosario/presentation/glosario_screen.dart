@@ -81,7 +81,10 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
                 alignment: Alignment.centerRight,
                 child: Text(
                   '${results.length} terminos',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: Colors.grey.shade600),
                 ),
               ),
             ),
@@ -115,18 +118,18 @@ class _GlosarioScreenState extends State<GlosarioScreen> {
                               children: [
                                 Text(
                                   entry.term,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
                                   entry.definition,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    height: 1.5,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(height: 1.5),
                                 ),
                               ],
                             ),

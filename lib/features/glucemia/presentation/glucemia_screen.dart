@@ -41,30 +41,35 @@ class GlucemiaScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             _buildCard(
+                context,
                 'Hipoglucemia grave',
                 '<40 mg/dL',
                 AppColors.severitySevere,
                 'Pérdida de consciencia, convulsiones.\nTratamiento: Glucagón IM / Glucosa IV.'),
             _buildCard(
+                context,
                 'Hipoglucemia',
                 '40-70 mg/dL',
                 AppColors.severityModerate,
                 'Temblor, sudoración, taquicardia, confusión.\nTratamiento: Glucosa oral si consciente.'),
-            _buildCard(
-                'Normal en ayunas', '70-100 mg/dL', AppColors.severityMild, ''),
-            _buildCard('Normal postprandial', '70-140 mg/dL',
+            _buildCard(context, 'Normal en ayunas', '70-100 mg/dL',
+                AppColors.severityMild, ''),
+            _buildCard(context, 'Normal postprandial', '70-140 mg/dL',
                 AppColors.severityMild, '2 horas después de comer.'),
             _buildCard(
+                context,
                 'Hiperglucemia',
                 '140-250 mg/dL',
                 AppColors.severityModerate,
                 'Poliuria, polidipsia, polifagia.\nControl y seguimiento.'),
             _buildCard(
+                context,
                 'Hiperglucemia grave',
                 '>250 mg/dL',
                 AppColors.severitySevere,
                 'Riesgo de cetoacidosis diabética o síndrome hiperosmolar.\nBuscar cetonuria. Valorar traslado.'),
             _buildCard(
+                context,
                 'Cetoacidosis diabética',
                 '>300 mg/dL + cetonas',
                 AppColors.severitySevere,
@@ -75,8 +80,8 @@ class GlucemiaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(
-      String title, String range, Color color, String description) {
+  Widget _buildCard(BuildContext context, String title, String range,
+      Color color, String description) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -96,7 +101,7 @@ class GlucemiaScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w600, color: color)),
             if (description.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(description, style: const TextStyle(fontSize: 12)),
+              Text(description, style: Theme.of(context).textTheme.bodySmall),
             ],
           ],
         ),

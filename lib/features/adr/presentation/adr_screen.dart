@@ -114,17 +114,19 @@ class AdrScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(12),
           children: [
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Panel naranja',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    SizedBox(height: 8),
-                    Text('Número superior: Código de peligro (Kemler)\n'
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    const Text('Número superior: Código de peligro (Kemler)\n'
                         'Número inferior: Número ONU (identifica la materia)\n\n'
                         'X delante = reacción peligrosa con agua\n'
                         'Repetición de cifra = intensificación del peligro'),
@@ -133,10 +135,13 @@ class AdrScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               child: Text('Clases ADR',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold)),
             ),
             ..._classes.map((c) => Card(
                   margin: const EdgeInsets.only(bottom: 6),
@@ -144,20 +149,22 @@ class AdrScreen extends StatelessWidget {
                     leading: CircleAvatar(
                       backgroundColor: c.color,
                       child: Text(c.code,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: c.color == Colors.white ||
-                                    c.color == Colors.yellow
-                                ? Colors.black
-                                : Colors.white,
-                          )),
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: c.color == Colors.white ||
+                                            c.color == Colors.yellow
+                                        ? Colors.black
+                                        : Colors.white,
+                                  )),
                     ),
                     title: Text('Clase ${c.code}: ${c.name}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.bold)),
                     subtitle: Text(c.description,
-                        style: const TextStyle(fontSize: 12)),
+                        style: Theme.of(context).textTheme.bodySmall),
                   ),
                 )),
           ],

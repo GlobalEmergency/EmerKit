@@ -88,6 +88,7 @@ class _WallaceScreenState extends State<WallaceScreen> {
         label: result.severity.label,
         subtitle: subtitle,
         color: color,
+        severityLevel: result.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.only(bottom: 24),
@@ -105,11 +106,12 @@ class _WallaceScreenState extends State<WallaceScreen> {
                       label: Text(WallaceData.ageGroups[i]),
                       selected: _selectedAge == i,
                       selectedColor: AppColors.valoracion,
-                      labelStyle: TextStyle(
-                        color: _selectedAge == i ? Colors.white : null,
-                        fontWeight: _selectedAge == i ? FontWeight.bold : null,
-                        fontSize: 13,
-                      ),
+                      labelStyle:
+                          Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: _selectedAge == i ? Colors.white : null,
+                                fontWeight:
+                                    _selectedAge == i ? FontWeight.bold : null,
+                              ),
                       onSelected: (_) => setState(() => _selectedAge = i),
                     ),
                   );
@@ -198,11 +200,10 @@ class _WallaceScreenState extends State<WallaceScreen> {
                     ? 'SCQ inferior al umbral de reposicion hidrica '
                         '(${_selectedAge > 0 ? "10" : "20"}%)'
                     : 'Introduce el peso para calcular la reposicion hidrica',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
               ),
             ),
         ],
@@ -253,16 +254,16 @@ class _WallaceScreenState extends State<WallaceScreen> {
                 color: AppColors.severityModerate.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.info_outline,
+                  const Icon(Icons.info_outline,
                       size: 16, color: AppColors.severityModerate),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       'Ritmos iniciales. Titular segun diuresis. '
                       'Fluido: Ringer Lactato.',
-                      style: TextStyle(fontSize: 11),
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ),
                 ],
@@ -280,13 +281,12 @@ class _WallaceScreenState extends State<WallaceScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13)),
+          Text(label, style: Theme.of(context).textTheme.bodyMedium),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),

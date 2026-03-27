@@ -106,22 +106,24 @@ class OxigenoterapiaScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(device.name,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        _buildInfoChip('Flujo', device.flowRange),
+                        _buildInfoChip(context, 'Flujo', device.flowRange),
                         const SizedBox(width: 8),
-                        _buildInfoChip('FiO₂', device.fio2Range),
+                        _buildInfoChip(context, 'FiO₂', device.fio2Range),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Text(device.description,
-                        style: const TextStyle(fontSize: 13)),
+                        style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
               ),
@@ -132,7 +134,7 @@ class OxigenoterapiaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip(String label, String value) {
+  Widget _buildInfoChip(BuildContext context, String label, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -143,10 +145,12 @@ class OxigenoterapiaScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('$label: ',
-              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .copyWith(color: Colors.grey)),
           Text(value,
-              style: const TextStyle(
-                  fontSize: 13,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.oxigenoterapia)),
         ],

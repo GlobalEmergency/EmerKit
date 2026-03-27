@@ -39,6 +39,7 @@ class _GlasgowScreenState extends State<GlasgowScreen> {
         label: r.severity.label,
         subtitle: 'O: ${r.eye}  V: ${r.verbal}  M: ${r.motor}',
         color: r.severity.level.color,
+        severityLevel: r.severity.level,
       ),
       toolBody: ListView(
         padding: const EdgeInsets.all(12),
