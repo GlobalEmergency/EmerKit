@@ -25,8 +25,8 @@ permissions:
 
 jobs:
   build:
-    name: Build & Upload to TestFlight
-    runs-on: macos-15
+    name: Build & Submit to App Store
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
@@ -194,11 +194,151 @@ jobs:
             -authenticationKeyIssuerID "$ISSUER_ID" \
             -allowProvisioningUpdates
 
-          echo "✅ IPA exported"
-          ls -la ../build/ios/ipa/ 2>/dev/null || echo "IPA uploaded directly to App Store Connect"
+          echo "✅ IPA exported and uploaded to App Store Connect"
 
-      # Note: ExportOptions.plist has destination=upload, so xcodebuild
-      # uploads directly to App Store Connect. No separate altool step needed.
+      - name: Submit to App Review
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          # Install API key for altool/notarytool
+          mkdir -p ~/private_keys
+          echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
+
+          VERSION="${{ steps.version.outputs.version }}"
+          BUILD="${{ steps.version.outputs.build_number }}"
+
+          echo "⏳ Waiting for build $VERSION ($BUILD) to finish processing..."
+          # App Store Connect needs time to process the uploaded build
+          for i in $(seq 1 30); do
+            sleep 30
+            # Use xcrun to check build processing status
+            BUILD_STATUS=$(xcrun altool --list-builds \
+              --apiKey "$KEY_ID" \
+              --apiIssuer "$ISSUER_ID" \
+              --output-format json 2>/dev/null | \
+              python3 -c "
+          import json, sys
+          try:
+              data = json.load(sys.stdin)
+              builds = data.get('builds', [])
+              for b in builds:
+                  if b.get('buildVersion') == '$BUILD':
+                      print(b.get('processingState', 'unknown'))
+                      sys.exit(0)
+              print('not_found')
+          except:
+              print('error')
+          " 2>/dev/null || echo "error")
+
+            echo "  Attempt $i/30: status=$BUILD_STATUS"
+            if [ "$BUILD_STATUS" = "VALID" ] || [ "$BUILD_STATUS" = "valid" ]; then
+              echo "✅ Build processing complete"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "⚠️ Build still processing after 15 minutes, submitting anyway..."
+            fi
+          done
+
+          # Submit for review using App Store Connect API via Python
+          python3 << 'PYEOF'
+          import json, time, jwt, requests, os, sys
+
+          KEY_ID = os.environ["KEY_ID"]
+          ISSUER_ID = os.environ["ISSUER_ID"]
+          key_path = os.path.expanduser(f"~/private_keys/AuthKey_{KEY_ID}.p8")
+
+          with open(key_path, "r") as f:
+              private_key = f.read()
+
+          # Generate JWT token
+          now = int(time.time())
+          payload = {
+              "iss": ISSUER_ID,
+              "iat": now,
+              "exp": now + 1200,
+              "aud": "appstoreconnect-v1"
+          }
+          token = jwt.encode(payload, private_key, algorithm="ES256", headers={"kid": KEY_ID})
+          headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+          base = "https://api.appstoreconnect.apple.com/v1"
+
+          # Find the app
+          r = requests.get(f"{base}/apps?filter[bundleId]=online.globalemergency.emerkit", headers=headers)
+          r.raise_for_status()
+          app_id = r.json()["data"][0]["id"]
+          print(f"App ID: {app_id}")
+
+          # Get the latest build (just uploaded)
+          version = os.environ.get("VERSION", "")
+          build_num = os.environ.get("BUILD", "")
+          r = requests.get(
+              f"{base}/builds?filter[app]={app_id}&filter[version]={build_num}&sort=-uploadedDate&limit=1",
+              headers=headers
+          )
+          r.raise_for_status()
+          builds = r.json()["data"]
+          if not builds:
+              print("⚠️ Build not found yet in App Store Connect, skipping auto-submit")
+              sys.exit(0)
+
+          build_id = builds[0]["id"]
+          processing = builds[0]["attributes"].get("processingState", "unknown")
+          print(f"Build ID: {build_id}, processing: {processing}")
+
+          # Get or create the app store version
+          r = requests.get(
+              f"{base}/apps/{app_id}/appStoreVersions?filter[appStoreState]=READY_FOR_SALE,PREPARE_FOR_SUBMISSION,WAITING_FOR_REVIEW,IN_REVIEW,DEVELOPER_REJECTED&limit=1",
+              headers=headers
+          )
+          r.raise_for_status()
+          versions = r.json()["data"]
+
+          if versions and versions[0]["attributes"]["appStoreState"] == "PREPARE_FOR_SUBMISSION":
+              version_id = versions[0]["id"]
+              print(f"Using existing version: {version_id}")
+          else:
+              # Create new version
+              r = requests.post(f"{base}/appStoreVersions", headers=headers, json={
+                  "data": {
+                      "type": "appStoreVersions",
+                      "attributes": {"platform": "IOS", "versionString": version},
+                      "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}
+                  }
+              })
+              r.raise_for_status()
+              version_id = r.json()["data"]["id"]
+              print(f"Created version: {version_id}")
+
+          # Attach build to version
+          r = requests.patch(f"{base}/appStoreVersions/{version_id}/relationships/build", headers=headers, json={
+              "data": {"type": "builds", "id": build_id}
+          })
+          if r.ok:
+              print(f"✅ Build {build_id} attached to version {version_id}")
+          else:
+              print(f"⚠️ Could not attach build: {r.status_code} {r.text}")
+
+          # Submit for review
+          r = requests.post(f"{base}/appStoreVersionSubmissions", headers=headers, json={
+              "data": {
+                  "type": "appStoreVersionSubmissions",
+                  "relationships": {
+                      "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+                  }
+              }
+          })
+          if r.ok:
+              print(f"✅ Submitted version {version} for App Review!")
+          else:
+              print(f"⚠️ Could not submit for review: {r.status_code} {r.text}")
+              print("You may need to submit manually from App Store Connect")
+          PYEOF
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
 
       - name: Cleanup keychain
         if: always()
