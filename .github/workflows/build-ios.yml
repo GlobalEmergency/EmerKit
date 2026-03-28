@@ -204,6 +204,8 @@ jobs:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
         run: |
           # Install API key for altool/notarytool
           mkdir -p ~/private_keys
@@ -339,9 +341,6 @@ jobs:
               print(f"⚠️ Could not submit for review: {r.status_code} {r.text}")
               print("You may need to submit manually from App Store Connect")
           PYEOF
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-          BUILD: ${{ steps.version.outputs.build_number }}
 
       - name: Cleanup keychain
         if: always()
