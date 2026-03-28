@@ -383,8 +383,8 @@ class _RcpScreenState extends State<RcpScreen> {
               child: GestureDetector(
                 onTap: _isRunning ? _stop : _start,
                 child: Container(
-                  width: _isRunning ? 100 : 160,
-                  height: _isRunning ? 100 : 160,
+                  width: _isRunning ? 80 : 160,
+                  height: _isRunning ? 80 : 160,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _isRunning
@@ -403,7 +403,7 @@ class _RcpScreenState extends State<RcpScreen> {
                   ),
                   child: Icon(
                     _isRunning ? Icons.pause : Icons.play_arrow,
-                    size: _isRunning ? 50 : 80,
+                    size: _isRunning ? 40 : 80,
                     color: Colors.white,
                   ),
                 ),
@@ -1180,7 +1180,7 @@ class _RcpScreenState extends State<RcpScreen> {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: anyDone ? 0.25 : 0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -1188,24 +1188,24 @@ class _RcpScreenState extends State<RcpScreen> {
                         ? Border.all(color: Colors.green, width: 1.5)
                         : null,
                   ),
-                  child: Icon(icon, color: color, size: 22),
+                  child: Icon(icon, color: color, size: 32),
                 ),
                 if (anyDone)
                   const Positioned(
                     right: -4,
                     top: -4,
                     child:
-                        Icon(Icons.check_circle, color: Colors.green, size: 16),
+                        Icon(Icons.check_circle, color: Colors.green, size: 20),
                   ),
               ],
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: Theme.of(context)
-                  .textTheme
-                  .labelSmall!
-                  .copyWith(color: color),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ],
         ),

@@ -93,19 +93,19 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
         final color = _categoryColor(entry.category);
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
+          padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.only(top: 4, right: 6),
+                width: 10,
+                height: 10,
+                margin: const EdgeInsets.only(top: 5, right: 6),
                 decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               Text(
                 '$clockHh:$clockMm:$clockSs',
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.grey.shade600,
                       fontFamily: 'monospace',
                     ),
@@ -113,7 +113,7 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
               const SizedBox(width: 4),
               Text(
                 '+$relMm:$relSs',
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeight.w600,
                       color: color,
                       fontFamily: 'monospace',
@@ -123,7 +123,7 @@ class _ActionLogViewerState extends State<ActionLogViewer> {
               Expanded(
                 child: Text(
                   entry.action,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
             ],
