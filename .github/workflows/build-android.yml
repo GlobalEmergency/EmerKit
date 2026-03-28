@@ -125,8 +125,8 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: online.globalemergency.emerkit
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: ${{ inputs.android_track || 'internal' }}
-          status: draft
+          track: ${{ inputs.android_track || 'production' }}
+          status: completed
           releaseName: ${{ steps.version.outputs.version }}
 
       - name: Upload APK to Release
