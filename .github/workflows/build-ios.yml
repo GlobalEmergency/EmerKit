@@ -197,7 +197,7 @@ jobs:
           echo "✅ IPA exported and uploaded to App Store Connect"
 
       - name: Install Python dependencies for App Store Connect API
-        run: pip3 install PyJWT requests
+        run: pip3 install --break-system-packages PyJWT requests
 
       - name: Submit to App Review
         env:
