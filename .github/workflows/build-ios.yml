@@ -196,6 +196,9 @@ jobs:
 
           echo "✅ IPA exported and uploaded to App Store Connect"
 
+      - name: Install Python dependencies for App Store Connect API
+        run: pip3 install PyJWT requests
+
       - name: Submit to App Review
         env:
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
