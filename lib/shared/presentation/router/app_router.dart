@@ -31,6 +31,7 @@ import 'package:emerkit/features/glosario/presentation/glosario_screen.dart';
 import 'package:emerkit/features/respiratory_rate/presentation/respiratory_rate_screen.dart';
 import 'package:emerkit/features/gps_converter/presentation/gps_converter_screen.dart';
 import 'package:emerkit/features/wallace/presentation/wallace_screen.dart';
+import 'package:emerkit/features/shock_index/presentation/shock_index_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -76,5 +77,6 @@ final appRouter = GoRouter(
     GoRoute(
         path: '/gps-converter', builder: (_, __) => const GpsConverterScreen()),
     GoRoute(path: '/wallace', builder: (_, __) => const WallaceScreen()),
+    GoRoute(path: '/shock-index', builder: (_, __) => const ShockIndexScreen()),
   ],
 );

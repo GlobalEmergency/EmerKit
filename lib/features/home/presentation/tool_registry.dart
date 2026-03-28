@@ -124,6 +124,12 @@ class ToolRegistry {
         icon: Icons.thermostat,
         route: '/hipertermia',
         category: ToolCategory.signosValores),
+    ToolEntry(
+        id: 'shock_index',
+        name: 'Indice de Shock',
+        icon: Icons.show_chart,
+        route: '/shock-index',
+        category: ToolCategory.signosValores),
     // Oxigenoterapia
     ToolEntry(
         id: 'o2_calculator',
