@@ -61,27 +61,28 @@ class MedicationAlertCard extends StatelessWidget {
                 children: [
                   Text(
                     medication.name,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     medication.dose,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Colors.grey.shade700,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.black87,
                         ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       if (timeSince != null) ...[
-                        Icon(Icons.timer_outlined, size: 14, color: border),
+                        Icon(Icons.timer_outlined, size: 16, color: border),
                         const SizedBox(width: 4),
                         Text(
                           _formatDuration(timeSince),
                           style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'monospace',
                                     color: border,
@@ -92,7 +93,10 @@ class MedicationAlertCard extends StatelessWidget {
                       Text(
                         'Dosis: ${tracker.dosesGiven}'
                         '${medication.maxDoses != null ? '/${medication.maxDoses}' : ''}',
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.black87),
                       ),
                     ],
                   ),
@@ -114,7 +118,7 @@ class MedicationAlertCard extends StatelessWidget {
               child: Text('Administrar',
                   style: Theme.of(context)
                       .textTheme
-                      .bodySmall!
+                      .bodyMedium!
                       .copyWith(color: Colors.white)),
             ),
           ],
@@ -143,7 +147,7 @@ class MedicationAlertCard extends StatelessWidget {
                   Builder(builder: (context) {
                     return Text(
                       medication.name,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey.shade600,
                           ),
@@ -153,7 +157,7 @@ class MedicationAlertCard extends StatelessWidget {
                   Builder(builder: (context) {
                     return Text(
                       medication.dose,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Colors.grey.shade500,
                           ),
                     );
@@ -164,7 +168,7 @@ class MedicationAlertCard extends StatelessWidget {
             Builder(builder: (context) {
               return Text(
                 'Maximo alcanzado',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontStyle: FontStyle.italic,
                       color: Colors.grey.shade600,
                     ),
