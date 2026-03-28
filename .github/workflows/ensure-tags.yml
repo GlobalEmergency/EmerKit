@@ -17,7 +17,7 @@ jobs:
     outputs:
       tag: ${{ steps.version.outputs.tag }}
       version: ${{ steps.version.outputs.version }}
-      created: ${{ steps.check.outputs.exists == 'false' }}
+      should_build: ${{ steps.decide.outputs.should_build }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -56,10 +56,23 @@ jobs:
             --title "v${{ steps.version.outputs.version }}" \
             --generate-notes
 
+      - name: Decide whether to build
+        id: decide
+        run: |
+          # Always build on workflow_dispatch (manual retries)
+          # On push, only build if tag was just created
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.check.outputs.exists }}" = "false" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build-android:
     name: Build & Deploy Android
     needs: tag-and-release
-    if: needs.tag-and-release.outputs.created == 'true'
+    if: needs.tag-and-release.outputs.should_build == 'true'
     uses: ./.github/workflows/build-android.yml
     with:
       version: ${{ needs.tag-and-release.outputs.version }}
@@ -69,7 +82,7 @@ jobs:
   build-ios:
     name: Build & Deploy iOS
     needs: tag-and-release
-    if: needs.tag-and-release.outputs.created == 'true'
+    if: needs.tag-and-release.outputs.should_build == 'true'
     uses: ./.github/workflows/build-ios.yml
     with:
       version: ${{ needs.tag-and-release.outputs.version }}
