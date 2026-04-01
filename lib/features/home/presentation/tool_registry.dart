@@ -180,6 +180,12 @@ class ToolRegistry {
         icon: Icons.airline_seat_recline_extra,
         route: '/posiciones',
         category: ToolCategory.tecnicas),
+    ToolEntry(
+        id: 'diluciones',
+        name: 'Diluciones',
+        icon: Icons.science_outlined,
+        route: '/diluciones',
+        category: ToolCategory.tecnicas),
     // Protección
     ToolEntry(
         id: 'epi',
