@@ -186,6 +186,12 @@ class ToolRegistry {
         icon: Icons.science_outlined,
         route: '/diluciones',
         category: ToolCategory.tecnicas),
+    ToolEntry(
+        id: 'apgar',
+        name: 'Apgar',
+        icon: Icons.child_friendly,
+        route: '/apgar',
+        category: ToolCategory.valoracion),
     // Protección
     ToolEntry(
         id: 'epi',
