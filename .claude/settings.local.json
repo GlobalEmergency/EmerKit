@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__list_issues",
+      "Bash(gh issue:*)",
+      "Bash(bash scripts/propagate-version.sh)",
+      "Bash(dart format:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)",
+      "Bash(bash scripts/propagate-version.sh --check)",
+      "Bash(gh pr:*)"
+    ]
+  }
+}
