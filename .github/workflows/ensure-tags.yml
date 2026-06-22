@@ -19,7 +19,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       should_build: ${{ steps.decide.outputs.should_build }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
