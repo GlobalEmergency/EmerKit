@@ -1,7 +1,7 @@
 name: emerkit
 description: EmerKit - Herramientas clinicas para profesionales de emergencias
 publish_to: 'none'
-version: 0.1.17+117
+version: 0.1.18+118
 
 environment:
   sdk: ^3.5.0
@@ -21,6 +21,8 @@ dependency_overrides:
   path_provider_foundation: 2.4.0
 
 dev_dependencies:
+  flutter_driver:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

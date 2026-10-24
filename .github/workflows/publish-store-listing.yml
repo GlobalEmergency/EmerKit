@@ -1,0 +1,40 @@
+name: Publish EmerKit store listing
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: emerkit-google-store-listing
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # Publishing is an explicit operation, separate from code review and iOS capture.
+    if: github.repository == 'GlobalEmergency/EmerKit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install Google Play client
+        run: python -m pip install google-api-python-client google-auth
+      - name: Upload authorized metadata and screenshots
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: python store-assets/2026-10/16-publish-google.py
+      - name: Preserve before state and result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emerkit-google-store-result
+          path: |
+            store-assets/2026-10/18-google-*.json
+            store-assets/2026-10/19-google-upload-result.json
+          if-no-files-found: ignore
