@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:emerkit/shared/analytics/analytics_scope.dart';
+import 'package:emerkit/shared/presentation/widgets/analytics_consent.dart';
 import 'package:go_router/go_router.dart';
 import 'package:emerkit/shared/presentation/theme/app_colors.dart';
 import 'package:emerkit/shared/utils/external_app_launcher.dart';
@@ -122,9 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : ListView.builder(
-                      itemCount: categories.length,
+                      itemCount: categories.length + 1,
                       itemBuilder: (context, sectionIndex) {
-                        final category = categories[sectionIndex];
+                        if (sectionIndex == 0) {
+                          return const AnalyticsConsentBanner();
+                        }
+                        final category = categories[sectionIndex - 1];
                         final tools = groups[category]!;
                         final color =
                             _categoryColors[category] ?? AppColors.primary;
@@ -156,6 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onTap: () {
                                       if (tool.isExternal &&
                                           tool.externalPackage != null) {
+                                        final analytics =
+                                            AnalyticsScope.maybeOf(context);
+                                        if (analytics != null) {
+                                          unawaited(analytics.recordToolOpen(
+                                              tool.id,
+                                              external: true));
+                                        }
                                         ExternalAppLauncher.launchOrStore(
                                           packageName: tool.externalPackage!,
                                           appScheme:
