@@ -51,17 +51,19 @@
     "secondaryCategory": "EDUCATION",
     "categoryRationale": "Medical representa la referencia sanitaria; Education se mantiene como secundaria por las guías, referencias y uso formativo.",
     "primaryLocale": "es-ES",
-    "privacyPolicyUrl": "https://www.globalemergency.online/privacy",
-    "privacyPolicyVerification": "PENDING_KEEP_CURRENT_URL",
+    "privacyPolicyUrl": "https://www.globalemergency.online/privacidad-emerkit",
+    "privacyPolicyVerification": "HTTP_200_CONTENT_VERIFIED_2026_10_24",
     "localizations": {
       "es-ES": {
         "name": "EmerKit: RCP y escalas",
         "subtitle": "TES, enfermería y medicina",
-        "keywords": "glasgow,nihss,oxígeno,triage,ictus,sbar,quemaduras,diluciones,ambulancia,emergencias,triaje",
+        "keywords": "glasgow,nihss,oxígeno,triage,ictus,sbar,quemaduras,diluciones,ambulancia,emergencias,triaje,ecg,tep",
         "promotionalText": "Gratis, sin anuncios y de código abierto. Escalas clínicas, calculadoras offline y bibliografía para profesionales de emergencias.",
         "description": "Tu kit de emergencias sanitarias en el bolsillo. Escalas clínicas, calculadoras y guías para TES, enfermería y medicina. Gratis, sin anuncios y de código abierto, con bibliografía para ampliar la consulta.\n\nConsulta las calculadoras y guías incorporadas sin conexión.\n\nVALORACIÓN Y REFERENCIA\nConsulta Glasgow, triage START, Triángulo de Evaluación Pediátrica, Cincinnati, Madrid-DIRECT, NIHSS y Rankin. Accede también a rangos de constantes vitales, clasificación de glucemia y temperatura, y cálculo del índice de shock.\n\nSOPORTE VITAL Y OXIGENOTERAPIA\nUtiliza el metrónomo de RCP y consulta los esquemas de soporte vital básico. Calcula la autonomía estimada de una botella de oxígeno a partir de los datos introducidos y consulta dispositivos de oxigenoterapia.\n\nTÉCNICAS Y COMUNICACIÓN\nRevisa la colocación de electrodos ECG, las estimaciones de superficie quemada mediante Wallace y Lund-Browder, y las guías de vendajes, heridas y posiciones de traslado. Incluye cálculo de diluciones, referencias sobre EPI y mercancías peligrosas ADR, comunicación SBAR y un glosario.\n\nUTILIDADES\nBusca herramientas por su nombre y convierte coordenadas GPS. La opción DEA Cercano abre DeaMap, un servicio externo para localizar desfibriladores.\n\nCONEXIÓN Y UBICACIÓN\nDeaMap, los enlaces, la consulta de direcciones y los mapas externos pueden requerir internet; obtener la ubicación necesita permiso y servicios de localización del dispositivo.\n\nUSO PROFESIONAL\nEmerKit es una herramienta de apoyo y referencia; no sustituye la formación profesional, los protocolos oficiales ni el juicio clínico. Su uso es responsabilidad del profesional sanitario.",
         "whatsNew": "Corregimos la declaración del idioma de la app en iOS y renovamos las capturas y la información de la ficha.",
-        "whatsNewDraft": "BORRADOR: completar únicamente con los cambios comprobados de la compilación que se enviará."
+        "whatsNewDraft": "BORRADOR: completar únicamente con los cambios comprobados de la compilación que se enviará.",
+        "supportUrl": "https://www.globalemergency.online/proyectos/emerkit",
+        "marketingUrl": "https://www.globalemergency.online/proyectos/emerkit"
       },
       "en-US": {
         "name": "EmerKit: EMT & Paramedic Tools",
@@ -70,7 +72,9 @@
         "promotionalText": "Free, ad-free and open source. Offline clinical scales, calculators and references for emergency healthcare professionals.",
         "description": "Your pocket emergency medical toolkit. Clinical scales, calculators and guides for emergency medical technicians, nurses and physicians. Free, ad-free and open source, with bibliographic references for further reading.\n\nUse the built-in calculators and guides offline.\n\nASSESSMENT AND REFERENCE\nConsult Glasgow, START triage, the Pediatric Assessment Triangle, Cincinnati, Madrid-DIRECT, NIHSS and Rankin. Find vital-sign reference ranges, blood glucose and temperature classifications, and a shock index calculator.\n\nLIFE SUPPORT AND OXYGEN THERAPY\nUse the CPR metronome and consult basic life support flowcharts. Estimate oxygen cylinder duration from the values you enter and review oxygen delivery devices.\n\nTECHNIQUES AND COMMUNICATION\nReview ECG electrode placement, burn surface area estimates using Wallace and Lund-Browder, and guides to bandaging, wounds and patient transport positions. Includes dilution calculations, PPE and ADR dangerous goods references, SBAR communication and a glossary.\n\nUTILITIES\nSearch for tools by name and convert GPS coordinates. The nearby AED option opens DeaMap, an external defibrillator location service.\n\nCONNECTIVITY AND LOCATION\nDeaMap, external links, address lookups and external maps may require internet; getting your location requires permission and the device's location services.\n\nPROFESSIONAL USE\nEmerKit is a support and reference tool; it does not replace professional training, official protocols or clinical judgment. Healthcare professionals are responsible for its use.",
         "whatsNew": "Corrected the app language declaration on iOS and refreshed the screenshots and store information.",
-        "whatsNewDraft": "DRAFT: replace with the verified changes in the build being submitted."
+        "whatsNewDraft": "DRAFT: replace with the verified changes in the build being submitted.",
+        "supportUrl": "https://www.globalemergency.online/proyectos/emerkit",
+        "marketingUrl": "https://www.globalemergency.online/proyectos/emerkit"
       }
     }
   },

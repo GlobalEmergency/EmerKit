@@ -10,19 +10,25 @@ Future<void> main() async {
     throw StateError('CAPTURE_UDID and CAPTURE_OUTPUT are required');
   }
   await Directory(output).create(recursive: true);
-  final driver = await FlutterDriver.connect();
+  final driver = await FlutterDriver.connect().timeout(
+    const Duration(seconds: 90),
+  );
   Process? recording;
   Future<void>? recordingComplete;
 
   Future<void> native(List<String> args) async {
-    final result = await Process.run('xcrun', ['simctl', ...args]);
+    final result = await Process.run('xcrun', ['simctl', ...args]).timeout(
+      const Duration(seconds: 30),
+    );
     if (result.exitCode != 0) {
       throw StateError('simctl failed: ${result.stderr}');
     }
   }
 
   Future<void> capture(String name, String marker) async {
-    await driver.waitFor(find.text(marker));
+    stderr.writeln('Capture $name: waiting for $marker');
+    await driver.waitFor(find.text(marker),
+        timeout: const Duration(seconds: 30));
     await Future<void>.delayed(const Duration(milliseconds: 700));
     await native(['io', udid, 'screenshot', '$output/$name.png']);
     if (await File('$output/$name.png').length() < 10000) {
@@ -31,24 +37,33 @@ Future<void> main() async {
   }
 
   Future<void> openTool(String label, String title) async {
-    await driver.tap(find.byType('TextField'));
-    await driver.enterText(label);
-    await driver.tap(find.descendant(
-      of: find.byType('ToolCard'),
-      matching: find.text(label),
-    ));
-    await driver.waitFor(find.text(title));
+    await driver.tap(find.byType('TextField'),
+        timeout: const Duration(seconds: 30));
+    stderr.writeln('Open tool: $label');
+    await driver.enterText(label, timeout: const Duration(seconds: 30));
+    await driver.tap(
+        find.descendant(
+          of: find.byType('ToolCard'),
+          matching: find.text(label),
+        ),
+        timeout: const Duration(seconds: 30));
+    await driver.waitFor(find.text(title),
+        timeout: const Duration(seconds: 30));
   }
 
   Future<void> home() async {
-    await driver.tap(find.pageBack());
-    await driver.waitFor(find.byType('TextField'));
-    await driver.tap(find.byType('TextField'));
-    await driver.enterText('');
+    stderr.writeln('Return to home');
+    await driver.tap(find.pageBack(), timeout: const Duration(seconds: 30));
+    await driver.waitFor(find.byType('TextField'),
+        timeout: const Duration(seconds: 30));
+    await driver.tap(find.byType('TextField'),
+        timeout: const Duration(seconds: 30));
+    await driver.enterText('', timeout: const Duration(seconds: 30));
   }
 
   try {
-    await driver.waitFor(find.byType('TextField'));
+    await driver.waitFor(find.byType('TextField'),
+        timeout: const Duration(seconds: 30));
     await capture('01-home', 'Buscar herramienta...');
     if (Platform.environment['CAPTURE_VIDEO'] == 'true') {
       recording = await Process.start('xcrun', [

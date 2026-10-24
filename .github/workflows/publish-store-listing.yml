@@ -2,13 +2,6 @@ name: Publish EmerKit store listing
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'store-assets/2026-10/16-publish-google.py'
-      - 'store-assets/2026-10/17-metadata-to-publish.json'
-      - 'store-assets/2026-10/es/android-phone/**'
-      - 'store-assets/2026-10/en/android-phone/**'
-      - '.github/workflows/publish-store-listing.yml'
 
 permissions:
   contents: read
@@ -19,34 +12,20 @@ concurrency:
 
 jobs:
   publish:
-    # Authorized store update, restricted to this repository and the prepared branch.
-    if: github.repository == 'GlobalEmergency/EmerKit' && (github.event_name == 'workflow_dispatch' || (github.head_ref == 'codex/emerkit-store-ios' && github.event.pull_request.head.repo.full_name == github.repository))
+    # Publishing is an explicit operation, separate from code review and iOS capture.
+    if: github.repository == 'GlobalEmergency/EmerKit'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 2
-      - name: Check whether this commit changes the listing
-        id: changed
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-        run: |
-          if [ "$EVENT_NAME" = "workflow_dispatch" ] || git diff --name-only HEAD^ HEAD -- store-assets/2026-10 | grep -q .; then
-            echo 'publish=true' >> "$GITHUB_OUTPUT"
-          else
-            echo 'publish=false' >> "$GITHUB_OUTPUT"
-          fi
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v6
-        if: steps.changed.outputs.publish == 'true'
         with:
           python-version: '3.12'
       - name: Install Google Play client
-        if: steps.changed.outputs.publish == 'true'
         run: python -m pip install google-api-python-client google-auth
       - name: Upload authorized metadata and screenshots
-        if: steps.changed.outputs.publish == 'true'
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
         run: python store-assets/2026-10/16-publish-google.py

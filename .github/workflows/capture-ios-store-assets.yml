@@ -2,10 +2,13 @@ name: Capture iOS Store Assets
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/capture-ios-store-assets.yml'
-      - 'test_driver/**'
+    inputs:
+      device:
+        description: 'Device class to capture'
+        type: choice
+        required: true
+        default: all
+        options: [all, iphone, ipad]
 
 permissions:
   contents: read
@@ -22,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        device: [iphone, ipad]
+        device: ${{ fromJSON(inputs.device == 'ipad' && '["ipad"]' || inputs.device == 'iphone' && '["iphone"]' || '["iphone", "ipad"]') }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -60,15 +63,35 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl ui "$UDID" appearance light
           xcrun simctl status_bar "$UDID" override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100
+      - name: Build Simulator app
+        timeout-minutes: 15
+        run: flutter build ios --simulator --debug --no-pub --target test_driver/store_app.dart
       - name: Run app and capture six screens
+        timeout-minutes: 5
         env:
           CAPTURE_UDID: ${{ steps.simulator.outputs.udid }}
           CAPTURE_OUTPUT: ${{ github.workspace }}/store-captures
           CAPTURE_VIDEO: ${{ matrix.device == 'iphone' }}
         run: |
-          flutter drive --no-pub --device-id "$CAPTURE_UDID" \
-            --target test_driver/store_app.dart \
-            --driver test_driver/store_capture.dart
+          xcrun simctl install "$CAPTURE_UDID" build/ios/iphonesimulator/Runner.app
+          # Connect to a known loopback port instead of waiting for Simulator logs.
+          xcrun simctl launch --terminate-running-process "$CAPTURE_UDID" online.globalemergency.emerkit \
+            --vm-service-port=54321 --disable-service-auth-codes --disable-vm-service-publication
+          export VM_SERVICE_URL='http://127.0.0.1:54321/'
+          python3 <<'PY'
+          import json, time, urllib.request, urllib.error
+          for attempt in range(60):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:54321/getVM', timeout=2) as response:
+                      assert json.load(response)['result']['type'] == 'VM'
+                  print('Simulator VM Service ready')
+                  break
+              except (OSError, ValueError, KeyError):
+                  time.sleep(1)
+          else:
+              raise SystemExit('Simulator VM Service did not start within 180 seconds')
+          PY
+          dart run test_driver/store_capture.dart
       - name: Export iPhone App Preview
         if: matrix.device == 'iphone'
         run: |
@@ -114,6 +137,11 @@ jobs:
               metadata['appPreview'] = {'durationSeconds': 20, 'size': [886, 1920], 'fps': 30}
           metadata_path.write_text(json.dumps(metadata, indent=2))
           PY
+      - name: Capture diagnostics after failure
+        if: failure() && steps.simulator.outputs.udid != ''
+        run: |
+          xcrun simctl io '${{ steps.simulator.outputs.udid }}' screenshot store-captures/99-failure.png || true
+          xcrun simctl spawn '${{ steps.simulator.outputs.udid }}' log show --last 3m --style compact --predicate 'process == "Runner"' > store-captures/99-runner.log || true
       - name: Save captures and original footage
         if: always()
         uses: actions/upload-artifact@v4
