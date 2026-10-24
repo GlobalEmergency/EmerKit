@@ -33,7 +33,10 @@ Future<void> main() async {
   Future<void> openTool(String label, String title) async {
     await driver.tap(find.byType('TextField'));
     await driver.enterText(label);
-    await driver.tap(find.text(label));
+    await driver.tap(find.descendant(
+      of: find.byType('ToolCard'),
+      matching: find.text(label),
+    ));
     await driver.waitFor(find.text(title));
   }
 
