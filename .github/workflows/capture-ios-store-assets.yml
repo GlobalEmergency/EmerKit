@@ -1,0 +1,123 @@
+name: Capture iOS Store Assets
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/capture-ios-store-assets.yml'
+      - 'test_driver/**'
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Capture ${{ matrix.device }}
+    runs-on: macos-26
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iphone, ipad]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.5'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Select and boot Simulator
+        id: simulator
+        env:
+          DEVICE_CLASS: ${{ matrix.device }}
+        run: |
+          xcrun simctl list devices available -j > "$RUNNER_TEMP/devices.json"
+          python3 <<'PY'
+          import json, os, re
+          from pathlib import Path
+          devices = json.loads(Path(os.environ['RUNNER_TEMP'], 'devices.json').read_text())['devices']
+          pattern = r'iPhone .*Pro Max' if os.environ['DEVICE_CLASS'] == 'iphone' else r'iPad Pro.*13-inch'
+          candidates = [(runtime, d) for runtime, group in devices.items() for d in group
+                        if d.get('isAvailable') and re.search(pattern, d['name'])]
+          if not candidates:
+              raise SystemExit(f'No supported {os.environ["DEVICE_CLASS"]} Simulator found')
+          runtime, device = sorted(candidates, key=lambda pair: (pair[0], pair[1]['name']), reverse=True)[0]
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'udid={device["udid"]}\n')
+          Path('store-captures').mkdir(exist_ok=True)
+          metadata = {'device': device['name'], 'runtime': runtime, 'udid': device['udid'],
+                      'commit': os.environ['GITHUB_SHA'], 'version': json.loads(Path('version.json').read_text())['version'],
+                      'source': 'iOS app running in Apple Simulator; native simctl capture'}
+          Path('store-captures/08-capture-metadata.json').write_text(json.dumps(metadata, indent=2))
+          PY
+          UDID=$(python3 -c 'import json; print(json.load(open("store-captures/08-capture-metadata.json"))["udid"])')
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl ui "$UDID" appearance light
+          xcrun simctl status_bar "$UDID" override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100
+      - name: Run app and capture six screens
+        env:
+          CAPTURE_UDID: ${{ steps.simulator.outputs.udid }}
+          CAPTURE_OUTPUT: ${{ github.workspace }}/store-captures
+          CAPTURE_VIDEO: ${{ matrix.device == 'iphone' }}
+        run: |
+          flutter drive --no-pub --device-id "$CAPTURE_UDID" \
+            --target test_driver/store_app.dart \
+            --driver test_driver/store_capture.dart
+      - name: Export iPhone App Preview
+        if: matrix.device == 'iphone'
+        run: |
+          brew install ffmpeg
+          ffmpeg -y -i store-captures/07-preview-raw.mov \
+            -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
+            -map 0:v:0 -map 1:a:0 -t 20 -r 30 \
+            -vf 'scale=886:1920:force_original_aspect_ratio=decrease,pad=886:1920:(ow-iw)/2:(oh-ih)/2,setsar=1' \
+            -c:v libx264 -profile:v high -level:v 4.0 -pix_fmt yuv420p \
+            -b:v 10M -maxrate 12M -bufsize 20M \
+            -c:a aac -b:a 256k -ac 2 -ar 48000 -movflags +faststart \
+            store-captures/07-app-preview-iphone.mp4
+      - name: Verify captured images and video
+        env:
+          DEVICE_CLASS: ${{ matrix.device }}
+        run: |
+          python3 <<'PY'
+          import json, os, struct, subprocess
+          from pathlib import Path
+          folder = Path('store-captures')
+          expected = ['01-home', '02-glasgow', '03-rcp', '04-triage', '05-ecg', '06-home-scroll']
+          dimensions = set()
+          for name in expected:
+              data = (folder / f'{name}.png').read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n' and len(data) > 10000, name
+              dimensions.add(struct.unpack('>II', data[16:24]))
+          assert len(dimensions) == 1, dimensions
+          width, height = dimensions.pop()
+          assert width >= 1242 and height > width, (width, height)
+          metadata_path = folder / '08-capture-metadata.json'
+          metadata = json.loads(metadata_path.read_text())
+          metadata['screenshotSize'] = [width, height]
+          if os.environ['DEVICE_CLASS'] == 'iphone':
+              video = folder / '07-app-preview-iphone.mp4'
+              probe = json.loads(subprocess.check_output(['ffprobe', '-v', 'error', '-show_streams', '-show_format', '-of', 'json', str(video)]))
+              stream = next(s for s in probe['streams'] if s['codec_type'] == 'video')
+              audio = next(s for s in probe['streams'] if s['codec_type'] == 'audio')
+              assert stream['codec_name'] == 'h264' and [stream['width'], stream['height']] == [886, 1920]
+              assert stream['r_frame_rate'] == '30/1'
+              assert audio['codec_name'] == 'aac' and audio['channels'] == 2
+              assert 19.9 <= float(probe['format']['duration']) <= 20.1
+              assert video.stat().st_size < 500_000_000
+              metadata['appPreview'] = {'durationSeconds': 20, 'size': [886, 1920], 'fps': 30}
+          metadata_path.write_text(json.dumps(metadata, indent=2))
+          PY
+      - name: Save captures and original footage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-store-${{ matrix.device }}-${{ github.sha }}
+          path: store-captures/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Shutdown Simulator
+        if: always() && steps.simulator.outputs.udid != ''
+        run: xcrun simctl shutdown '${{ steps.simulator.outputs.udid }}'
