@@ -1,0 +1,55 @@
+{
+  "accepted": {
+    "status": 200,
+    "body": {
+      "accepted": 1
+    }
+  },
+  "duplicate": {
+    "status": 200,
+    "body": {
+      "accepted": 0
+    }
+  },
+  "clinical_rejected": {
+    "status": 400,
+    "body": {
+      "error": "invalid_payload"
+    }
+  },
+  "erased": {
+    "status": 200,
+    "body": {
+      "erased": 1
+    }
+  },
+  "post_erasure_rejected": {
+    "status": 200,
+    "body": {
+      "accepted": 0
+    }
+  },
+  "android_redirect": {
+    "status": 302,
+    "location": "https://play.google.com/store/apps/details?id=online.globalemergency.emerkit&referrer=utm_source%3Dyoutube%26utm_medium%3Dvideo%26utm_campaign%3Daso_202610%26utm_content%3Des",
+    "cache": "no-cache, must-revalidate, max-age=0, no-store, private"
+  },
+  "ios_redirect": {
+    "status": 302,
+    "location": "https://apps.apple.com/app/id6760960392",
+    "cache": "no-cache, must-revalidate, max-age=0, no-store, private"
+  },
+  "report_after_test": {
+    "summary": [
+      {
+        "sessions": "0",
+        "participants": "0",
+        "app_opens": "0",
+        "home_ready": "0"
+      }
+    ],
+    "tools": [],
+    "sources": [],
+    "clicks": []
+  }
+}

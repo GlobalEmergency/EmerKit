@@ -1,0 +1,22 @@
+{
+  "device": "emulator-5556",
+  "mode": "release x86_64, local debug signing for emulator only",
+  "apk_sha256": "d0cbbd863d2b44e950f18d9c519f4957f34bc2fe885d22bad985534a102232e1",
+  "install": "Performing Streamed Install\r\nSuccess",
+  "launches": [
+    "Starting: Intent { cmp=online.globalemergency.emerkit/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: online.globalemergency.emerkit/.MainActivity\r\nTotalTime: 7548\r\nWaitTime: 7550\r\nComplete",
+    "Starting: Intent { cmp=online.globalemergency.emerkit/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: online.globalemergency.emerkit/.MainActivity\r\nTotalTime: 6632\r\nWaitTime: 6636\r\nComplete",
+    "Starting: Intent { cmp=online.globalemergency.emerkit/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: online.globalemergency.emerkit/.MainActivity\r\nTotalTime: 5229\r\nWaitTime: 5312\r\nComplete"
+  ],
+  "visible_texts": [],
+  "process_running": true,
+  "package_version": [
+    "versionCode=4119 minSdk=24 targetSdk=36",
+    "versionName=0.1.19"
+  ],
+  "home_reached": false,
+  "home_reached_visual_review": true,
+  "visual_evidence": "18-android-release-home.png",
+  "semantic_texts_available": false,
+  "note": "Tres aperturas en frío terminan Status ok y proceso vivo. Captura revisada: inicio con banner y RCP/Glasgow visibles. El emulador no expone etiquetas en uiautomator. am start mide primera presentación bajo carga local, no latencia hasta herramientas ni rendimiento real de usuarios."
+}

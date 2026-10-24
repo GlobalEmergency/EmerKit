@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:emerkit/shared/presentation/widgets/analytics_consent.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:emerkit/shared/presentation/theme/app_colors.dart';
@@ -103,6 +104,9 @@ class AboutScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              const AnalyticsConsentSettings(),
               const SizedBox(height: 16),
 
               // Developer
