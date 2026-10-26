@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:emerkit/shared/analytics/app_analytics.dart';
@@ -25,6 +26,7 @@ void main() {
   AppAnalytics make(
           {http.Client? client,
           bool enabled = true,
+          String platform = 'android',
           Future<String?> Function()? referrer}) =>
       AppAnalytics(
         store: store,
@@ -42,7 +44,7 @@ void main() {
             }),
         collectionEnabled: enabled,
         appVersion: '0.1.19',
-        platform: 'android',
+        platform: platform,
         deviceLanguage: 'es-ES',
         allowedToolIds: {'glasgow', 'deamap'},
         referrerReader: referrer,
@@ -50,6 +52,28 @@ void main() {
   setUp(() {
     store = MemoryStore();
     requests = [];
+  });
+
+  test(
+      'Flutter iOS enum enables consented analytics with canonical ios payloads',
+      () async {
+    final a = make(platform: TargetPlatform.iOS.name);
+    expect(a.supported, isTrue);
+    await a.startSession();
+    expect(requests, isEmpty);
+    await a.setConsent(true);
+    await a.recordToolOpen('glasgow');
+    await a.flush();
+    final batches = requests
+        .where((r) => r.url.path.endsWith('/events'))
+        .map((r) => jsonDecode(r.body) as Map<String, dynamic>)
+        .toList();
+    expect(batches, isNotEmpty);
+    expect(batches.every((b) => b['platform'] == 'ios'), isTrue);
+    expect(batches.expand((b) => b['events'] as List).map((e) => e['name']),
+        containsAll(['measurement_started', 'app_open', 'tool_open']));
+    expect(a.pendingCount, 0);
+    a.dispose();
   });
 
   test('Sin permiso no transmite ni persiste identificadores o herramientas',
