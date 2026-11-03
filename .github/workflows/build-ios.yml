@@ -28,7 +28,7 @@ on:
         default: false
         type: boolean
       submit_for_review:
-        description: 'Submit this exact version for App Review (requires upload)'
+        description: 'Submit this exact version for App Review (requires "Upload to TestFlight")'
         required: false
         default: false
         type: boolean

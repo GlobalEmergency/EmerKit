@@ -26,7 +26,9 @@ jobs:
     timeout-minutes: 10
     env:
       WP_PATH: /var/www/vhosts/globalemergency.online/httpdocs
-      # srv07 public host key, pinned instead of trusting the first connection.
+      TARGET: ${{ secrets.SRV07_USER }}@${{ secrets.SRV07_HOST }}
+      # srv07 public host key, pinned instead of trusting the first connection
+      # (update it here if the server key is ever rotated).
       SRV07_HOST_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBcznWLBEBj0x0Y/w6mhRzYzCsunu5jUwMC8Pd/aQd10
     steps:
       - uses: actions/checkout@v6
@@ -42,27 +44,24 @@ jobs:
           echo "$SRV07_HOST $SRV07_HOST_KEY" > ~/.ssh/known_hosts
 
       - name: Sync plugin files
-        env:
-          TARGET: ${{ secrets.SRV07_USER }}@${{ secrets.SRV07_HOST }}
         # --delay-updates swaps every file in at the end, so PHP never loads a
-        # half-copied plugin. --chmod drops the world-writable bits of the manual copy.
+        # half-copied plugin. -p + --chmod also reset the world-writable bits of
+        # the manual copy. --delete removes server-side files not in the repo.
         run: |
-          rsync -rlz --delete --delay-updates --chmod=D755,F644 \
+          rsync -rlpz --delete --delay-updates --chmod=D755,F644 \
             --exclude=tests/ --exclude='*.md' \
             -e "ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes" \
             backend/emerkit-analytics/ \
             "$TARGET:$WP_PATH/wp-content/plugins/emerkit-analytics/"
 
       - name: Check plugin is active
-        env:
-          TARGET: ${{ secrets.SRV07_USER }}@${{ secrets.SRV07_HOST }}
         run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "$TARGET" \
             "/opt/plesk/php/8.4/bin/php -d memory_limit=512M /usr/local/bin/wp --path=$WP_PATH plugin is-active emerkit-analytics"
 
       - name: Smoke test public contract
         run: |
-          # Validation rejects an empty batch before touching the tables: 400 proves the route is live.
+          # Validation rejects an empty payload before touching the tables: 400 proves the route is live.
           code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
             -d '{}' https://emerkit.globalemergency.online/wp-json/emerkit/v1/events)
           [ "$code" = 400 ] || { echo "::error::events endpoint returned $code, expected 400"; exit 1; }

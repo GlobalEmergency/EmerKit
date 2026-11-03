@@ -6,8 +6,9 @@
  *
  *   1. find the app by bundle id;
  *   2. wait until the build with this CFBundleVersion is processed (VALID);
- *   3. find or create the editable App Store version for the version string;
- *   4. attach the build;
+ *   3. declare export compliance if Apple still asks for it;
+ *   4. find or create the editable App Store version for the version string,
+ *      and attach the build;
  *   5. set "What's New" on every localization from WHATSNEW_DIR/<locale>.txt
  *      (Apple requires it on updates);
  *   6. add the version to a review submission (reusing an open one) and submit it.
@@ -36,6 +37,10 @@ const EDITABLE_STATES = new Set([
   'REJECTED',
   'METADATA_REJECTED',
   'INVALID_BINARY',
+  'WAITING_FOR_EXPORT_COMPLIANCE',
+  // Added to a review submission that was never sent (e.g. a previous run
+  // failed on the final PATCH): resuming submits it.
+  'READY_FOR_REVIEW',
 ]);
 const ALREADY_SUBMITTED_STATES = new Set([
   'WAITING_FOR_REVIEW',
@@ -43,6 +48,7 @@ const ALREADY_SUBMITTED_STATES = new Set([
   'PENDING_DEVELOPER_RELEASE',
   'PENDING_APPLE_RELEASE',
   'PROCESSING_FOR_APP_STORE',
+  'PROCESSING_FOR_DISTRIBUTION',
   'READY_FOR_SALE',
   'READY_FOR_DISTRIBUTION',
   'ACCEPTED',
@@ -105,24 +111,38 @@ class AppleApiError extends Error {
 
 async function api(method, path, body) {
   for (let attempt = 1; ; attempt++) {
-    const res = await fetch(`${API}${path}`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token()}`,
-        'Content-Type': 'application/json',
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    let res;
+    try {
+      res = await fetch(`${API}${path}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token()}`,
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (err) {
+      // Network errors (reset, DNS) are transient like a 5xx.
+      if (attempt >= 4) throw err;
+      log(`  ${method} ${path} -> ${err.message}, retrying (${attempt}/3)`);
+      await sleep(attempt * 10_000);
+      continue;
+    }
     if (res.status === 204) return undefined;
-    const text = await res.text();
-    const json = text ? JSON.parse(text) : undefined;
-    if (res.ok) return json;
-    // Rate limits and transient server errors: retry a few times.
+    // Rate limits and transient server errors (often HTML bodies): retry a few times.
     if ((res.status === 429 || res.status >= 500) && attempt < 4) {
       log(`  ${method} ${path} -> HTTP ${res.status}, retrying (${attempt}/3)`);
       await sleep(attempt * 10_000);
       continue;
     }
+    const text = await res.text();
+    let json;
+    try {
+      json = text ? JSON.parse(text) : undefined;
+    } catch {
+      json = undefined;
+    }
+    if (res.ok) return json;
     throw new AppleApiError(method, path, res.status, json?.errors);
   }
 }
@@ -359,7 +379,7 @@ async function submissionHasVersion(submissionId, versionId) {
   );
 }
 
-// ---------------------------------------------------------------- main
+// ---------------------------------------------------------------- helpers
 
 function log(message) {
   console.log(message);
@@ -374,6 +394,8 @@ function fail(message) {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+// ---------------------------------------------------------------- main
 
 async function main() {
   log(
