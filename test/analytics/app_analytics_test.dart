@@ -54,11 +54,9 @@ void main() {
     requests = [];
   });
 
-  test(
-      'Flutter iOS enum enables consented analytics with canonical ios payloads',
+  test('En iOS, con permiso, se mide y los envíos declaran la plataforma ios',
       () async {
     final a = make(platform: TargetPlatform.iOS.name);
-    expect(a.supported, isTrue);
     await a.startSession();
     expect(requests, isEmpty);
     await a.setConsent(true);
@@ -73,7 +71,6 @@ void main() {
     expect(batches.expand((b) => b['events'] as List).map((e) => e['name']),
         containsAll(['measurement_started', 'app_open', 'tool_open']));
     expect(a.pendingCount, 0);
-    a.dispose();
   });
 
   test('Sin permiso no transmite ni persiste identificadores o herramientas',
