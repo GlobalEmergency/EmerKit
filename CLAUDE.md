@@ -183,7 +183,11 @@ All tools are registered in `lib/features/home/presentation/tool_registry.dart` 
 ### Release (on version.json change)
 - `ensure-tags.yml` → creates tag + GitHub Release
 - Calls `build-android.yml` → signed APK/AAB → Google Play (internal track)
-- Calls `build-ios.yml` → IPA → TestFlight
+- Calls `build-ios.yml` → IPA → TestFlight → App Review (`.github/scripts/app-store-submit.mjs`; "What's New" from `store-assets/whatsnew/<locale>.txt`)
+
+### Analytics plugin (`backend/emerkit-analytics`)
+- PR/push: `ci.yml` job `analytics-plugin` lints on PHP 7.4/8.4 and runs its tests (MariaDB service)
+- Push to main touching it: `deploy-analytics.yml` rsyncs it to srv07 and smoke-tests it
 
 ## Commit Convention
 

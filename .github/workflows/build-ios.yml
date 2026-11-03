@@ -28,7 +28,7 @@ on:
         default: false
         type: boolean
       submit_for_review:
-        description: 'Submit this exact version for App Review (requires upload)'
+        description: 'Submit this exact version for App Review (requires "Upload to TestFlight")'
         required: false
         default: false
         type: boolean
@@ -41,6 +41,10 @@ jobs:
     name: Build iOS
     runs-on: macos-26
     timeout-minutes: 60
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build_number: ${{ steps.version.outputs.build_number }}
+      uploaded: ${{ steps.upload.outcome == 'success' }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -228,159 +232,36 @@ jobs:
             --file "$(find build/ios/ipa -name '*.ipa' -print -quit)" \
             --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
 
-      - name: Install Python dependencies for App Store Connect API
-        if: inputs.submit_for_review == true && steps.upload.outcome == 'success'
-        run: pip3 install --break-system-packages PyJWT requests
-
-      - name: Submit to App Review
-        if: inputs.submit_for_review == true && steps.upload.outcome == 'success'
-        env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-          VERSION: ${{ steps.version.outputs.version }}
-          BUILD: ${{ steps.version.outputs.build_number }}
-        run: |
-          # Install API key for altool/notarytool
-          mkdir -p ~/private_keys
-          echo "$API_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
-
-          VERSION="${{ steps.version.outputs.version }}"
-          BUILD="${{ steps.version.outputs.build_number }}"
-
-          echo "⏳ Waiting for build $VERSION ($BUILD) to finish processing..."
-          # App Store Connect needs time to process the uploaded build
-          for i in $(seq 1 30); do
-            sleep 30
-            # Use xcrun to check build processing status
-            BUILD_STATUS=$(xcrun altool --list-builds \
-              --apiKey "$KEY_ID" \
-              --apiIssuer "$ISSUER_ID" \
-              --output-format json 2>/dev/null | \
-              python3 -c "
-          import json, sys
-          try:
-              data = json.load(sys.stdin)
-              builds = data.get('builds', [])
-              for b in builds:
-                  if b.get('buildVersion') == '$BUILD':
-                      print(b.get('processingState', 'unknown'))
-                      sys.exit(0)
-              print('not_found')
-          except:
-              print('error')
-          " 2>/dev/null || echo "error")
-
-            echo "  Attempt $i/30: status=$BUILD_STATUS"
-            if [ "$BUILD_STATUS" = "VALID" ] || [ "$BUILD_STATUS" = "valid" ]; then
-              echo "✅ Build processing complete"
-              break
-            fi
-            if [ "$i" -eq 30 ]; then
-              echo "⚠️ Build still processing after 15 minutes, submitting anyway..."
-            fi
-          done
-
-          # Submit for review using App Store Connect API via Python
-          python3 << 'PYEOF'
-          import json, time, jwt, requests, os, sys
-
-          KEY_ID = os.environ["KEY_ID"]
-          ISSUER_ID = os.environ["ISSUER_ID"]
-          key_path = os.path.expanduser(f"~/private_keys/AuthKey_{KEY_ID}.p8")
-
-          with open(key_path, "r") as f:
-              private_key = f.read()
-
-          # Generate JWT token
-          now = int(time.time())
-          payload = {
-              "iss": ISSUER_ID,
-              "iat": now,
-              "exp": now + 1200,
-              "aud": "appstoreconnect-v1"
-          }
-          token = jwt.encode(payload, private_key, algorithm="ES256", headers={"kid": KEY_ID})
-          headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-          base = "https://api.appstoreconnect.apple.com/v1"
-
-          # Find the app
-          r = requests.get(f"{base}/apps?filter[bundleId]=online.globalemergency.emerkit", headers=headers)
-          r.raise_for_status()
-          app_id = r.json()["data"][0]["id"]
-          print(f"App ID: {app_id}")
-
-          # Get the latest build (just uploaded)
-          version = os.environ.get("VERSION", "")
-          build_num = os.environ.get("BUILD", "")
-          r = requests.get(
-              f"{base}/builds?filter[app]={app_id}&filter[version]={build_num}&sort=-uploadedDate&limit=1",
-              headers=headers
-          )
-          r.raise_for_status()
-          builds = r.json()["data"]
-          if not builds:
-              raise RuntimeError("Exact build not found in App Store Connect")
-
-          build_id = builds[0]["id"]
-          processing = builds[0]["attributes"].get("processingState", "unknown")
-          if processing != "VALID":
-              raise RuntimeError("Build is not VALID; refusing App Review submission")
-          print(f"Build ID: {build_id}, processing: {processing}")
-
-          # Get or create the app store version
-          r = requests.get(
-              f"{base}/apps/{app_id}/appStoreVersions?filter[versionString]={version}&filter[platform]=IOS&limit=10",
-              headers=headers
-          )
-          r.raise_for_status()
-          versions = [v for v in r.json()["data"] if v["attributes"]["versionString"] == version]
-          if versions and versions[0]["attributes"]["appStoreState"] not in ("PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED"):
-              raise RuntimeError("The exact version is not editable; refusing to alter another version")
-
-          if versions:
-              version_id = versions[0]["id"]
-              print(f"Using existing version: {version_id}")
-          else:
-              # Create new version
-              r = requests.post(f"{base}/appStoreVersions", headers=headers, json={
-                  "data": {
-                      "type": "appStoreVersions",
-                      "attributes": {"platform": "IOS", "versionString": version},
-                      "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}
-                  }
-              })
-              r.raise_for_status()
-              version_id = r.json()["data"]["id"]
-              print(f"Created version: {version_id}")
-
-          # Attach build to version
-          r = requests.patch(f"{base}/appStoreVersions/{version_id}/relationships/build", headers=headers, json={
-              "data": {"type": "builds", "id": build_id}
-          })
-          if r.ok:
-              print(f"✅ Build {build_id} attached to version {version_id}")
-          else:
-              r.raise_for_status()
-
-          # Submit for review
-          r = requests.post(f"{base}/appStoreVersionSubmissions", headers=headers, json={
-              "data": {
-                  "type": "appStoreVersionSubmissions",
-                  "relationships": {
-                      "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
-                  }
-              }
-          })
-          if r.ok:
-              print(f"✅ Submitted version {version} for App Review!")
-          else:
-              r.raise_for_status()
-          PYEOF
-
       - name: Cleanup keychain
         if: always()
         run: |
           if [ -n "$KEYCHAIN_PATH" ] && [ -f "$KEYCHAIN_PATH" ]; then
             security delete-keychain "$KEYCHAIN_PATH" || true
           fi
+
+  # Separate Linux job: waiting for Apple's processing would burn macOS minutes.
+  submit:
+    name: Submit to App Review
+    needs: build
+    if: inputs.submit_for_review == true && needs.build.outputs.uploaded == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Submit build for App Review
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          BUNDLE_ID: online.globalemergency.emerkit
+          APP_VERSION: ${{ needs.build.outputs.version }}
+          BUILD_NUMBER: ${{ needs.build.outputs.build_number }}
+          WHATSNEW_DIR: store-assets/whatsnew
+        run: node .github/scripts/app-store-submit.mjs

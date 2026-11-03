@@ -93,3 +93,47 @@ jobs:
       - name: Build debug APK
         if: github.event_name == 'push'
         run: flutter build apk --debug
+
+  analytics-plugin:
+    name: Analytics plugin (PHP)
+    runs-on: ubuntu-latest
+    services:
+      # Disposable database for store-test.php (it only touches test_emerkit_* tables).
+      mariadb:
+        image: mariadb:11.8
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_DATABASE: analytics
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    defaults:
+      run:
+        working-directory: backend/emerkit-analytics
+    steps:
+      - uses: actions/checkout@v6
+
+      # The plugin declares PHP >= 7.4; production runs 8.4.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+      - name: Lint plugin on PHP 7.4
+        run: find . -name '*.php' -not -path './tests/*' -print0 | xargs -0 -n1 php -l
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql
+          coverage: none
+      - name: Lint on PHP 8.4
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+        run: |
+          for t in contract wp host-alias store; do
+            echo "== $t"
+            php "tests/$t-test.php"
+          done

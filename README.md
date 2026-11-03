@@ -173,7 +173,7 @@ La version se gestiona desde `version.json`. Al hacer push a main con cambios en
 
 1. Crea un tag `vX.Y.Z`
 2. Crea un GitHub Release
-3. Dispara los builds de Android (Google Play) e iOS (TestFlight)
+3. Dispara los builds de Android (Google Play) e iOS (TestFlight + envío a revisión de App Store)
 
 ```bash
 # Propagar version a pubspec.yaml y assets
