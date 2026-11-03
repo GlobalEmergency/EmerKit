@@ -87,4 +87,5 @@ jobs:
     with:
       version: ${{ needs.tag-and-release.outputs.version }}
       tag: ${{ needs.tag-and-release.outputs.tag }}
+      submit_for_review: true
     secrets: inherit

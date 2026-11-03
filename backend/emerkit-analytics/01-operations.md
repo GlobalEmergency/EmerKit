@@ -4,6 +4,8 @@ Plugin propio para el WordPress de GlobalEmergency. Base real del colector: `htt
 
 ## Instalación y comprobación
 
+**Despliegue continuo:** cada push a `main` que toque `backend/emerkit-analytics/` ejecuta `.github/workflows/deploy-analytics.yml`: rsync (sin `tests/` ni `.md`, permisos 644/755) a `/var/www/vhosts/globalemergency.online/httpdocs/wp-content/plugins/emerkit-analytics/` con la clave de despliegue del usuario del vhost (secretos `SRV07_*`, copia en el vault: *Hosting → srv07 deploy key EmerKit Analytics*), comprobación de que el plugin sigue activo y smoke test de `/events` (400 con lote vacío) y de la redirección Android (302 por HEAD, que no cuenta clic). La CI de la PR hace lint en PHP 7.4/8.4 y ejecuta las cuatro pruebas, incluida la de persistencia con MariaDB desechable. El esquema se actualiza solo: en `plugins_loaded`, si `emerkit_analytics_schema` no coincide con `Plugin::VERSION`, se ejecuta `install()`. El procedimiento siguiente queda para la primera instalación o una reparación manual.
+
 Copiar esta carpeta como `wp-content/plugins/emerkit-analytics/` (excluir `tests/` en producción si se desea). El plugin no se activa al copiarlo. Ejecutar WP-CLI como el usuario del vhost:
 
 ```sh

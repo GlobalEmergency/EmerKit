@@ -1,0 +1,72 @@
+name: Deploy Analytics Plugin (srv07)
+
+# Publishes backend/emerkit-analytics to the GlobalEmergency WordPress on srv07
+# (served at emerkit.globalemergency.online) on every push to main that touches it.
+# The plugin is already active there: copying the files is the whole update
+# (see backend/emerkit-analytics/01-operations.md). CI lints and tests it on the PR.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/emerkit-analytics/**'
+      - '.github/workflows/deploy-analytics.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-emerkit-analytics-srv07
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to srv07
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      WP_PATH: /var/www/vhosts/globalemergency.online/httpdocs
+      # srv07 public host key, pinned instead of trusting the first connection.
+      SRV07_HOST_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBcznWLBEBj0x0Y/w6mhRzYzCsunu5jUwMC8Pd/aQd10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure SSH
+        env:
+          SRV07_HOST: ${{ secrets.SRV07_HOST }}
+          SRV07_DEPLOY_KEY: ${{ secrets.SRV07_DEPLOY_KEY }}
+        run: |
+          install -d -m 700 ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
+          printf '%s\n' "$SRV07_DEPLOY_KEY" > ~/.ssh/deploy_key
+          echo "$SRV07_HOST $SRV07_HOST_KEY" > ~/.ssh/known_hosts
+
+      - name: Sync plugin files
+        env:
+          TARGET: ${{ secrets.SRV07_USER }}@${{ secrets.SRV07_HOST }}
+        # --delay-updates swaps every file in at the end, so PHP never loads a
+        # half-copied plugin. --chmod drops the world-writable bits of the manual copy.
+        run: |
+          rsync -rlz --delete --delay-updates --chmod=D755,F644 \
+            --exclude=tests/ --exclude='*.md' \
+            -e "ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            backend/emerkit-analytics/ \
+            "$TARGET:$WP_PATH/wp-content/plugins/emerkit-analytics/"
+
+      - name: Check plugin is active
+        env:
+          TARGET: ${{ secrets.SRV07_USER }}@${{ secrets.SRV07_HOST }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "$TARGET" \
+            "/opt/plesk/php/8.4/bin/php -d memory_limit=512M /usr/local/bin/wp --path=$WP_PATH plugin is-active emerkit-analytics"
+
+      - name: Smoke test public contract
+        run: |
+          # Validation rejects an empty batch before touching the tables: 400 proves the route is live.
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
+            -d '{}' https://emerkit.globalemergency.online/wp-json/emerkit/v1/events)
+          [ "$code" = 400 ] || { echo "::error::events endpoint returned $code, expected 400"; exit 1; }
+          # HEAD is not counted as a store click.
+          code=$(curl -s -o /dev/null -w '%{http_code}' -I https://emerkit.globalemergency.online/emerkit/descargar/android/)
+          [ "$code" = 302 ] || { echo "::error::store redirect returned $code, expected 302"; exit 1; }
+          echo "Plugin deployed and responding"
